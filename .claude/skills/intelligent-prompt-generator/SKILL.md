@@ -200,18 +200,122 @@ dramatic rim light, professional photography quality
 - 光影/技术：数据库元素
 ```
 
+### 第2.5步：从候选中选择最匹配的元素（关键！）
+
+**核心原则：能匹配就用数据库，匹配不上不强求！**
+
+Python返回的是**候选列表**，不是最终结果。你（Claude）需要：
+
+**1️⃣ 根据用户需求确定搜索关键词**
+
+```
+用户输入："龙珠悟空打出龟派气功的蜡像3D感"
+
+你分析出的关键词：
+- lighting相关: ["dramatic", "energy", "glow", "rim light", "dynamic"]
+- style相关: ["3D", "wax", "sculpture", "CGI", "hyperrealistic"]
+- 动作相关: ["action", "power", "blast", "energy beam"]
+```
+
+**2️⃣ 遍历候选，判断是否匹配**
+
+```
+lighting_techniques候选（202个）：
+├─ "natural window light, soft daylight" 
+│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+├─ "dramatic rim light, edge lighting"
+│   → 关键词匹配: dramatic, rim light ✅ 匹配！选中
+├─ "neon glow, colorful lighting"
+│   → 关键词匹配: glow ✅ 部分匹配，备选
+└─ ...
+
+art_styles候选（30个）：
+├─ "watercolor painting style"
+│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+├─ "oil painting classical"
+│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+├─ "anime cel shading"
+│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+└─ （遍历完，没有wax/3D/sculpture相关）
+    → ⚠️ 整个category匹配不上，不强求！由Claude补充
+```
+
+**3️⃣ 匹配规则**
+
+| 情况 | 处理方式 |
+|------|---------|
+| 候选关键词包含用户需求 | ✅ 选中该元素 |
+| 部分匹配（1-2个关键词） | ⚠️ 备选，看整体一致性 |
+| 完全不匹配 | ❌ 放弃，不要硬塞 |
+| 整个category都匹配不上 | ⚠️ 该category由Claude补充 |
+
+**4️⃣ 示例：完整的选择过程**
+
+```
+用户："龙珠悟空打出龟派气功的蜡像3D感"
+
+【lighting_techniques】202个候选
+  搜索关键词: dramatic, energy, glow, rim, dynamic, power
+  
+  遍历结果:
+  - "natural window light" → 匹配0个 → 放弃
+  - "soft diffused lighting" → 匹配0个 → 放弃
+  - "dramatic rim light" → 匹配2个(dramatic, rim) → ✅ 选中！
+  - "cinematic lighting" → 匹配1个(dynamic感觉相关) → 备选
+  
+  最终选择: "dramatic rim light, cinematic lighting"
+
+【art_styles】30个候选
+  搜索关键词: 3D, wax, sculpture, CGI, hyperrealistic
+  
+  遍历结果:
+  - "watercolor" → 匹配0个 → 放弃
+  - "anime style" → 匹配0个 → 放弃
+  - ... (全部遍历)
+  - 没有任何候选匹配 wax/3D/sculpture
+  
+  最终选择: ⚠️ 无匹配，由Claude补充
+
+【photography_techniques】50个候选
+  搜索关键词: action, dynamic, motion, blur
+  
+  遍历结果:
+  - "portrait photography" → 匹配0个 → 放弃
+  - "dynamic action shot" → 匹配2个(dynamic, action) → ✅ 选中！
+  
+  最终选择: "dynamic action shot"
+```
+
+**5️⃣ 最终组合**
+
+```
+最终提示词 = 
+  Claude补充（数据库没有/匹配不上的）:
+    - 悟空外貌描述
+    - 龟派气功动作描述
+    - 蜡像3D风格描述（art_styles匹配不上）
+  +
+  数据库选中（匹配上的）:
+    - dramatic rim light（lighting匹配上了）
+    - dynamic action shot（photography匹配上了）
+    - cinematic quality（technical匹配上了）
+```
+
+---
+
 ### 什么时候需要Claude补充？
 
 | 内容类型 | 数据库有？ | 处理方式 |
 |---------|----------|---------|
-| 光影技术 | ✅ 有 | 调用Python |
-| 摄影参数 | ✅ 有 | 调用Python |
-| 基础人物特征 | ✅ 有 | 调用Python |
+| 光影技术 | ✅ 有 | 从候选中选择匹配的 |
+| 摄影参数 | ✅ 有 | 从候选中选择匹配的 |
+| 基础人物特征 | ✅ 有 | 从候选中选择匹配的 |
 | 动漫角色 | ❌ 没有 | **Claude补充** |
 | 游戏角色 | ❌ 没有 | **Claude补充** |
 | 特殊技能/动作 | ❌ 没有 | **Claude补充** |
 | 历史人物 | ❌ 没有 | **Claude补充** |
 | 特定IP风格 | ❌ 没有 | **Claude补充** |
+| 数据库有但匹配不上 | ⚠️ 有但不匹配 | **Claude补充** |
 
 ### Claude补充时的质量要求
 
