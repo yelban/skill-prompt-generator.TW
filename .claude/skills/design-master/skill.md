@@ -1,161 +1,161 @@
 ---
 name: design-master
-description: 平面设计主控 - 自动生成平面设计提示词，支持海报、logo、插画等多种设计类型
+description: 平面設計主控 - 自動生成平面設計提示詞，支援海報、logo、插畫等多種設計型別
 ---
 
-# Design Master - 平面设计主控 Skill
+# Design Master - 平面設計主控 Skill
 
 **版本**: 1.0
-**领域**: 平面设计
-**架构**: Master-Subordinate
-**数据源**: Universal Elements Database
+**領域**: 平面設計
+**架構**: Master-Subordinate
+**資料來源**: Universal Elements Database
 
 ## 🎯 核心功能
 
-自动生成高质量的平面设计提示词，支持：
-- 🎨 布局系统（Bento Grid、对分屏、网格拼贴等）
-- ✨ 视觉效果（Glassmorphism、渐变、3D等）
-- 🎭 设计风格（现代极简、复古、科技等）
-- 🌈 色彩方案（配色规则、色调控制）
-- 📐 构图技巧（对称、黄金比例、视觉层次）
+自動生成高質量的平面設計提示詞，支援：
+- 🎨 佈局系統（Bento Grid、對分屏、網格拼貼等）
+- ✨ 視覺效果（Glassmorphism、漸變、3D等）
+- 🎭 設計風格（現代極簡、復古、科技等）
+- 🌈 色彩方案（配色規則、色調控制）
+- 📐 構圖技巧（對稱、黃金比例、視覺層次）
 
 ---
 
 ## 📋 使用方式
 
-### 方式1：元素级生成（灵活组合）
+### 方式1：元素級生成（靈活組合）
 
 ```
-生成一个Bento Grid布局海报
+生成一個Bento Grid佈局海報
 ```
 
 或
 
 ```
-平面设计：现代极简风格，玻璃态效果
+平面設計：現代極簡風格，玻璃態效果
 ```
 
-**原理**：从80个design元素中智能选择并组合
+**原理**：從80個design元素中智慧選擇並組合
 
 ---
 
-### 方式2：模板级生成（完整系统）⭐ 新增
+### 方式2：模板級生成（完整系統）⭐ 新增
 
 ```
-生成Apple风格PPT模板
+生成Apple風格PPT模板
 ```
 
 或
 
 ```
-使用现代商务科技典雅风格PPT模板
+使用現代商務科技典雅風格PPT模板
 ```
 
-**关键词**：包含"模板"一词触发模板查询
+**關鍵詞**：包含"模板"一詞觸發模板查詢
 
-**原理**：从design_templates表查询完整设计系统
+**原理**：從design_templates表查詢完整設計系統
 
-**返回内容**：
-- 设计理念说明
-- 完整元素列表（12个元素，按结构组织）
-- 使用场景和指南
-- 组装好的完整提示词
+**返回內容**：
+- 設計理念說明
+- 完整元素列表（12個元素，按結構組織）
+- 使用場景和指南
+- 組裝好的完整提示詞
 
 ---
 
 ## 🔄 工作流程
 
-### 元素级流程（默认）
+### 元素級流程（預設）
 
 ```
-用户输入（不含"模板"关键词）
+使用者輸入（不含"模板"關鍵詞）
   ↓
-查询design领域元素 (80 elements)
-  - layout_systems: Bento网格、对分屏等
-  - visual_effects: 玻璃态、渐变等
+查詢design領域元素 (80 elements)
+  - layout_systems: Bento網格、對分屏等
+  - visual_effects: 玻璃態、漸變等
   - color_schemes: 配色方案
-  - typography: 字体系统
-  - backgrounds: 背景系统
+  - typography: 字體系統
+  - backgrounds: 背景系統
   ↓
-智能选择元素
-  - 根据用户需求匹配
-  - 语义相关性排序
+智慧選擇元素
+  - 根據使用者需求匹配
+  - 語義相關性排序
   ↓
-组装Prompt
-  1. 布局系统
-  2. 视觉效果
+組裝Prompt
+  1. 佈局系統
+  2. 視覺效果
   3. 色彩方案
-  4. 技术参数（4K、DPI）
+  4. 技術引數（4K、DPI）
   ↓
-输出完整设计Prompt
+輸出完整設計Prompt
 ```
 
-### 模板级流程（包含"模板"关键词）⭐ 新增
+### 模板級流程（包含"模板"關鍵詞）⭐ 新增
 
 ```
-用户输入（包含"模板"）
+使用者輸入（包含"模板"）
   ↓
-检测关键词："模板" | "template"
+檢測關鍵詞："模板" | "template"
   ↓
-查询design_templates表
+查詢design_templates表
   - 匹配name、chinese_name、style_tags
-  - 示例：Apple → "Apple淡蓝商务PPT"
+  - 示例：Apple → "Apple淡藍商務PPT"
   ↓
 返回完整模板
-  - 设计理念
-  - 12个元素（按结构组织）
-  - 使用场景
-  - 完整提示词
+  - 設計理念
+  - 12個元素（按結構組織）
+  - 使用場景
+  - 完整提示詞
   ↓
-输出模板详情 + 提示词
+輸出模板詳情 + 提示詞
 ```
 
 ---
 
-## 📊 数据源
+## 📊 資料來源
 
-### 元素库（elements表）
+### 元素庫（elements表）
 
-**领域**: `design` domain (80 elements)
+**領域**: `design` domain (80 elements)
 
-**元素类别**:
-- `layout_systems` - 布局系统
-- `visual_effects` - 视觉效果
+**元素類別**:
+- `layout_systems` - 佈局系統
+- `visual_effects` - 視覺效果
 - `color_schemes` - 配色方案
-- `typography` - 字体系统
-- `backgrounds` - 背景系统
+- `typography` - 字體系統
+- `backgrounds` - 背景系統
 
-**可用标签**:
+**可用標籤**:
 - `bento-grid`, `glassmorphism`, `modern`
 - `minimalist`, `grid`, `layout`, `apple`
 
-### 模板库（design_templates表）⭐ 新增
+### 模板庫（design_templates表）⭐ 新增
 
-**当前模板数**: 1个
+**當前模板數**: 1個
 
 **已有模板**:
-1. **Apple淡蓝商务PPT** (template_apple_soft_blue_ppt_v1)
-   - 类别: ppt_design
-   - 包含: 12个元素
-   - 标签: apple, business, soft_blue, minimal, professional
-   - 适用: 商务汇报、产品发布会、数据分析
+1. **Apple淡藍商務PPT** (template_apple_soft_blue_ppt_v1)
+   - 類別: ppt_design
+   - 包含: 12個元素
+   - 標籤: apple, business, soft_blue, minimal, professional
+   - 適用: 商務彙報、產品釋出會、資料分析
 
-**模板分类**:
-- `ppt_design` - PPT演示设计
-- `ui_system` - UI设计系统
-- `brand_vi` - 品牌视觉识别
-- `web_design` - 网页设计系统
-- `dashboard` - 仪表板设计
+**模板分類**:
+- `ppt_design` - PPT演示設計
+- `ui_system` - UI設計系統
+- `brand_vi` - 品牌視覺識別
+- `web_design` - 網頁設計系統
+- `dashboard` - 儀表板設計
 
 ---
 
-## ✅ 输出示例
+## ✅ 輸出示例
 
-### 示例1：元素级生成
+### 示例1：元素級生成
 
-**输入**: `生成Bento Grid玻璃态海报`
+**輸入**: `生成Bento Grid玻璃態海報`
 
-**输出**:
+**輸出**:
 ```
 Modern Bento grid layout with 8 asymmetric modular cards, frosted glass effect
 with 80% translucency and backdrop blur filter, minimalist modern aesthetics,
@@ -164,52 +164,52 @@ resolution, professional graphic design, UI/UX design system, contemporary
 digital poster design
 ```
 
-### 示例2：模板级生成 ⭐ 新增
+### 示例2：模板級生成 ⭐ 新增
 
-**输入**: `生成Apple风格PPT模板`
+**輸入**: `生成Apple風格PPT模板`
 
-**输出**:
+**輸出**:
 ```
-📋 找到匹配模板：现代商务科技典雅风格PPT - 淡蓝装饰版
+📋 找到匹配模板：現代商務科技典雅風格PPT - 淡藍裝飾版
 
-🎯 设计理念：
-极简主义美学融合温和的科技感。在Apple设计语言基础上，
-加入淡雅的蓝色调和细腻的装饰纹理，营造既专业又不失温度
-的商务氛围。
+🎯 設計理念：
+極簡主義美學融合溫和的科技感。在Apple設計語言基礎上，
+加入淡雅的藍色調和細膩的裝飾紋理，營造既專業又不失溫度
+的商務氛圍。
 
-📦 完整模板包含（12个元素）：
+📦 完整模板包含（12個元素）：
 
-【背景系统】
-• Apple风格淡蓝渐变背景
-• 四层装饰背景系统
+【背景系統】
+• Apple風格淡藍漸變背景
+• 四層裝飾背景系統
 
-【布局系统】
-• Apple风格玻璃卡片系统
-• 12列8点网格系统
+【佈局系統】
+• Apple風格玻璃卡片系統
+• 12列8點網格系統
 
-【配色系统】
-• Apple商务蓝配色系统
+【配色系統】
+• Apple商務藍配色系統
 
-【字体系统】
-• Apple字体层级系统
+【字體系統】
+• Apple字型層級系統
 
-【视觉效果】
-• macOS窗口三色圆点
-• SF Symbols超细线性图标
-• Apple风格柔和蓝数据图表
-• 淡蓝标签组件
-• Apple圆角层级系统
-• 蓝色调投影系统
+【視覺效果】
+• macOS視窗三色圓點
+• SF Symbols超細線性圖示
+• Apple風格柔和藍資料圖表
+• 淡藍標籤元件
+• Apple圓角層級系統
+• 藍色調投影系統
 
-🎨 使用场景：
-高端商务汇报、产品发布会、数据分析报告
+🎨 使用場景：
+高階商務彙報、產品釋出會、資料分析報告
 
-✨ 完整模板提示词：
+✨ 完整模板提示詞：
 ────────────────────────────────────────
-[包含全部12个元素的完整提示词]
+[包含全部12個元素的完整提示詞]
 ────────────────────────────────────────
 ```
 
 ---
 
-**Skill状态**: ✅ 已实现（v1.1 - 支持模板系统）
+**Skill狀態**: ✅ 已實現（v1.1 - 支援模板系統）

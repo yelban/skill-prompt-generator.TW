@@ -1,266 +1,266 @@
 ---
 name: universal-learner
-description: 通用学习器 - 从任何领域的Prompt中自动提取可复用元素，持续学习和积累知识
+description: 通用學習器 - 從任何領域的Prompt中自動提取可複用元素，持續學習和積累知識
 ---
 
-# Universal Learner - 通用学习器 Skill
+# Universal Learner - 通用學習器 Skill
 
 **版本**: 1.0
-**架构**: Master-Subordinate
-**学习方式**: 半自动（生成报告 + 人工审核）
+**架構**: Master-Subordinate
+**學習方式**: 半自動（生成報告 + 人工稽核）
 
 ## 🎯 核心功能
 
-从任何领域的Prompt中自动提取可复用元素，存入Universal Elements Library数据库。
+從任何領域的Prompt中自動提取可複用元素，存入Universal Elements Library資料庫。
 
-支持7大领域：
-- 📷 **portrait** - 人像摄影
-- 🏠 **interior** - 室内设计
-- 📦 **product** - 产品摄影
-- 🎨 **design** - 平面设计
-- 🎭 **art** - 艺术风格
-- 🎬 **video** - 视频生成
-- 📸 **common** - 通用摄影技术
+支援7大領域：
+- 📷 **portrait** - 人像攝影
+- 🏠 **interior** - 室內設計
+- 📦 **product** - 產品攝影
+- 🎨 **design** - 平面設計
+- 🎭 **art** - 藝術風格
+- 🎬 **video** - 影片生成
+- 📸 **common** - 通用攝影技術
 
 ---
 
 ## 📋 使用方式
 
-### 方式1：学习单个Prompt
+### 方式1：學習單個Prompt
 
 ```
-学习这个Prompt: [粘贴完整Prompt]
-```
-
-或
-
-```
-分析并学习: A premium collector's edition book photographed with Phase One camera, featuring Italian calfskin binding...
-```
-
-### 方式2：批量学习18个源Prompts
-
-```
-批量学习所有Prompts
+學習這個Prompt: [貼上完整Prompt]
 ```
 
 或
 
 ```
-学习extracted_modules.json中的所有Prompts
+分析並學習: A premium collector's edition book photographed with Phase One camera, featuring Italian calfskin binding...
 ```
 
-### 方式3：学习特定领域
+### 方式2：批次學習18個源Prompts
 
 ```
-只学习product领域的Prompts
-```
-
-或
-
-```
-学习Prompt #1, #6, #14, #16（产品摄影）
-```
-
-### 方式4：学习设计系统/模块系统 ⭐ 新增
-
-```
-学习这个设计系统：[粘贴完整的设计系统规范]
+批次學習所有Prompts
 ```
 
 或
 
 ```
-学习这个工作流模块：[完整工作流内容]
+學習extracted_modules.json中的所有Prompts
 ```
 
-**自动识别特征**：
-- 包含关键词：**模块 / 系统 / 工作流 / 框架**
-- 有层级结构（背景系统 + 配色方案 + 字体系统...）
-- 包含设计理念说明或流程步骤
+### 方式3：學習特定領域
 
-**特殊处理（模块系统模式）**：
+```
+只學習product領域的Prompts
+```
+
+或
+
+```
+學習Prompt #1, #6, #14, #16（產品攝影）
+```
+
+### 方式4：學習設計系統/模組系統 ⭐ 新增
+
+```
+學習這個設計系統：[貼上完整的設計系統規範]
+```
+
+或
+
+```
+學習這個工作流模組：[完整工作流內容]
+```
+
+**自動識別特徵**：
+- 包含關鍵詞：**模組 / 系統 / 工作流 / 框架**
+- 有層級結構（背景系統 + 配色方案 + 字體系統...）
+- 包含設計理念說明或流程步驟
+
+**特殊處理（模組系統模式）**：
 - 提取元素 → elements表
-- 创建设计系统记录 → design_templates表
-- **保存完整原始内容 → visual_reference字段** ⭐ 关键增强
+- 建立設計系統記錄 → design_templates表
+- **儲存完整原始內容 → visual_reference欄位** ⭐ 關鍵增強
 
 ---
 
 ## 🔄 工作流程
 
 ```
-输入Prompt
+輸入Prompt
   ↓
-【Step 0: 类型识别】⭐ 新增
-  - 判断是"画面描述型" 还是 "设计系统型"
-  - 设计系统特征：包含"设计系统"、"风格规范"、有层级结构
-  - 输出: {"type": "prompt" | "design_system"}
+【Step 0: 型別識別】⭐ 新增
+  - 判斷是"畫面描述型" 還是 "設計系統型"
+  - 設計系統特徵：包含"設計系統"、"風格規範"、有層級結構
+  - 輸出: {"type": "prompt" | "design_system"}
   ↓
-【Step 0.1: 模块系统判断】⭐ 关键增强
-  - 检测关键词：【模块】【系统】【工作流】【框架】
-  - YES → 模块系统模式（需保存完整原始内容）
-  - NO  → 普通学习模式（只提取元素）
+【Step 0.1: 模組系統判斷】⭐ 關鍵增強
+  - 檢測關鍵詞：【模組】【系統】【工作流】【框架】
+  - YES → 模組系統模式（需儲存完整原始內容）
+  - NO  → 普通學習模式（只提取元素）
   ↓
-【Step 1: 领域分类】domain_classifier.md
-  - 识别主要领域（product/design/art/video...）
-  - 判断是否多领域
-  - 输出: {"primary": "product", "secondary": ["photography"]}
+【Step 1: 領域分類】domain_classifier.md
+  - 識別主要領域（product/design/art/video...）
+  - 判斷是否多領域
+  - 輸出: {"primary": "product", "secondary": ["photography"]}
   ↓
 【Step 2: 元素提取】element_extractor.md
-  - 根据领域提取对应元素
+  - 根據領域提取對應元素
   - product → product_types, materials, photography_techniques
   - design → layouts, effects, typography
   - art → art_styles, special_effects
-  - 输出: List[{category, name, template, keywords}]
+  - 輸出: List[{category, name, template, keywords}]
   ↓
-【Step 3: 自动打标签】tagger.md
-  - 基于keywords生成tags
-  - 添加领域标签、类别标签
-  - 跨领域标签识别（luxury, glass, dynamic...）
-  - 输出: tags列表
+【Step 3: 自動打標籤】tagger.md
+  - 基於keywords生成tags
+  - 新增領域標籤、類別標籤
+  - 跨領域標籤識別（luxury, glass, dynamic...）
+  - 輸出: tags列表
   ↓
-【Step 4: 计算复用性】
+【Step 4: 計算複用性】
   - reusability_score (1-10)
-  - 基于：通用性、清晰度、独立性
+  - 基於：通用性、清晰度、獨立性
   ↓
-【Step 5: 更新数据库】library_updater.md
-  - 检查是否已存在（去重）
+【Step 5: 更新資料庫】library_updater.md
+  - 檢查是否已存在（去重）
   - 生成element_id
-  - 写入elements.db
+  - 寫入elements.db
   - 更新tag_index
   ↓
-【Step 5.1: 如果是设计系统】⭐ 新增
-  - 同时创建模板记录
-  - 写入design_templates表
-  - 关联所有提取的元素
-  - 保存设计理念、使用指南等完整信息
+【Step 5.1: 如果是設計系統】⭐ 新增
+  - 同時建立模板記錄
+  - 寫入design_templates表
+  - 關聯所有提取的元素
+  - 儲存設計理念、使用指南等完整資訊
   ↓
-【Step 5.2: 如果是模块系统模式】⭐ 关键增强
-  - 把完整原始内容保存到 visual_reference 字段
-  - 包括：完整工作流、所有模板、配置参数等
-  - 目的：可直接使用，无需重新组合元素
+【Step 5.2: 如果是模組系統模式】⭐ 關鍵增強
+  - 把完整原始內容儲存到 visual_reference 欄位
+  - 包括：完整工作流、所有模板、配置引數等
+  - 目的：可直接使用，無需重新組合元素
   ↓
-【Step 6: 生成报告】
-  - 新学习的元素列表
-  - 按领域和类别分组
-  - 推荐的tags
-  - 质量评估
-  - （设计系统）额外显示模板信息
+【Step 6: 生成報告】
+  - 新學習的元素列表
+  - 按領域和類別分組
+  - 推薦的tags
+  - 質量評估
+  - （設計系統）額外顯示模板資訊
 ```
 
 ---
 
-## 📊 输出示例
+## 📊 輸出示例
 
-### 学习报告
+### 學習報告
 
 ```markdown
-# Universal Learner - 学习报告
+# Universal Learner - 學習報告
 
-**学习时间**: 2026-01-01 18:30:00
+**學習時間**: 2026-01-01 18:30:00
 **源Prompt**: Prompt #1
 
-## 🎯 领域识别
+## 🎯 領域識別
 
-主领域: **product** (产品摄影)
-次领域: **common** (通用摄影)
+主領域: **product** (產品攝影)
+次領域: **common** (通用攝影)
 
 ## 📦 提取的元素
 
-### 产品类型 (product_types)
+### 產品型別 (product_types)
 
-1. **collector_edition_book** - 收藏版书籍
+1. **collector_edition_book** - 收藏版書籍
    - 模板: premium collector's edition book, luxury binding, Italian calfskin cover
-   - 关键词: collector's edition, premium book, luxury binding
-   - 标签: product, book, luxury, collectible
-   - 复用性: 7.5/10
+   - 關鍵詞: collector's edition, premium book, luxury binding
+   - 標籤: product, book, luxury, collectible
+   - 複用性: 7.5/10
    - element_id: product_product_types_001
 
-### 材质纹理 (material_textures)
+### 材質紋理 (material_textures)
 
-2. **glossy_reflective** - 光泽反射材质
+2. **glossy_reflective** - 光澤反射材質
    - 模板: high-end glossy surface, reflective finish, metallic sheen
-   - 关键词: glossy, reflective, shiny, polished
-   - 标签: material, glossy, luxury, product
-   - 复用性: 8.5/10
+   - 關鍵詞: glossy, reflective, shiny, polished
+   - 標籤: material, glossy, luxury, product
+   - 複用性: 8.5/10
    - element_id: product_material_textures_002
 
-### 摄影技术 (photography_techniques)
+### 攝影技術 (photography_techniques)
 
-3. **macro_product_shot** - 产品微距特写
+3. **macro_product_shot** - 產品微距特寫
    - 模板: Phase One medium format camera with 100mm macro lens, razor-sharp focus
-   - 关键词: macro, close-up, detailed, high-resolution
-   - 标签: photography, macro, product, technical
-   - 复用性: 9.0/10
+   - 關鍵詞: macro, close-up, detailed, high-resolution
+   - 標籤: photography, macro, product, technical
+   - 複用性: 9.0/10
    - element_id: common_photography_techniques_032
 
-## ✅ 已添加到数据库
+## ✅ 已新增到資料庫
 
-- 3个新元素已写入 elements.db
-- 更新了12个标签索引
-- product领域: 60 → 63 个元素
-- common领域: 31 → 32 个元素
+- 3個新元素已寫入 elements.db
+- 更新了12個標籤索引
+- product領域: 60 → 63 個元素
+- common領域: 31 → 32 個元素
 
-## 💡 质量评估
+## 💡 質量評估
 
 - 提取完整度: 95%
-- 标签质量: 优秀
-- 复用性评分: 8.3/10 (平均)
+- 標籤質量: 優秀
+- 複用性評分: 8.3/10 (平均)
 ```
 
 ---
 
-## 🎛️ 配置选项
+## 🎛️ 配置選項
 
-### 自动化程度
+### 自動化程度
 
-- **当前**: 半自动（生成报告 + 人工审核）
-- **未来**: 可选全自动模式
+- **當前**: 半自動（生成報告 + 人工稽核）
+- **未來**: 可選全自動模式
 
-### 复用性评分标准
+### 複用性評分標準
 
-| 评分 | 标准 |
+| 評分 | 標準 |
 |------|------|
-| 9-10 | 极高复用性：跨领域通用，如"macro photography", "soft lighting" |
-| 7-8  | 高复用性：领域内通用，如"product on table", "geometric layout" |
-| 5-6  | 中等复用性：特定场景，如"collector's edition book" |
-| 3-4  | 低复用性：非常具体，如"vintage 1960s typewriter" |
-| 1-2  | 极低复用性：一次性描述，不推荐提取 |
+| 9-10 | 極高複用性：跨領域通用，如"macro photography", "soft lighting" |
+| 7-8  | 高複用性：領域內通用，如"product on table", "geometric layout" |
+| 5-6  | 中等複用性：特定場景，如"collector's edition book" |
+| 3-4  | 低複用性：非常具體，如"vintage 1960s typewriter" |
+| 1-2  | 極低複用性：一次性描述，不推薦提取 |
 
 ---
 
-## 📚 数据源
+## 📚 資料來源
 
-**输入**: `extracted_results/extracted_modules.json` (18个源Prompts)
+**輸入**: `extracted_results/extracted_modules.json` (18個源Prompts)
 
-**输出**:
-- `extracted_results/elements.db` (SQLite数据库)
-- `extracted_results/universal_elements_library.json` (JSON导出)
+**輸出**:
+- `extracted_results/elements.db` (SQLite資料庫)
+- `extracted_results/universal_elements_library.json` (JSON匯出)
 
 ---
 
-## 🔧 模块说明
+## 🔧 模組說明
 
-| 模块 | 文件 | 功能 |
+| 模組 | 檔案 | 功能 |
 |------|------|------|
-| 领域分类器 | `modules/domain_classifier.md` | 识别Prompt属于哪个领域 |
-| 元素提取器 | `modules/element_extractor.md` | 提取可复用元素 |
-| 标签生成器 | `modules/tagger.md` | 自动生成tags |
-| 库更新器 | `modules/library_updater.md` | 更新数据库 |
+| 領域分類器 | `modules/domain_classifier.md` | 識別Prompt屬於哪個領域 |
+| 元素提取器 | `modules/element_extractor.md` | 提取可複用元素 |
+| 標籤生成器 | `modules/tagger.md` | 自動生成tags |
+| 庫更新器 | `modules/library_updater.md` | 更新資料庫 |
 
 ---
 
-## ✅ 验收标准
+## ✅ 驗收標準
 
-学习成功的标志：
-- ✅ 能正确识别7大领域
-- ✅ 从18个Prompts提取~440个元素
-- ✅ 自动去重（不重复添加已存在元素）
-- ✅ 标签质量高（相关性强）
-- ✅ 复用性评分合理
+學習成功的標誌：
+- ✅ 能正確識別7大領域
+- ✅ 從18個Prompts提取~440個元素
+- ✅ 自動去重（不重複新增已存在元素）
+- ✅ 標籤質量高（相關性強）
+- ✅ 複用性評分合理
 
 ---
 
-**Skill状态**: ✅ 已实现
-**最后更新**: 2026-01-05
-**维护者**: Universal Library System
+**Skill狀態**: ✅ 已實現
+**最後更新**: 2026-01-05
+**維護者**: Universal Library System

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Universal Elements Library - Database Layer
-通用元素库 - 数据库层
+通用元素庫 - 資料庫層
 
-使用SQLite数据库存储所有领域的可复用元素
-支持导出/导入JSON用于版本控制
+使用SQLite資料庫儲存所有領域的可複用元素
+支援匯出/匯入JSON用於版本控制
 """
 
 import sqlite3
@@ -17,14 +17,14 @@ import re
 
 
 class ElementDB:
-    """通用元素库数据库管理类"""
+    """通用元素庫資料庫管理類"""
 
     def __init__(self, db_path: str = "extracted_results/elements.db"):
         """
-        初始化数据库连接
+        初始化資料庫連線
 
         Args:
-            db_path: 数据库文件路径
+            db_path: 資料庫檔案路徑
         """
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -35,10 +35,10 @@ class ElementDB:
         self._init_database()
 
     def _init_database(self):
-        """初始化数据库表结构"""
+        """初始化資料庫表結構"""
         cursor = self.conn.cursor()
 
-        # 1. 领域表
+        # 1. 領域表
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS domains (
             domain_id TEXT PRIMARY KEY,
@@ -50,7 +50,7 @@ class ElementDB:
         )
         """)
 
-        # 2. 类别表
+        # 2. 類別表
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS categories (
             category_id TEXT PRIMARY KEY,
@@ -69,7 +69,7 @@ class ElementDB:
             domain_id TEXT NOT NULL,
             category_id TEXT NOT NULL,
 
-            -- 基本信息
+            -- 基本資訊
             name TEXT NOT NULL,
             chinese_name TEXT,
 
@@ -77,7 +77,7 @@ class ElementDB:
             ai_prompt_template TEXT NOT NULL,
             keywords TEXT,  -- JSON array
 
-            -- 评分和元数据
+            -- 評分和元資料
             reusability_score REAL CHECK(reusability_score >= 0 AND reusability_score <= 10),
             confidence_score REAL,
 
@@ -85,10 +85,10 @@ class ElementDB:
             source_prompts TEXT,  -- JSON array: [1, 5, 10]
             learned_from TEXT,    -- 'manual' or 'auto_learner'
 
-            -- 扩展字段
-            metadata TEXT,        -- JSON: 其他自定义字段
+            -- 擴充套件欄位
+            metadata TEXT,        -- JSON: 其他自定義欄位
 
-            -- 时间戳
+            -- 時間戳
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -97,7 +97,7 @@ class ElementDB:
         )
         """)
 
-        # 4. 标签表
+        # 4. 標籤表
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS tags (
             tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,7 +108,7 @@ class ElementDB:
         )
         """)
 
-        # 5. 元素-标签关联表（多对多）
+        # 5. 元素-標籤關聯表（多對多）
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS element_tags (
             element_id TEXT NOT NULL,
@@ -119,7 +119,7 @@ class ElementDB:
         )
         """)
 
-        # 6. 来源Prompt表
+        # 6. 來源Prompt表
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS source_prompts (
             prompt_id INTEGER PRIMARY KEY,
@@ -135,7 +135,7 @@ class ElementDB:
         )
         """)
 
-        # 创建索引
+        # 建立索引
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_elements_domain ON elements(domain_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_elements_category ON elements(category_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_elements_reusability ON elements(reusability_score DESC)")
@@ -144,19 +144,19 @@ class ElementDB:
 
         self.conn.commit()
 
-        # 初始化7个领域
+        # 初始化7個領域
         self._init_domains()
 
     def _init_domains(self):
-        """初始化7个领域"""
+        """初始化7個領域"""
         domains = [
-            ("portrait", "人像摄影", "Portrait photography elements"),
-            ("interior", "室内设计", "Interior design elements"),
-            ("product", "产品摄影", "Product photography elements"),
-            ("design", "平面设计", "Graphic design elements"),
-            ("art", "艺术风格", "Art style elements"),
-            ("video", "视频生成", "Video generation elements"),
-            ("common", "通用摄影", "Common photography techniques")
+            ("portrait", "人像攝影", "Portrait photography elements"),
+            ("interior", "室內設計", "Interior design elements"),
+            ("product", "產品攝影", "Product photography elements"),
+            ("design", "平面設計", "Graphic design elements"),
+            ("art", "藝術風格", "Art style elements"),
+            ("video", "影片生成", "Video generation elements"),
+            ("common", "通用攝影", "Common photography techniques")
         ]
 
         cursor = self.conn.cursor()
@@ -184,29 +184,29 @@ class ElementDB:
                    learned_from: str = "manual",
                    metadata: Optional[Dict] = None) -> bool:
         """
-        添加元素到库中
+        新增元素到庫中
 
         Args:
             element_id: 元素ID，如 'portrait_facial_001'
-            domain_id: 领域ID，如 'portrait'
-            category_id: 类别ID，如 'facial_features'
-            name: 元素名称，如 'large_expressive_almond'
-            ai_prompt_template: AI提示词模板
-            chinese_name: 中文名称
-            keywords: 关键词列表
-            tags: 标签列表
-            reusability_score: 复用性评分 (0-10)
-            source_prompts: 来源Prompt ID列表
-            learned_from: 学习方式 ('manual' or 'auto_learner')
-            metadata: 其他元数据
+            domain_id: 領域ID，如 'portrait'
+            category_id: 類別ID，如 'facial_features'
+            name: 元素名稱，如 'large_expressive_almond'
+            ai_prompt_template: AI提示詞模板
+            chinese_name: 中文名稱
+            keywords: 關鍵詞列表
+            tags: 標籤列表
+            reusability_score: 複用性評分 (0-10)
+            source_prompts: 來源Prompt ID列表
+            learned_from: 學習方式 ('manual' or 'auto_learner')
+            metadata: 其他元資料
 
         Returns:
-            bool: 是否添加成功
+            bool: 是否新增成功
         """
         cursor = self.conn.cursor()
 
         try:
-            # 确保category存在
+            # 確保category存在
             cursor.execute("""
                 INSERT OR IGNORE INTO categories (category_id, domain_id, name)
                 VALUES (?, ?, ?)
@@ -233,19 +233,19 @@ class ElementDB:
                 json.dumps(metadata or {}, ensure_ascii=False)
             ))
 
-            # 添加标签
+            # 新增標籤
             if tags:
                 for tag_name in tags:
                     self._add_tag_to_element(element_id, tag_name)
 
-            # 更新统计
+            # 更新統計
             self._update_counts(domain_id, category_id)
 
             self.conn.commit()
             return True
 
         except sqlite3.IntegrityError as e:
-            print(f"❌ 添加元素失败: {e}")
+            print(f"❌ 新增元素失敗: {e}")
             self.conn.rollback()
             return False
 
@@ -258,19 +258,19 @@ class ElementDB:
                           complexity: Optional[str] = None,
                           extracted_elements_count: int = 0) -> bool:
         """
-        保存学习的源Prompt记录到source_prompts表
+        儲存學習的源Prompt記錄到source_prompts表
 
         Args:
             prompt_id: Prompt ID
-            original_prompt: 原始提示词文本
-            theme: 主题
-            domain_classification: 领域分类（JSON格式）
-            quality_score: 质量评分
-            complexity: 复杂度（'simple', 'medium', 'complex'）
-            extracted_elements_count: 提取的元素数量
+            original_prompt: 原始提示詞文字
+            theme: 主題
+            domain_classification: 領域分類（JSON格式）
+            quality_score: 質量評分
+            complexity: 複雜度（'simple', 'medium', 'complex'）
+            extracted_elements_count: 提取的元素數量
 
         Returns:
-            bool: 是否保存成功
+            bool: 是否儲存成功
         """
         cursor = self.conn.cursor()
 
@@ -296,7 +296,7 @@ class ElementDB:
             return True
 
         except sqlite3.IntegrityError as e:
-            # Prompt ID已存在，更新记录
+            # Prompt ID已存在，更新記錄
             try:
                 cursor.execute("""
                     UPDATE source_prompts
@@ -307,41 +307,41 @@ class ElementDB:
                 self.conn.commit()
                 return True
             except Exception as update_error:
-                print(f"❌ 更新学习记录失败: {update_error}")
+                print(f"❌ 更新學習記錄失敗: {update_error}")
                 self.conn.rollback()
                 return False
 
     def _add_tag_to_element(self, element_id: str, tag_name: str):
-        """为元素添加标签"""
+        """為元素新增標籤"""
         cursor = self.conn.cursor()
 
-        # 确保标签存在
+        # 確保標籤存在
         cursor.execute("""
             INSERT OR IGNORE INTO tags (tag_name)
             VALUES (?)
         """, (tag_name,))
 
-        # 获取tag_id
+        # 獲取tag_id
         cursor.execute("SELECT tag_id FROM tags WHERE tag_name = ?", (tag_name,))
         tag_id = cursor.fetchone()[0]
 
-        # 关联元素和标签
+        # 關聯元素和標籤
         cursor.execute("""
             INSERT OR IGNORE INTO element_tags (element_id, tag_id)
             VALUES (?, ?)
         """, (element_id, tag_id))
 
-        # 更新标签使用计数
+        # 更新標籤使用計數
         cursor.execute("""
             UPDATE tags SET usage_count = usage_count + 1
             WHERE tag_id = ?
         """, (tag_id,))
 
     def _update_counts(self, domain_id: str, category_id: str):
-        """更新领域和类别的元素计数"""
+        """更新領域和類別的元素計數"""
         cursor = self.conn.cursor()
 
-        # 更新category计数
+        # 更新category計數
         cursor.execute("""
             UPDATE categories
             SET total_elements = (
@@ -350,7 +350,7 @@ class ElementDB:
             WHERE category_id = ?
         """, (category_id, category_id))
 
-        # 更新domain计数
+        # 更新domain計數
         cursor.execute("""
             UPDATE domains
             SET total_elements = (
@@ -359,15 +359,15 @@ class ElementDB:
             WHERE domain_id = ?
         """, (domain_id, domain_id))
 
-    # ========== 查询方法 ==========
+    # ========== 查詢方法 ==========
 
     def search_by_tags(self, tags: List[str], require_all: bool = False) -> List[Dict]:
         """
-        按标签搜索元素
+        按標籤搜尋元素
 
         Args:
-            tags: 标签列表
-            require_all: 是否要求包含所有标签（AND逻辑），否则为OR逻辑
+            tags: 標籤列表
+            require_all: 是否要求包含所有標籤（AND邏輯），否則為OR邏輯
 
         Returns:
             元素列表
@@ -375,7 +375,7 @@ class ElementDB:
         cursor = self.conn.cursor()
 
         if require_all:
-            # AND逻辑：必须包含所有标签
+            # AND邏輯：必須包含所有標籤
             query = """
                 SELECT DISTINCT e.* FROM elements e
                 WHERE element_id IN (
@@ -388,7 +388,7 @@ class ElementDB:
             """.format(','.join(['?' for _ in tags]))
             cursor.execute(query, tags + [len(tags)])
         else:
-            # OR逻辑：包含任意标签
+            # OR邏輯：包含任意標籤
             query = """
                 SELECT DISTINCT e.* FROM elements e
                 JOIN element_tags et ON e.element_id = et.element_id
@@ -405,13 +405,13 @@ class ElementDB:
                         min_reusability: Optional[float] = None,
                         limit: Optional[int] = None) -> List[Dict]:
         """
-        按领域搜索元素
+        按領域搜尋元素
 
         Args:
-            domain_id: 领域ID
-            category_id: 可选的类别ID
-            min_reusability: 最小复用性评分
-            limit: 限制返回数量
+            domain_id: 領域ID
+            category_id: 可選的類別ID
+            min_reusability: 最小複用性評分
+            limit: 限制返回數量
 
         Returns:
             元素列表
@@ -439,14 +439,14 @@ class ElementDB:
         return [self._row_to_dict(row) for row in cursor.fetchall()]
 
     def get_element(self, element_id: str) -> Optional[Dict]:
-        """获取单个元素"""
+        """獲取單個元素"""
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM elements WHERE element_id = ?", (element_id,))
         row = cursor.fetchone()
         return self._row_to_dict(row) if row else None
 
     def get_element_tags(self, element_id: str) -> List[str]:
-        """获取元素的所有标签"""
+        """獲取元素的所有標籤"""
         cursor = self.conn.cursor()
         cursor.execute("""
             SELECT t.tag_name FROM tags t
@@ -456,13 +456,13 @@ class ElementDB:
         return [row[0] for row in cursor.fetchall()]
 
     def _row_to_dict(self, row: sqlite3.Row) -> Dict:
-        """将数据库行转换为字典"""
+        """將資料庫行轉換為字典"""
         if not row:
             return {}
 
         result = dict(row)
 
-        # 解析JSON字段
+        # 解析JSON欄位
         if result.get('keywords'):
             result['keywords'] = json.loads(result['keywords'])
         if result.get('source_prompts'):
@@ -470,27 +470,27 @@ class ElementDB:
         if result.get('metadata'):
             result['metadata'] = json.loads(result['metadata'])
 
-        # 添加标签
+        # 新增標籤
         result['tags'] = self.get_element_tags(result['element_id'])
 
         return result
 
-    # ========== 统计方法 ==========
+    # ========== 統計方法 ==========
 
     def get_stats(self) -> Dict:
-        """获取库的统计信息"""
+        """獲取庫的統計資訊"""
         cursor = self.conn.cursor()
 
         stats = {}
 
-        # 总体统计
+        # 總體統計
         cursor.execute("SELECT COUNT(*) FROM elements")
         stats['total_elements'] = cursor.fetchone()[0]
 
         cursor.execute("SELECT COUNT(*) FROM tags")
         stats['total_tags'] = cursor.fetchone()[0]
 
-        # 各领域统计
+        # 各領域統計
         cursor.execute("""
             SELECT d.domain_id, d.name, d.total_elements
             FROM domains d
@@ -501,7 +501,7 @@ class ElementDB:
             for row in cursor.fetchall()
         ]
 
-        # 热门标签
+        # 熱門標籤
         cursor.execute("""
             SELECT tag_name, usage_count
             FROM tags
@@ -515,17 +515,17 @@ class ElementDB:
 
         return stats
 
-    # ========== 导出/导入 JSON ==========
+    # ========== 匯出/匯入 JSON ==========
 
     def export_to_json(self, output_path: str) -> bool:
         """
-        导出数据库为JSON格式（用于版本控制）
+        匯出資料庫為JSON格式（用於版本控制）
 
         Args:
-            output_path: 输出JSON文件路径
+            output_path: 輸出JSON檔案路徑
 
         Returns:
-            是否导出成功
+            是否匯出成功
         """
         cursor = self.conn.cursor()
 
@@ -544,7 +544,7 @@ class ElementDB:
                 "source_prompts": []
             }
 
-            # 导出各领域
+            # 匯出各領域
             cursor.execute("SELECT * FROM domains WHERE total_elements > 0")
             domains_data = cursor.fetchall()
 
@@ -561,7 +561,7 @@ class ElementDB:
                     "categories": {}
                 }
 
-                # 获取该领域的所有类别
+                # 獲取該領域的所有類別
                 cursor.execute("""
                     SELECT DISTINCT category_id FROM elements
                     WHERE domain_id = ?
@@ -570,7 +570,7 @@ class ElementDB:
                 for cat_row in cursor.fetchall():
                     category_id = cat_row['category_id']
 
-                    # 获取该类别的所有元素
+                    # 獲取該類別的所有元素
                     cursor.execute("""
                         SELECT * FROM elements
                         WHERE domain_id = ? AND category_id = ?
@@ -585,7 +585,7 @@ class ElementDB:
                     if category_elements:
                         library["domains"][domain_id]["categories"][category_id] = category_elements
 
-            # 导出标签索引
+            # 匯出標籤索引
             cursor.execute("SELECT tag_name, tag_id FROM tags")
             for tag_row in cursor.fetchall():
                 tag_name = tag_row['tag_name']
@@ -597,39 +597,39 @@ class ElementDB:
 
                 library["tag_index"][tag_name] = [row[0] for row in cursor.fetchall()]
 
-            # 导出来源Prompts
+            # 匯出來源Prompts
             cursor.execute("SELECT * FROM source_prompts")
             for prompt_row in cursor.fetchall():
                 library["source_prompts"].append(dict(prompt_row))
 
-            # 写入文件
+            # 寫入檔案
             output_path = Path(output_path)
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(library, f, indent=2, ensure_ascii=False)
 
-            print(f"✅ 导出完成: {output_path}")
-            print(f"   - {library['library_metadata']['total_elements']} 个元素")
-            print(f"   - {library['library_metadata']['total_domains']} 个领域")
-            print(f"   - {len(library['tag_index'])} 个标签")
+            print(f"✅ 匯出完成: {output_path}")
+            print(f"   - {library['library_metadata']['total_elements']} 個元素")
+            print(f"   - {library['library_metadata']['total_domains']} 個領域")
+            print(f"   - {len(library['tag_index'])} 個標籤")
 
             return True
 
         except Exception as e:
-            print(f"❌ 导出失败: {e}")
+            print(f"❌ 匯出失敗: {e}")
             return False
 
     def import_from_json(self, json_path: str, clear_existing: bool = False) -> bool:
         """
-        从JSON导入到数据库
+        從JSON匯入到資料庫
 
         Args:
-            json_path: JSON文件路径
-            clear_existing: 是否清空现有数据
+            json_path: JSON檔案路徑
+            clear_existing: 是否清空現有資料
 
         Returns:
-            是否导入成功
+            是否匯入成功
         """
         try:
             with open(json_path, 'r', encoding='utf-8') as f:
@@ -640,7 +640,7 @@ class ElementDB:
 
             imported_count = 0
 
-            # 导入各领域的元素
+            # 匯入各領域的元素
             for domain_id, domain_data in library.get("domains", {}).items():
                 for category_id, category_elements in domain_data.get("categories", {}).items():
                     for element_name, element in category_elements.items():
@@ -660,15 +660,15 @@ class ElementDB:
                         ):
                             imported_count += 1
 
-            print(f"✅ 导入完成: {imported_count} 个元素")
+            print(f"✅ 匯入完成: {imported_count} 個元素")
             return True
 
         except Exception as e:
-            print(f"❌ 导入失败: {e}")
+            print(f"❌ 匯入失敗: {e}")
             return False
 
     def _clear_all_data(self):
-        """清空所有数据（保留表结构）"""
+        """清空所有資料（保留表結構）"""
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM element_tags")
         cursor.execute("DELETE FROM elements")
@@ -679,27 +679,27 @@ class ElementDB:
         self.conn.commit()
 
     def close(self):
-        """关闭数据库连接"""
+        """關閉資料庫連線"""
         self.conn.close()
 
 
 # ========== 使用示例 ==========
 if __name__ == "__main__":
-    # 创建数据库
+    # 建立資料庫
     db = ElementDB('extracted_results/elements.db')
 
     print("=" * 60)
     print("Universal Elements Library - Database Test")
     print("=" * 60)
 
-    # 测试添加元素
-    print("\n1. 添加测试元素...")
+    # 測試新增元素
+    print("\n1. 新增測試元素...")
     db.add_element(
         element_id='product_type_001',
         domain_id='product',
         category_id='product_types',
         name='collector_edition_book',
-        chinese_name='收藏版书籍',
+        chinese_name='收藏版書籍',
         ai_prompt_template='premium collector\'s edition book, luxury binding, Italian calfskin cover',
         keywords=['collector\'s edition', 'premium book', 'luxury binding'],
         tags=['product', 'book', 'luxury', 'collectible'],
@@ -712,7 +712,7 @@ if __name__ == "__main__":
         domain_id='design',
         category_id='layout_systems',
         name='bento_grid',
-        chinese_name='Bento网格布局',
+        chinese_name='Bento網格佈局',
         ai_prompt_template='modern Bento grid layout, modular card-based design, asymmetric arrangement',
         keywords=['bento grid', 'modular', 'card-based'],
         tags=['layout', 'grid', 'modern', 'ui'],
@@ -720,32 +720,32 @@ if __name__ == "__main__":
         source_prompts=[2]
     )
 
-    print("✅ 元素已添加")
+    print("✅ 元素已新增")
 
-    # 测试搜索
-    print("\n2. 按标签搜索 ['luxury']...")
+    # 測試搜尋
+    print("\n2. 按標籤搜尋 ['luxury']...")
     results = db.search_by_tags(['luxury'])
     for elem in results:
         print(f"   - {elem['element_id']}: {elem['chinese_name']}")
 
-    print("\n3. 按领域搜索 [product]...")
+    print("\n3. 按領域搜尋 [product]...")
     results = db.search_by_domain('product')
     for elem in results:
-        print(f"   - {elem['element_id']}: {elem['name']} (复用性: {elem['reusability_score']})")
+        print(f"   - {elem['element_id']}: {elem['name']} (複用性: {elem['reusability_score']})")
 
-    # 统计
-    print("\n4. 库统计信息:")
+    # 統計
+    print("\n4. 庫統計資訊:")
     stats = db.get_stats()
-    print(f"   总元素数: {stats['total_elements']}")
-    print(f"   总标签数: {stats['total_tags']}")
-    print(f"\n   各领域:")
+    print(f"   總元素數: {stats['total_elements']}")
+    print(f"   總標籤數: {stats['total_tags']}")
+    print(f"\n   各領域:")
     for domain in stats['domains']:
         if domain['total_elements'] > 0:
-            print(f"   - {domain['name']}: {domain['total_elements']} 个元素")
+            print(f"   - {domain['name']}: {domain['total_elements']} 個元素")
 
-    # 导出
-    print("\n5. 导出为JSON...")
+    # 匯出
+    print("\n5. 匯出為JSON...")
     db.export_to_json('extracted_results/universal_elements_export.json')
 
     db.close()
-    print("\n✅ 数据库测试完成")
+    print("\n✅ 資料庫測試完成")

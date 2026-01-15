@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-设计变量桥接器 - 连接SQLite元素和YAML设计变量
-智能融合两者生成完整的设计提示词
+設計變數橋接器 - 連線SQLite元素和YAML設計變數
+智慧融合兩者生成完整的設計提示詞
 """
 
 import sys
 import os
 from typing import Dict, List, Optional
 
-# 添加上级目录到路径
+# 新增上級目錄到路徑
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.cross_domain_query import CrossDomainQueryEngine
@@ -17,56 +17,56 @@ from core.yaml_sampler import YAMLVariableSampler
 
 
 class DesignVariableBridge:
-    """连接 SQLite元素 和 YAML设计变量的桥接器"""
+    """連線 SQLite元素 和 YAML設計變數的橋接器"""
 
     def __init__(self, db_path: str = "extracted_results/elements.db",
                  yaml_dir: str = "variables"):
         """
-        初始化设计变量桥接器
+        初始化設計變數橋接器
 
         Args:
-            db_path: SQLite数据库路径
-            yaml_dir: YAML变量文件目录
+            db_path: SQLite資料庫路徑
+            yaml_dir: YAML變數檔案目錄
         """
         self.sqlite_engine = CrossDomainQueryEngine(db_path)
         self.yaml_sampler = YAMLVariableSampler(yaml_dir)
 
     def generate_design_prompt(self, intent: Dict) -> Dict:
         """
-        生成完整设计提示词（SQLite + YAML）
+        生成完整設計提示詞（SQLite + YAML）
 
         Args:
-            intent: 用户意图字典
+            intent: 使用者意圖字典
 
         Returns:
-            包含完整提示词和元数据的字典
+            包含完整提示詞和元資料的字典
             {
-                'prompt': '完整提示词',
+                'prompt': '完整提示詞',
                 'sqlite_elements': {...},
                 'yaml_variables': {...},
                 'metadata': {...}
             }
         """
-        # 1. 从SQLite获取基础元素（人物、场景、光影）
+        # 1. 從SQLite獲取基礎元素（人物、場景、光影）
         sqlite_elements = self.sqlite_engine.query_by_intent(intent)
-        print(f"📊 SQLite元素: {sum(len(elems) for elems in sqlite_elements.values())} 个")
+        print(f"📊 SQLite元素: {sum(len(elems) for elems in sqlite_elements.values())} 個")
 
-        # 2. 从YAML获取设计变量（配色、边框、装饰）
-        design_style = intent.get('design_style', '温馨可爱')
+        # 2. 從YAML獲取設計變數（配色、邊框、裝飾）
+        design_style = intent.get('design_style', '溫馨可愛')
         yaml_variables = self.yaml_sampler.sample_variables(style=design_style)
-        print(f"🎨 YAML变量: 风格={design_style}")
+        print(f"🎨 YAML變數: 風格={design_style}")
 
-        # 3. 融合两者
+        # 3. 融合兩者
         merged = self.merge_elements_and_variables(
             sqlite_elements,
             yaml_variables,
             intent
         )
 
-        # 4. 应用设计逻辑（可选）
+        # 4. 應用設計邏輯（可選）
         # design_logic = self.load_design_logic(design_style)
 
-        # 5. 生成最终提示词
+        # 5. 生成最終提示詞
         prompt = self.build_final_prompt(merged)
 
         return {
@@ -84,30 +84,30 @@ class DesignVariableBridge:
                                     yaml_variables: Dict,
                                     intent: Dict) -> Dict:
         """
-        智能融合SQLite元素和YAML变量
+        智慧融合SQLite元素和YAML變數
 
         Args:
-            sqlite_elements: SQLite查询的元素（按domain分组）
-            yaml_variables: YAML采样的变量
-            intent: 用户意图
+            sqlite_elements: SQLite查詢的元素（按domain分組）
+            yaml_variables: YAML取樣的變數
+            intent: 使用者意圖
 
         Returns:
-            融合后的结构化数据
+            融合後的結構化資料
         """
         merged = {
-            'content': [],       # SQLite元素（主体内容）
-            'design': [],        # YAML变量（设计规范）
-            'technical': []      # 技术参数
+            'content': [],       # SQLite元素（主體內容）
+            'design': [],        # YAML變數（設計規範）
+            'technical': []      # 技術引數
         }
 
-        # 处理SQLite元素
+        # 處理SQLite元素
         for domain, elements in sqlite_elements.items():
             for elem in elements:
                 category = elem.get('category', '')
 
-                # 分类元素
+                # 分類元素
                 if domain in ['portrait', 'video', 'art']:
-                    # 主体内容
+                    # 主體內容
                     merged['content'].append({
                         'domain': domain,
                         'category': category,
@@ -115,7 +115,7 @@ class DesignVariableBridge:
                         'chinese_name': elem.get('chinese_name', '')
                     })
                 elif domain == 'common':
-                    # 技术参数（光影、摄影技术）
+                    # 技術引數（光影、攝影技術）
                     if 'lighting' in category or 'photography' in category:
                         merged['technical'].append({
                             'domain': domain,
@@ -124,7 +124,7 @@ class DesignVariableBridge:
                             'chinese_name': elem.get('chinese_name', '')
                         })
 
-        # 处理YAML变量（设计规范）
+        # 處理YAML變數（設計規範）
         if 'colors' in yaml_variables:
             colors_data = yaml_variables['colors']
             scheme_name = colors_data.get('scheme_name', '')
@@ -158,29 +158,29 @@ class DesignVariableBridge:
 
     def build_final_prompt(self, merged: Dict) -> str:
         """
-        构建最终提示词
+        構建最終提示詞
 
         Args:
-            merged: 融合后的结构化数据
+            merged: 融合後的結構化資料
 
         Returns:
-            完整提示词字符串
+            完整提示詞字串
         """
         parts = []
 
-        # 1. 主体内容（SQLite元素）
+        # 1. 主體內容（SQLite元素）
         for item in merged['content']:
             template = item['template']
             if template:
                 parts.append(template)
 
-        # 2. 设计规范（YAML变量）
+        # 2. 設計規範（YAML變數）
         for item in merged['design']:
             description = item['description']
             if description:
                 parts.append(description)
 
-        # 3. 技术参数（光影、摄影）
+        # 3. 技術引數（光影、攝影）
         for item in merged['technical']:
             template = item['template']
             if template:
@@ -190,37 +190,37 @@ class DesignVariableBridge:
 
     def load_design_logic(self, design_style: str) -> Optional[Dict]:
         """
-        加载设计逻辑（可选）
+        載入設計邏輯（可選）
 
         Args:
-            design_style: 设计风格名称
+            design_style: 設計風格名稱
 
         Returns:
-            设计逻辑配置字典
+            設計邏輯配置字典
         """
-        # 从design-logic目录加载对应风格的规则
-        # 这部分可以后续扩展
+        # 從design-logic目錄載入對應風格的規則
+        # 這部分可以後續擴充套件
         return None
 
     def close(self):
-        """关闭资源"""
+        """關閉資源"""
         self.sqlite_engine.close()
 
 
 def test_design_bridge():
-    """测试设计变量桥接器"""
+    """測試設計變數橋接器"""
     print("=" * 80)
-    print("测试设计变量桥接器")
+    print("測試設計變數橋接器")
     print("=" * 80)
 
     bridge = DesignVariableBridge()
 
-    # 测试案例：温馨可爱的儿童教育海报
-    print("\n【测试案例】温馨可爱的儿童教育海报\n")
+    # 測試案例：溫馨可愛的兒童教育海報
+    print("\n【測試案例】溫馨可愛的兒童教育海報\n")
 
     intent = {
-        'raw_input': '温馨可爱风格的儿童教育海报',
-        'design_style': '温馨可爱',
+        'raw_input': '溫馨可愛風格的兒童教育海報',
+        'design_style': '溫馨可愛',
         'subject': {
             'age_range': 'child',
             'gender': 'female'
@@ -232,33 +232,33 @@ def test_design_bridge():
         'lighting': 'soft'
     }
 
-    # 生成设计提示词
+    # 生成設計提示詞
     result = bridge.generate_design_prompt(intent)
 
-    # 显示结果
-    print("\n📋 生成结果：")
-    print(f"\n风格: {result['metadata']['design_style']}")
-    print(f"元素数: {result['metadata']['element_count']}")
+    # 顯示結果
+    print("\n📋 生成結果：")
+    print(f"\n風格: {result['metadata']['design_style']}")
+    print(f"元素數: {result['metadata']['element_count']}")
     print(f"使用domain: {', '.join(result['metadata']['domains_used'])}")
 
-    print(f"\n✨ 完整提示词：")
+    print(f"\n✨ 完整提示詞：")
     print("─" * 80)
     print(result['prompt'])
     print("─" * 80)
 
-    # 显示YAML变量
+    # 顯示YAML變數
     if result['yaml_variables']:
-        print(f"\n🎨 设计变量：")
+        print(f"\n🎨 設計變數：")
         for var_type, var_data in result['yaml_variables'].items():
             if var_type == 'colors':
                 print(f"  配色: {var_data.get('scheme_name')}")
             elif var_type == 'borders':
-                print(f"  边框: {var_data.get('border_name')}")
+                print(f"  邊框: {var_data.get('border_name')}")
             elif var_type == 'decorations':
-                print(f"  装饰: {var_data.get('decoration_name')}")
+                print(f"  裝飾: {var_data.get('decoration_name')}")
 
     bridge.close()
-    print("\n✅ 测试完成")
+    print("\n✅ 測試完成")
 
 
 if __name__ == '__main__':

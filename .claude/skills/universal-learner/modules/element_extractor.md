@@ -1,24 +1,24 @@
-# Element Extractor - 元素提取器模块
+# Element Extractor - 元素提取器模組
 
-**功能**: 从Prompt中提取可复用的元素片段
+**功能**: 從Prompt中提取可複用的元素片段
 
 ---
 
-## 🎯 提取策略（按领域）
+## 🎯 提取策略（按領域）
 
-### 1. Product Domain (产品摄影)
+### 1. Product Domain (產品攝影)
 
-**提取类别**:
-- `product_types` - 产品类型
-- `material_textures` - 材质纹理
-- `photography_techniques` - 摄影技术
-- `lighting_setups` - 光照布局
-- `composition_styles` - 构图风格
+**提取類別**:
+- `product_types` - 產品型別
+- `material_textures` - 材質紋理
+- `photography_techniques` - 攝影技術
+- `lighting_setups` - 光照佈局
+- `composition_styles` - 構圖風格
 
 **示例**:
 
 ```
-输入: "A premium collector's edition book with Italian calfskin binding,
+輸入: "A premium collector's edition book with Italian calfskin binding,
        glossy reflective surface, photographed with Phase One 100mm macro lens"
 
 提取:
@@ -41,19 +41,19 @@
 
 ---
 
-### 2. Design Domain (平面设计)
+### 2. Design Domain (平面設計)
 
-**提取类别**:
-- `layout_systems` - 布局系统
-- `visual_effects` - 视觉效果
-- `typography_styles` - 字体风格
+**提取類別**:
+- `layout_systems` - 佈局系統
+- `visual_effects` - 視覺效果
+- `typography_styles` - 字型風格
 - `color_schemes` - 色彩方案
-- `composition_techniques` - 构图技巧
+- `composition_techniques` - 構圖技巧
 
 **示例**:
 
 ```
-输入: "Modern Bento grid layout with glassmorphism effects,
+輸入: "Modern Bento grid layout with glassmorphism effects,
        asymmetric card arrangement, bold sans-serif typography"
 
 提取:
@@ -72,18 +72,18 @@
 
 ---
 
-### 3. Art Domain (艺术风格)
+### 3. Art Domain (藝術風格)
 
-**提取类别**:
-- `art_styles` - 艺术风格
+**提取類別**:
+- `art_styles` - 藝術風格
 - `special_effects` - 特效
-- `narrative_elements` - 叙事元素
-- `visual_techniques` - 视觉技巧
+- `narrative_elements` - 敘事元素
+- `visual_techniques` - 視覺技巧
 
 **示例**:
 
 ```
-输入: "Surrealistic painting with dreamlike atmosphere,
+輸入: "Surrealistic painting with dreamlike atmosphere,
        melting clocks style, vibrant color explosion"
 
 提取:
@@ -102,20 +102,20 @@
 
 ---
 
-### 4. Portrait Domain (人像摄影)
+### 4. Portrait Domain (人像攝影)
 
-**提取类别**:
-- `facial_features` - 面部特征
-- `makeup_styles` - 妆容风格
-- `hair_styles` - 发型
+**提取類別**:
+- `facial_features` - 面部特徵
+- `makeup_styles` - 妝容風格
+- `hair_styles` - 髮型
 - `expressions` - 表情
-- `poses` - 姿势
-- `clothing_styles` - 服装风格
+- `poses` - 姿勢
+- `clothing_styles` - 服裝風格
 
 **示例**:
 
 ```
-输入: "A woman with large almond eyes, porcelain skin,
+輸入: "A woman with large almond eyes, porcelain skin,
        wearing elegant red qipao dress"
 
 提取:
@@ -134,18 +134,18 @@
 
 ---
 
-### 5. Video Domain (视频生成)
+### 5. Video Domain (影片生成)
 
-**提取类别**:
-- `scene_types` - 场景类型
-- `camera_movements` - 相机运动
-- `transitions` - 转场效果
-- `motion_effects` - 动态效果
+**提取類別**:
+- `scene_types` - 場景型別
+- `camera_movements` - 相機運動
+- `transitions` - 轉場效果
+- `motion_effects` - 動態效果
 
 **示例**:
 
 ```
-输入: "Cinematic dolly shot moving through forest,
+輸入: "Cinematic dolly shot moving through forest,
        slow-motion falling leaves, golden hour lighting"
 
 提取:
@@ -164,19 +164,19 @@
 
 ---
 
-### 6. Interior Domain (室内设计)
+### 6. Interior Domain (室內設計)
 
-**提取类别**:
-- `space_types` - 空间类型
-- `furniture_layouts` - 家具布局
-- `design_elements` - 设计元素
-- `material_combinations` - 材质组合
-- `spatial_atmospheres` - 空间氛围
+**提取類別**:
+- `space_types` - 空間型別
+- `furniture_layouts` - 傢俱佈局
+- `design_elements` - 設計元素
+- `material_combinations` - 材質組合
+- `spatial_atmospheres` - 空間氛圍
 
 **示例**:
 
 ```
-输入: "Mid-century modern living room with walnut herringbone flooring,
+輸入: "Mid-century modern living room with walnut herringbone flooring,
        L-shaped sofa with tapered legs, sputnik chandelier"
 
 提取:
@@ -199,18 +199,18 @@
 
 ---
 
-### 7. Common Domain (通用摄影)
+### 7. Common Domain (通用攝影)
 
-**提取类别**:
-- `camera_angles` - 相机角度
-- `photography_techniques` - 摄影技术
-- `lighting_techniques` - 光照技术
-- `technical_effects` - 技术效果
+**提取類別**:
+- `camera_angles` - 相機角度
+- `photography_techniques` - 攝影技術
+- `lighting_techniques` - 光照技術
+- `technical_effects` - 技術效果
 
 **示例**:
 
 ```
-输入: "Shot with 24mm wide-angle lens, f/2.8 aperture,
+輸入: "Shot with 24mm wide-angle lens, f/2.8 aperture,
        soft natural window light, 8K resolution"
 
 提取:
@@ -229,28 +229,28 @@
 
 ---
 
-## 🔍 提取规则
+## 🔍 提取規則
 
-### 规则1: 独立性
-每个元素应该可以独立使用
+### 規則1: 獨立性
+每個元素應該可以獨立使用
 - ✅ "large almond eyes with thick lashes"
-- ❌ "her eyes were beautiful" (依赖上下文)
+- ❌ "her eyes were beautiful" (依賴上下文)
 
-### 规则2: 具体性
+### 規則2: 具體性
 避免空洞描述
 - ✅ "brass sputnik chandelier with 12 arms"
-- ❌ "nice lighting fixture" (太笼统)
+- ❌ "nice lighting fixture" (太籠統)
 
-### 规则3: 可复用性
-可以在不同场景使用
-- ✅ "geometric patterned area rug" (可用于多种室内)
+### 規則3: 可複用性
+可以在不同場景使用
+- ✅ "geometric patterned area rug" (可用於多種室內)
 - ❌ "the rug in my grandmother's house" (太特定)
 
-### 规则4: 长度适中
-模板长度15-50词
+### 規則4: 長度適中
+模板長度15-50詞
 - ✅ "mid-century modern walnut coffee table with organic curved edges and tapered legs"
 - ❌ "table" (太短)
-- ❌ 200词的详细描述 (太长)
+- ❌ 200詞的詳細描述 (太長)
 
 ---
 
@@ -260,25 +260,25 @@
 def extract_elements(prompt_text: str, primary_domain: str) -> List[Dict]:
     elements = []
 
-    # Step 1: 领域特定提取
+    # Step 1: 領域特定提取
     if primary_domain == 'product':
         elements.extend(extract_product_elements(prompt_text))
     elif primary_domain == 'design':
         elements.extend(extract_design_elements(prompt_text))
     elif primary_domain == 'art':
         elements.extend(extract_art_elements(prompt_text))
-    # ... 其他领域
+    # ... 其他領域
 
-    # Step 2: 通用摄影技术提取（所有领域）
+    # Step 2: 通用攝影技術提取（所有領域）
     elements.extend(extract_common_elements(prompt_text))
 
-    # Step 3: 质量过滤
+    # Step 3: 質量過濾
     elements = [e for e in elements if is_high_quality(e)]
 
     return elements
 
 def is_high_quality(element: Dict) -> bool:
-    # 检查独立性、具体性、长度
+    # 檢查獨立性、具體性、長度
     template = element['ai_prompt_template']
     word_count = len(template.split())
 
@@ -296,7 +296,7 @@ def is_high_quality(element: Dict) -> bool:
 
 ---
 
-## ✅ 输出格式
+## ✅ 輸出格式
 
 ```json
 {
@@ -304,7 +304,7 @@ def is_high_quality(element: Dict) -> bool:
     {
       "category": "product_types",
       "name": "collector_edition_book",
-      "chinese_name": "收藏版书籍",
+      "chinese_name": "收藏版書籍",
       "ai_prompt_template": "premium collector's edition book, luxury binding, Italian calfskin cover",
       "keywords": ["collector's edition", "premium book", "luxury binding"],
       "estimated_reusability": 7.5,
@@ -313,7 +313,7 @@ def is_high_quality(element: Dict) -> bool:
     {
       "category": "material_textures",
       "name": "glossy_reflective",
-      "chinese_name": "光泽反射材质",
+      "chinese_name": "光澤反射材質",
       "ai_prompt_template": "glossy reflective surface, high-end finish, metallic sheen",
       "keywords": ["glossy", "reflective", "shiny", "polished"],
       "estimated_reusability": 8.5,
@@ -326,5 +326,5 @@ def is_high_quality(element: Dict) -> bool:
 
 ---
 
-**状态**: ✅ 已实现
-**目标**: 从18个Prompts提取~440个高质量元素
+**狀態**: ✅ 已實現
+**目標**: 從18個Prompts提取~440個高質量元素

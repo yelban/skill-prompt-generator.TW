@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-跨Domain查询引擎 - 智能查询多个domain并组合元素
-核心功能：根据用户意图自动识别需要的domains，智能查询和组合
+跨Domain查詢引擎 - 智慧查詢多個domain並組合元素
+核心功能：根據使用者意圖自動識別需要的domains，智慧查詢和組合
 """
 
 import sqlite3
@@ -11,7 +11,7 @@ import sys
 import os
 from typing import Dict, List, Optional, Set, Any
 
-# 添加上级目录到路径
+# 新增上級目錄到路徑
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.variable_sampler import SQLiteVariableSampler
@@ -19,14 +19,14 @@ from intelligent_generator import IntelligentGenerator
 
 
 class CrossDomainQueryEngine:
-    """跨Domain智能查询引擎"""
+    """跨Domain智慧查詢引擎"""
 
     def __init__(self, db_path: str = "extracted_results/elements.db"):
         """
-        初始化跨domain查询引擎
+        初始化跨domain查詢引擎
 
         Args:
-            db_path: 数据库路径
+            db_path: 資料庫路徑
         """
         self.db = sqlite3.connect(db_path)
         self.cursor = self.db.cursor()
@@ -35,13 +35,13 @@ class CrossDomainQueryEngine:
 
     def query_by_intent(self, intent: Dict) -> Dict[str, List[Dict]]:
         """
-        根据用户意图跨domain查询元素
+        根據使用者意圖跨domain查詢元素
 
         Args:
-            intent: 用户意图字典
+            intent: 使用者意圖字典
 
         Returns:
-            按domain分组的元素字典
+            按domain分組的元素字典
             {
                 'portrait': [element1, element2, ...],
                 'video': [element3, ...],
@@ -51,29 +51,29 @@ class CrossDomainQueryEngine:
         """
         # 1. 分析需要哪些domains
         required_domains = self.analyze_required_domains(intent)
-        print(f"📊 分析结果：需要 {len(required_domains)} 个domain: {', '.join(required_domains)}")
+        print(f"📊 分析結果：需要 {len(required_domains)} 個domain: {', '.join(required_domains)}")
 
-        # 2. 构建跨domain SQL查询计划
+        # 2. 構建跨domain SQL查詢計劃
         query_plan = self.build_query_plan(intent, required_domains)
 
-        # 3. 执行查询，从多个domains获取元素
+        # 3. 執行查詢，從多個domains獲取元素
         elements = {}
         for domain, categories in query_plan.items():
-            print(f"  🔍 查询 {domain} domain: {', '.join(categories)}")
+            print(f"  🔍 查詢 {domain} domain: {', '.join(categories)}")
             elements[domain] = self.query_domain(domain, categories, intent)
 
-        # 4. 应用变量采样（如果元素有变量）
+        # 4. 應用變數取樣（如果元素有變數）
         sampled_elements = {}
         for domain, domain_elements in elements.items():
             sampled_elements[domain] = []
             for elem in domain_elements:
-                # 检查是否有变量
+                # 檢查是否有變數
                 try:
                     result = self.sampler.sample_element_with_variables(
                         elem['element_id'],
                         style_context=intent.get('visual_style')
                     )
-                    # 如果有变量，使用采样后的结果
+                    # 如果有變數，使用取樣後的結果
                     if result['variables']:
                         elem_copy = elem.copy()
                         elem_copy['template'] = result['result']
@@ -82,17 +82,17 @@ class CrossDomainQueryEngine:
                     else:
                         sampled_elements[domain].append(elem)
                 except:
-                    # 没有变量或采样失败，使用原始元素
+                    # 沒有變數或採樣失敗，使用原始元素
                     sampled_elements[domain].append(elem)
 
         return sampled_elements
 
     def analyze_required_domains(self, intent: Dict) -> List[str]:
         """
-        分析意图需要哪些domains
+        分析意圖需要哪些domains
 
         Args:
-            intent: 用户意图字典
+            intent: 使用者意圖字典
 
         Returns:
             需要的domain列表
@@ -103,17 +103,17 @@ class CrossDomainQueryEngine:
         if 'subject' in intent:
             domains.add('portrait')
 
-        # 有动作/能量/运动 → video
+        # 有動作/能量/運動 → video
         video_keywords = ['action', 'pose', 'energy', 'movement', 'motion', 'dynamic']
         if any(k in intent for k in video_keywords):
             domains.add('video')
 
-        # 检查特殊动作关键词
+        # 檢查特殊動作關鍵詞
         raw_input = intent.get('raw_input', '').lower()
-        if any(kw in raw_input for kw in ['kamehameha', '龟派气功', '能量', 'energy', '气息']):
+        if any(kw in raw_input for kw in ['kamehameha', '龜派氣功', '能量', 'energy', '氣息']):
             domains.add('video')
 
-        # 有艺术风格 → art
+        # 有藝術風格 → art
         if 'art_style' in intent or 'visual_style' in intent:
             visual_style = intent.get('visual_style', {})
             if isinstance(visual_style, dict):
@@ -121,35 +121,35 @@ class CrossDomainQueryEngine:
             else:
                 art_style = str(visual_style)
 
-            # 特殊艺术风格需要art domain
-            art_keywords = ['3d', 'wax', '蜡像', 'holographic', 'sculpture', 'rendering']
+            # 特殊藝術風格需要art domain
+            art_keywords = ['3d', 'wax', '蠟像', 'holographic', 'sculpture', 'rendering']
             if any(kw in art_style.lower() for kw in art_keywords):
                 domains.add('art')
 
-        # 有设计需求 → design
+        # 有設計需求 → design
         design_keywords = ['layout', 'composition', 'typography', 'poster', 'card']
         if any(k in intent for k in design_keywords):
             domains.add('design')
 
-        # 有产品 → product
+        # 有產品 → product
         if 'product' in intent:
             domains.add('product')
 
-        # 始终包含common（光影、技术参数）
+        # 始終包含common（光影、技術引數）
         domains.add('common')
 
         return list(domains)
 
     def build_query_plan(self, intent: Dict, domains: List[str]) -> Dict[str, List[str]]:
         """
-        构建查询计划
+        構建查詢計劃
 
         Args:
-            intent: 用户意图
-            domains: 需要查询的domain列表
+            intent: 使用者意圖
+            domains: 需要查詢的domain列表
 
         Returns:
-            查询计划字典 {domain: [categories]}
+            查詢計劃字典 {domain: [categories]}
         """
         query_plan = {}
 
@@ -164,14 +164,14 @@ class CrossDomainQueryEngine:
 
             elif domain == 'video':
                 query_plan['video'] = [
-                    'scene_types',      # 能量气息、动态场景
-                    'motion_effects',   # 动态效果
-                    'camera_movements'  # 镜头运动
+                    'scene_types',      # 能量氣息、動態場景
+                    'motion_effects',   # 動態效果
+                    'camera_movements'  # 鏡頭運動
                 ]
 
             elif domain == 'art':
                 query_plan['art'] = [
-                    'art_styles',        # 3D渲染、蜡像质感
+                    'art_styles',        # 3D渲染、蠟像質感
                     'special_effects'    # 全息、粒子效果
                 ]
 
@@ -200,12 +200,12 @@ class CrossDomainQueryEngine:
 
     def query_domain(self, domain: str, categories: List[str], intent: Dict) -> List[Dict]:
         """
-        查询单个domain的元素
+        查詢單個domain的元素
 
         Args:
             domain: domain ID
-            categories: 要查询的category列表
-            intent: 用户意图（用于关键词提取）
+            categories: 要查詢的category列表
+            intent: 使用者意圖（用於關鍵詞提取）
 
         Returns:
             元素列表
@@ -213,16 +213,16 @@ class CrossDomainQueryEngine:
         elements = []
 
         for category in categories:
-            # 从intent提取该category的关键词
+            # 從intent提取該category的關鍵詞
             keywords = self.extract_keywords_from_intent(intent, category)
 
-            # 获取候选元素
+            # 獲取候選元素
             candidates = self.get_all_elements_by_category(domain, category)
 
             if not candidates:
                 continue
 
-            # 使用ElementSelector选择最佳元素
+            # 使用ElementSelector選擇最佳元素
             from framework_loader import ElementSelector
 
             best_elem, score = ElementSelector.select_best_element(
@@ -233,64 +233,64 @@ class CrossDomainQueryEngine:
                 debug=False
             )
 
-            if best_elem and score > 20:  # 分数阈值
+            if best_elem and score > 20:  # 分數閾值
                 elements.append(best_elem)
 
         return elements
 
     def extract_keywords_from_intent(self, intent: Dict, category: str) -> List[str]:
         """
-        从intent中提取特定category的关键词
+        從intent中提取特定category的關鍵詞
 
         Args:
-            intent: 用户意图
+            intent: 使用者意圖
             category: category ID
 
         Returns:
-            关键词列表
+            關鍵詞列表
         """
         keywords = []
         raw_input = intent.get('raw_input', '')
 
-        # 根据category提取不同的关键词
+        # 根據category提取不同的關鍵詞
         if category == 'scene_types':
-            # 场景类型：能量、气息、氛围
-            scene_keywords = ['energy', 'aura', 'atmosphere', 'power', '能量', '气息', '氛围']
+            # 場景型別：能量、氣息、氛圍
+            scene_keywords = ['energy', 'aura', 'atmosphere', 'power', '能量', '氣息', '氛圍']
             keywords.extend([kw for kw in scene_keywords if kw in raw_input.lower()])
 
         elif category == 'motion_effects':
-            # 动态效果：动作、运动
-            motion_keywords = ['motion', 'movement', 'action', 'dynamic', '动作', '运动', '动态']
+            # 動態效果：動作、運動
+            motion_keywords = ['motion', 'movement', 'action', 'dynamic', '動作', '運動', '動態']
             keywords.extend([kw for kw in motion_keywords if kw in raw_input.lower()])
 
         elif category == 'art_styles':
-            # 艺术风格
+            # 藝術風格
             visual_style = intent.get('visual_style', {})
             if isinstance(visual_style, dict):
                 art_style = visual_style.get('art_style', '')
                 if art_style:
                     keywords.append(art_style)
-            # 从raw_input提取
-            art_keywords = ['3d', 'wax', '蜡像', 'holographic', 'realistic', 'rendering']
+            # 從raw_input提取
+            art_keywords = ['3d', 'wax', '蠟像', 'holographic', 'realistic', 'rendering']
             keywords.extend([kw for kw in art_keywords if kw in raw_input.lower()])
 
         elif category == 'special_effects':
             # 特效
-            effect_keywords = ['glow', 'particle', 'holographic', 'energy', '发光', '粒子', '全息']
+            effect_keywords = ['glow', 'particle', 'holographic', 'energy', '發光', '粒子', '全息']
             keywords.extend([kw for kw in effect_keywords if kw in raw_input.lower()])
 
         elif category == 'lighting_techniques':
-            # 光影技术
+            # 光影技術
             lighting = intent.get('lighting', 'natural')
             if lighting:
                 keywords.append(lighting)
 
-        # 如果没有关键词，使用空列表（会选择评分最高的）
+        # 如果沒有關鍵詞，使用空列表（會選擇評分最高的）
         return keywords if keywords else []
 
     def get_all_elements_by_category(self, domain: str, category: str) -> List[Dict]:
         """
-        从数据库获取该category的所有元素
+        從資料庫獲取該category的所有元素
 
         Args:
             domain: domain ID
@@ -302,25 +302,25 @@ class CrossDomainQueryEngine:
         return self.generator.get_all_elements_by_category(domain, category)
 
     def close(self):
-        """关闭数据库连接"""
+        """關閉資料庫連線"""
         self.sampler.close()
         self.generator.close()
         self.db.close()
 
 
 def test_cross_domain_query():
-    """测试跨domain查询"""
+    """測試跨domain查詢"""
     print("=" * 80)
-    print("测试跨Domain查询引擎")
+    print("測試跨Domain查詢引擎")
     print("=" * 80)
 
     engine = CrossDomainQueryEngine()
 
-    # 测试案例：龙珠悟空打龟派气功
-    print("\n【测试案例】龙珠悟空打龟派气功的蜡像3D感\n")
+    # 測試案例：龍珠悟空打龜派氣功
+    print("\n【測試案例】龍珠悟空打龜派氣功的蠟像3D感\n")
 
     intent = {
-        'raw_input': '龙珠动漫的蜡像3D感悟空打出龟派气功',
+        'raw_input': '龍珠動漫的蠟像3D感悟空打出龜派氣功',
         'subject': {
             'gender': 'male',
             'ethnicity': 'East_Asian',
@@ -334,20 +334,20 @@ def test_cross_domain_query():
         'render': '3d_realistic'
     }
 
-    # 执行跨domain查询
+    # 執行跨domain查詢
     results = engine.query_by_intent(intent)
 
-    # 显示结果
-    print("\n📋 查询结果：")
+    # 顯示結果
+    print("\n📋 查詢結果：")
     total_elements = 0
     for domain, elements in results.items():
         if elements:
-            print(f"\n  【{domain} domain】({len(elements)}个元素)")
-            for elem in elements[:3]:  # 只显示前3个
+            print(f"\n  【{domain} domain】({len(elements)}個元素)")
+            for elem in elements[:3]:  # 只顯示前3個
                 print(f"    - {elem['chinese_name']} ({elem['category']})")
             total_elements += len(elements)
 
-    print(f"\n✅ 共获取 {total_elements} 个元素，来自 {len(results)} 个domain")
+    print(f"\n✅ 共獲取 {total_elements} 個元素，來自 {len(results)} 個domain")
 
     engine.close()
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-智能提示词生成器 - 配合Claude Skill使用
-具备语义理解、常识推理、一致性检查能力
+智慧提示詞生成器 - 配合Claude Skill使用
+具備語義理解、常識推理、一致性檢查能力
 """
 
 import sqlite3
@@ -11,19 +11,19 @@ from typing import Dict, List, Optional, Tuple
 
 
 class IntelligentGenerator:
-    """智能提示词生成器 - 理解意图，检查一致性"""
+    """智慧提示詞生成器 - 理解意圖，檢查一致性"""
 
     def __init__(self, db_path: str = "extracted_results/elements.db"):
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
 
-        # 加载常识知识库
+        # 載入常識知識庫
         self.knowledge = self.load_knowledge()
 
     def load_knowledge(self) -> Dict:
-        """加载元素关系和常识约束"""
+        """載入元素關係和常識約束"""
         return {
-            # 人种 → 典型眼睛颜色
+            # 人種 → 典型眼睛顏色
             'ethnicity_typical_eyes': {
                 'East_Asian': ['black', 'dark brown', 'brown'],
                 'Southeast_Asian': ['dark brown', 'brown', 'black'],
@@ -34,7 +34,7 @@ class IntelligentGenerator:
                 'Latin_American': ['brown', 'dark brown', 'hazel', 'green'],
             },
 
-            # 人种 → 典型发色
+            # 人種 → 典型髮色
             'ethnicity_typical_hair': {
                 'East_Asian': ['black', 'dark brown'],
                 'Southeast_Asian': ['black', 'dark brown'],
@@ -45,41 +45,41 @@ class IntelligentGenerator:
                 'Latin_American': ['black', 'dark brown', 'brown'],
             },
 
-            # 风格类型定义
+            # 風格型別定義
             'style_types': {
-                'anime': {'type': 'art_style', 'affects': 'rendering', 'description': '动漫绘画风格'},
-                'manga': {'type': 'art_style', 'affects': 'rendering', 'description': '漫画绘画风格'},
-                'realistic': {'type': 'art_style', 'affects': 'rendering', 'description': '写实绘画风格'},
-                'illustration': {'type': 'art_style', 'affects': 'rendering', 'description': '插画绘画风格'},
+                'anime': {'type': 'art_style', 'affects': 'rendering', 'description': '動漫繪畫風格'},
+                'manga': {'type': 'art_style', 'affects': 'rendering', 'description': '漫畫繪畫風格'},
+                'realistic': {'type': 'art_style', 'affects': 'rendering', 'description': '寫實繪畫風格'},
+                'illustration': {'type': 'art_style', 'affects': 'rendering', 'description': '插畫繪畫風格'},
 
-                'cyberpunk': {'type': 'atmosphere', 'affects': 'scene', 'description': '赛博朋克场景氛围'},
-                'fantasy': {'type': 'atmosphere', 'affects': 'scene', 'description': '奇幻场景氛围'},
-                'vintage': {'type': 'atmosphere', 'affects': 'scene', 'description': '复古场景氛围'},
+                'cyberpunk': {'type': 'atmosphere', 'affects': 'scene', 'description': '賽博朋克場景氛圍'},
+                'fantasy': {'type': 'atmosphere', 'affects': 'scene', 'description': '奇幻場景氛圍'},
+                'vintage': {'type': 'atmosphere', 'affects': 'scene', 'description': '復古場景氛圍'},
 
-                'neon': {'type': 'lighting', 'affects': 'lighting', 'description': '霓虹灯光'},
-                'dramatic': {'type': 'lighting', 'affects': 'lighting', 'description': '戏剧性灯光'},
+                'neon': {'type': 'lighting', 'affects': 'lighting', 'description': '霓虹燈光'},
+                'dramatic': {'type': 'lighting', 'affects': 'lighting', 'description': '戲劇性燈光'},
             },
 
-            # 导演/风格 → 光影需求映射
+            # 導演/風格 → 光影需求對映
             'director_lighting_styles': {
                 'zhang_yimou': {
-                    'description': '张艺谋电影风格',
+                    'description': '張藝謀電影風格',
                     'lighting_keywords': ['dramatic', 'shadow', 'rim', 'contrast', 'chiaroscuro', 'volumetric'],
                     'required_elements': ['dramatic shadows', 'rim lighting'],
                 },
                 'cinematic': {
-                    'description': '电影级',
+                    'description': '電影級',
                     'lighting_keywords': ['dramatic', 'cinematic', 'rim', 'contrast'],
                     'required_elements': ['dramatic lighting', 'rim lighting'],
                 },
                 'film_noir': {
-                    'description': '黑色电影',
+                    'description': '黑色電影',
                     'lighting_keywords': ['shadow', 'contrast', 'chiaroscuro', 'low key'],
                     'required_elements': ['dramatic shadows', 'high contrast'],
                 },
             },
 
-            # 人物属性类别（不应该被style关键词覆盖）
+            # 人物屬性類別（不應該被style關鍵詞覆蓋）
             'subject_attribute_categories': {
                 'gender', 'age_range', 'ethnicity', 'skin_tones',
                 'eye_types', 'hair_colors', 'hair_styles',
@@ -89,7 +89,7 @@ class IntelligentGenerator:
 
     def get_element_by_category(self, domain: str, category: str,
                                 value_filter: Optional[str] = None) -> Optional[Dict]:
-        """从数据库获取元素"""
+        """從資料庫獲取元素"""
         query = """
             SELECT element_id, name, chinese_name, ai_prompt_template,
                    keywords, reusability_score, category_id
@@ -110,9 +110,9 @@ class IntelligentGenerator:
         if not row:
             return None
 
-        # 验证name是否匹配value_filter（避免子串误匹配，如female被male匹配）
+        # 驗證name是否匹配value_filter（避免子串誤匹配，如female被male匹配）
         if value_filter and row[1].lower() != value_filter.lower():
-            # 如果不匹配，尝试直接用name精确匹配
+            # 如果不匹配，嘗試直接用name精確匹配
             query_exact = """
                 SELECT element_id, name, chinese_name, ai_prompt_template,
                        keywords, reusability_score, category_id
@@ -144,7 +144,7 @@ class IntelligentGenerator:
 
     def get_all_elements_by_category(self, domain: str, category: str,
                                      value_filter: Optional[str] = None) -> List[Dict]:
-        """从数据库获取该类别的所有元素（用于SKILL分析）"""
+        """從資料庫獲取該類別的所有元素（用於SKILL分析）"""
         query = """
             SELECT element_id, name, chinese_name, ai_prompt_template,
                    keywords, reusability_score, category_id
@@ -185,7 +185,7 @@ class IntelligentGenerator:
 
     def select_elements_by_intent(self, intent: Dict) -> List[Dict]:
         """
-        基于解析的意图从数据库选择元素
+        基於解析的意圖從資料庫選擇元素
 
         intent格式:
         {
@@ -204,7 +204,7 @@ class IntelligentGenerator:
         """
         elements = []
 
-        # 1. 选择人物属性
+        # 1. 選擇人物屬性
         subject = intent.get('subject', {})
 
         if 'gender' in subject:
@@ -223,8 +223,8 @@ class IntelligentGenerator:
             if elem:
                 elements.append(elem)
 
-            # 自动选择匹配人种的眼睛
-            # 对于东亚人，选择almond/large expressive类型（避免green/blue）
+            # 自動選擇匹配人種的眼睛
+            # 對於東亞人，選擇almond/large expressive型別（避免green/blue）
             if ethnicity_name == 'East_Asian':
                 eye_elem = self.get_element_by_category('portrait', 'eye_types', 'almond')
             else:
@@ -233,17 +233,17 @@ class IntelligentGenerator:
             if eye_elem:
                 elements.append(eye_elem)
 
-            # 自动选择匹配人种的发色
+            # 自動選擇匹配人種的髮色
             typical_hair = self.knowledge['ethnicity_typical_hair'].get(ethnicity_name, ['black'])
             hair_color_elem = self.get_element_by_category('portrait', 'hair_colors', typical_hair[0])
             if hair_color_elem:
                 elements.append(hair_color_elem)
 
-        # 2. 根据intent选择服装和发型（优先使用intent指定的）
+        # 2. 根據intent選擇服裝和髮型（優先使用intent指定的）
         clothing = intent.get('clothing', 'modern')
         hairstyle = intent.get('hairstyle', 'modern')
 
-        # 服装关键词映射（灵活搜索）
+        # 服裝關鍵詞對映（靈活搜尋）
         clothing_keywords_map = {
             'traditional_chinese': ['traditional', 'chinese', 'hanfu', 'period'],
             'kimono': ['kimono', 'japanese'],
@@ -252,111 +252,111 @@ class IntelligentGenerator:
             'formal': ['formal', 'evening']
         }
 
-        # 搜索服装元素
-        if clothing != 'modern':  # 如果非默认，搜索特定服装
+        # 搜尋服裝元素
+        if clothing != 'modern':  # 如果非預設，搜尋特定服裝
             search_keywords = clothing_keywords_map.get(clothing, [clothing])
             clothing_elem = None
-            # 尝试用每个关键词搜索
+            # 嘗試用每個關鍵詞搜尋
             for kw in search_keywords:
                 clothing_elem = self.get_element_by_category('portrait', 'clothing_styles', kw)
                 if clothing_elem:
-                    print(f"✓ 找到服装元素: '{clothing_elem['chinese_name']}'（搜索关键词: {kw}）")
+                    print(f"✓ 找到服裝元素: '{clothing_elem['chinese_name']}'（搜尋關鍵詞: {kw}）")
                     elements.append(clothing_elem)
                     break
 
-            # 如果没找到，记录信息
+            # 如果沒找到，記錄資訊
             if not clothing_elem:
-                print(f"⚠️ 未找到'{clothing}'服装元素，将通过风格关键词搜索")
+                print(f"⚠️ 未找到'{clothing}'服裝元素，將透過風格關鍵詞搜尋")
         else:
-            # 默认选择一个现代服装
+            # 預設選擇一個現代服裝
             elem = self.get_element_by_category('portrait', 'clothing_styles')
             if elem:
                 elements.append(elem)
 
-        # 发型关键词映射（灵活搜索）
+        # 髮型關鍵詞對映（靈活搜尋）
         hairstyle_keywords_map = {
             'ancient_chinese': ['traditional', 'classical', 'bun', 'updo'],
             'traditional_japanese': ['traditional', 'japanese'],
         }
 
-        # 搜索发型元素（如果指定了特殊发型）
+        # 搜尋髮型元素（如果指定了特殊髮型）
         if hairstyle != 'modern':
             search_keywords = hairstyle_keywords_map.get(hairstyle, [hairstyle])
             hair_style_elem = None
-            # 尝试用每个关键词搜索
+            # 嘗試用每個關鍵詞搜尋
             for kw in search_keywords:
                 hair_style_elem = self.get_element_by_category('portrait', 'hair_styles', kw)
                 if hair_style_elem:
-                    print(f"✓ 找到发型元素: '{hair_style_elem['chinese_name']}'（搜索关键词: {kw}）")
+                    print(f"✓ 找到髮型元素: '{hair_style_elem['chinese_name']}'（搜尋關鍵詞: {kw}）")
                     elements.append(hair_style_elem)
                     break
 
-            # 如果没找到，记录信息
+            # 如果沒找到，記錄資訊
             if not hair_style_elem:
-                print(f"⚠️ 未找到'{hairstyle}'发型元素，将通过风格关键词搜索")
+                print(f"⚠️ 未找到'{hairstyle}'髮型元素，將透過風格關鍵詞搜尋")
         else:
-            # 默认选择一个现代发型
+            # 預設選擇一個現代髮型
             elem = self.get_element_by_category('portrait', 'hair_styles')
             if elem:
                 elements.append(elem)
 
-        # 3. 选择其他人物属性
+        # 3. 選擇其他人物屬性
         for attr in ['skin_tones', 'skin_textures', 'face_shapes',
                      'makeup_styles', 'expressions', 'poses']:
             elem = self.get_element_by_category('portrait', attr)
             if elem:
                 elements.append(elem)
 
-        # 4. 添加风格元素（lighting, era, director_style等）
+        # 4. 新增風格元素（lighting, era, director_style等）
         visual_style = intent.get('visual_style', {})
         atmosphere = intent.get('atmosphere', {})
         era = intent.get('era', 'modern')
         lighting = intent.get('lighting', 'natural')
 
-        # 收集所有风格关键词
+        # 收集所有風格關鍵詞
         style_keywords = []
 
-        # 添加服装关键词（补充搜索）
+        # 新增服裝關鍵詞（補充搜尋）
         if clothing != 'modern':
             clothing_search_kws = clothing_keywords_map.get(clothing, [])
             style_keywords.extend(clothing_search_kws)
-            print(f"✓ 添加服装搜索关键词: {', '.join(clothing_search_kws)}")
+            print(f"✓ 新增服裝搜尋關鍵詞: {', '.join(clothing_search_kws)}")
 
-        # 添加发型关键词（补充搜索）
+        # 添加發型關鍵詞（補充搜尋）
         if hairstyle != 'modern':
             hairstyle_search_kws = hairstyle_keywords_map.get(hairstyle, [])
             style_keywords.extend(hairstyle_search_kws)
-            print(f"✓ 添加发型搜索关键词: {', '.join(hairstyle_search_kws)}")
+            print(f"✓ 添加發型搜尋關鍵詞: {', '.join(hairstyle_search_kws)}")
 
-        # 添加艺术风格
+        # 新增藝術風格
         if 'art_style' in visual_style:
             style_keywords.append(visual_style['art_style'])
 
-        # 添加氛围主题
+        # 新增氛圍主題
         if 'theme' in atmosphere:
             style_keywords.append(atmosphere['theme'])
 
-        # 添加光影关键词
+        # 新增光影關鍵詞
         if lighting:
             style_keywords.append(lighting)
 
-        # 添加时代背景关键词
+        # 新增時代背景關鍵詞
         if era != 'modern':
             style_keywords.append(era)
-            # 古代时期添加相关词
+            # 古代時期新增相關詞
             if era == 'ancient':
                 style_keywords.extend(['traditional', 'period', 'classical'])
 
-        # 检查导演风格，添加特定关键词
+        # 檢查導演風格，新增特定關鍵詞
         director_style = atmosphere.get('director_style')
         if director_style:
-            # 检查是否在知识库中（用于光影扩展）
+            # 檢查是否在知識庫中（用於光影擴充套件）
             if director_style in self.knowledge.get('director_lighting_styles', {}):
                 lighting_config = self.knowledge['director_lighting_styles'][director_style]
                 style_keywords.extend(lighting_config['lighting_keywords'])
-                print(f"✓ 识别到'{lighting_config['description']}'，自动添加光影关键词: {', '.join(lighting_config['lighting_keywords'])}")
+                print(f"✓ 識別到'{lighting_config['description']}'，自動新增光影關鍵詞: {', '.join(lighting_config['lighting_keywords'])}")
 
-            # 添加导演风格的特定关键词
+            # 新增導演風格的特定關鍵詞
             director_keywords = {
                 'tsui_hark': ['wuxia', 'martial arts', 'flowing', 'dynamic'],
                 'zhang_yimou': ['traditional', 'red', 'gold', 'period drama'],
@@ -364,7 +364,7 @@ class IntelligentGenerator:
             }
             if director_style in director_keywords:
                 style_keywords.extend(director_keywords[director_style])
-                print(f"✓ 识别到导演风格'{director_style}'，添加特征关键词: {', '.join(director_keywords[director_style])}")
+                print(f"✓ 識別到導演風格'{director_style}'，新增特徵關鍵詞: {', '.join(director_keywords[director_style])}")
 
         if style_keywords:
             style_elements = self.search_style_elements(style_keywords)
@@ -374,39 +374,39 @@ class IntelligentGenerator:
 
     def calculate_relevance(self, element: Dict, required_keywords: List[str]) -> float:
         """
-        计算元素与需求的相关性得分（0-1）
+        計算元素與需求的相關性得分（0-1）
 
-        参数:
+        引數:
             element: 元素字典
-            required_keywords: 用户需求的关键词列表
+            required_keywords: 使用者需求的關鍵詞列表
 
         返回:
-            相关性得分 (0.0 - 1.0)
+            相關性得分 (0.0 - 1.0)
         """
         if not required_keywords:
-            return 0.5  # 无关键词，默认中等相关性
+            return 0.5  # 無關鍵詞，預設中等相關性
 
         template = element.get('template', '').lower()
         keywords = element.get('keywords', [])
 
-        # 构建元素的所有文本
+        # 構建元素的所有文字
         element_text = template
         if keywords:
             element_text += ' ' + ' '.join(keywords).lower()
 
-        # 计算匹配的关键词数量
+        # 計算匹配的關鍵詞數量
         matched = 0
         for kw in required_keywords:
             if kw.lower() in element_text:
                 matched += 1
 
-        # 相关性 = 匹配数 / 总关键词数
+        # 相關性 = 匹配數 / 總關鍵詞數
         relevance = matched / len(required_keywords)
 
         return relevance
 
     def search_style_elements(self, keywords: List[str]) -> List[Dict]:
-        """搜索风格元素，排除人物属性类别，按相关性×质量排序"""
+        """搜尋風格元素，排除人物屬性類別，按相關性×質量排序"""
         excluded_categories = self.knowledge['subject_attribute_categories']
 
         keyword_conditions = " OR ".join(["ai_prompt_template LIKE ?" for _ in keywords])
@@ -425,7 +425,7 @@ class IntelligentGenerator:
 
         elements = []
         for row in self.cursor.fetchall():
-            # 过滤掉人物属性类别
+            # 過濾掉人物屬性類別
             if row[6] in excluded_categories:
                 continue
 
@@ -446,47 +446,47 @@ class IntelligentGenerator:
                 'category': row[6]
             }
 
-            # 计算相关性得分
+            # 計算相關性得分
             relevance = self.calculate_relevance(elem, keywords)
 
-            # 综合得分 = 相关性 × 质量分
+            # 綜合得分 = 相關性 × 質量分
             elem['relevance'] = relevance
             elem['final_score'] = relevance * row[5]  # reusability_score
 
             elements.append(elem)
 
-        # 按综合得分排序
+        # 按綜合得分排序
         elements.sort(key=lambda x: x['final_score'], reverse=True)
 
-        # 返回前10个最相关的
+        # 返回前10個最相關的
         return elements[:10]
 
     def check_consistency(self, elements: List[Dict]) -> List[Dict]:
         """
-        检查元素之间的一致性
+        檢查元素之間的一致性
 
-        返回问题列表，每个问题包含：
-        - type: 问题类型
-        - severity: 严重程度 (low/medium/high)
-        - description: 问题描述
-        - suggestion: 修正建议
+        返回問題列表，每個問題包含：
+        - type: 問題型別
+        - severity: 嚴重程度 (low/medium/high)
+        - description: 問題描述
+        - suggestion: 修正建議
         """
         issues = []
 
-        # 提取关键元素
+        # 提取關鍵元素
         ethnicity_elem = self.find_element_by_category(elements, 'ethnicity')
         eye_elem = self.find_element_by_category(elements, 'eye_types')
         hair_elem = self.find_element_by_category(elements, 'hair_colors')
 
-        # 检查1：人种 vs 眼睛颜色（检测不合理的颜色如green/blue for 东亚人）
+        # 檢查1：人種 vs 眼睛顏色（檢測不合理的顏色如green/blue for 東亞人）
         if ethnicity_elem and eye_elem:
             ethnicity_name = self.extract_ethnicity_name(ethnicity_elem['name'])
             eye_template = eye_elem['template'].lower()
 
-            # 检测不合理的颜色
+            # 檢測不合理的顏色
             incompatible_colors = []
             if ethnicity_name == 'East_Asian':
-                # 东亚人不应该有这些眼睛颜色
+                # 東亞人不應該有這些眼睛顏色
                 if 'green' in eye_template or 'blue' in eye_template or 'violet' in eye_template:
                     incompatible_colors = ['green', 'blue', 'violet']
             elif ethnicity_name == 'African':
@@ -502,11 +502,11 @@ class IntelligentGenerator:
                     'current_eye': eye_elem['template'],
                     'incompatible_colors': incompatible_colors,
                     'typical_eyes': typical_eyes,
-                    'description': f"{ethnicity_elem['chinese_name']}通常不会有包含'{', '.join(incompatible_colors)}'的眼睛",
-                    'suggestion': f"建议选择包含这些颜色的眼型: {', '.join(typical_eyes)}"
+                    'description': f"{ethnicity_elem['chinese_name']}通常不會有包含'{', '.join(incompatible_colors)}'的眼睛",
+                    'suggestion': f"建議選擇包含這些顏色的眼型: {', '.join(typical_eyes)}"
                 })
 
-        # 检查2：人种 vs 发色
+        # 檢查2：人種 vs 髮色
         if ethnicity_elem and hair_elem:
             ethnicity_name = self.extract_ethnicity_name(ethnicity_elem['name'])
             typical_hair = self.knowledge['ethnicity_typical_hair'].get(ethnicity_name, [])
@@ -521,51 +521,51 @@ class IntelligentGenerator:
                     'current_ethnicity': ethnicity_elem['chinese_name'],
                     'current_hair': hair_elem['template'],
                     'typical_hair': typical_hair,
-                    'description': f"{ethnicity_elem['chinese_name']}通常不会有'{hair_elem['template']}'",
-                    'suggestion': f"建议改为: {', '.join(typical_hair)}"
+                    'description': f"{ethnicity_elem['chinese_name']}通常不會有'{hair_elem['template']}'",
+                    'suggestion': f"建議改為: {', '.join(typical_hair)}"
                 })
 
-        # 检查3：重复类别（但lighting_techniques允许多个）
+        # 檢查3：重複類別（但lighting_techniques允許多個）
         category_counts = {}
         for elem in elements:
             cat = elem['category']
             category_counts[cat] = category_counts.get(cat, 0) + 1
 
-        # 允许多个元素的类别
+        # 允許多個元素的類別
         multi_element_categories = {'lighting_techniques', 'photography_techniques'}
 
         for cat, count in category_counts.items():
-            # lighting_techniques等类别允许多个元素组合
+            # lighting_techniques等類別允許多個元素組合
             if count > 1 and cat not in multi_element_categories:
                 issues.append({
                     'type': 'duplicate_category',
                     'severity': 'high',
                     'category': cat,
                     'count': count,
-                    'description': f"类别'{cat}'出现了{count}次（应该只有1次）",
-                    'suggestion': "保留最相关的一个元素"
+                    'description': f"類別'{cat}'出現了{count}次（應該只有1次）",
+                    'suggestion': "保留最相關的一個元素"
                 })
 
         return issues
 
     def check_completeness(self, intent: Dict, prompt: str) -> List[Dict]:
         """
-        检查生成的提示词是否满足所有用户要求
+        檢查生成的提示詞是否滿足所有使用者要求
 
-        参数:
-            intent: 原始意图字典
-            prompt: 生成的提示词字符串
+        引數:
+            intent: 原始意圖字典
+            prompt: 生成的提示詞字串
 
         返回:
-            缺失需求列表，每个包含：
-            - requirement: 需求类型
-            - expected: 期望的关键词
+            缺失需求列表，每個包含：
+            - requirement: 需求型別
+            - expected: 期望的關鍵詞
             - description: 缺失描述
         """
         missing = []
         prompt_lower = prompt.lower()
 
-        # 检查1：服装要求
+        # 檢查1：服裝要求
         clothing = intent.get('clothing')
         if clothing and clothing != 'modern':
             clothing_keywords = {
@@ -580,11 +580,11 @@ class IntelligentGenerator:
                 missing.append({
                     'requirement': 'clothing',
                     'expected': expected_kws,
-                    'description': f"用户要求'{clothing}'服装，但提示词中未找到相关描述",
-                    'suggestion': f"应包含: {', '.join(expected_kws[:3])}"
+                    'description': f"使用者要求'{clothing}'服裝，但提示詞中未找到相關描述",
+                    'suggestion': f"應包含: {', '.join(expected_kws[:3])}"
                 })
 
-        # 检查2：发型要求
+        # 檢查2：髮型要求
         hairstyle = intent.get('hairstyle')
         if hairstyle and hairstyle != 'modern':
             hairstyle_keywords = {
@@ -596,11 +596,11 @@ class IntelligentGenerator:
                 missing.append({
                     'requirement': 'hairstyle',
                     'expected': expected_kws,
-                    'description': f"用户要求'{hairstyle}'发型，但提示词中未找到相关描述",
-                    'suggestion': f"应包含: {', '.join(expected_kws[:3])}"
+                    'description': f"使用者要求'{hairstyle}'髮型，但提示詞中未找到相關描述",
+                    'suggestion': f"應包含: {', '.join(expected_kws[:3])}"
                 })
 
-        # 检查3：时代背景
+        # 檢查3：時代背景
         era = intent.get('era')
         if era and era != 'modern':
             era_keywords = {
@@ -612,11 +612,11 @@ class IntelligentGenerator:
                 missing.append({
                     'requirement': 'era',
                     'expected': expected_kws,
-                    'description': f"用户要求'{era}'时代背景，但提示词中未找到相关描述",
-                    'suggestion': f"应包含: {', '.join(expected_kws[:3])}"
+                    'description': f"使用者要求'{era}'時代背景，但提示詞中未找到相關描述",
+                    'suggestion': f"應包含: {', '.join(expected_kws[:3])}"
                 })
 
-        # 检查4：导演风格特征
+        # 檢查4：導演風格特徵
         atmosphere = intent.get('atmosphere', {})
         director_style = atmosphere.get('director_style')
         if director_style:
@@ -630,12 +630,12 @@ class IntelligentGenerator:
                 missing.append({
                     'requirement': 'director_style',
                     'expected': expected_kws,
-                    'description': f"用户要求'{director_style}'导演风格，但提示词中未找到特征关键词",
-                    'suggestion': f"应包含: {', '.join(expected_kws[:3])}"
+                    'description': f"使用者要求'{director_style}'導演風格，但提示詞中未找到特徵關鍵詞",
+                    'suggestion': f"應包含: {', '.join(expected_kws[:3])}"
                 })
 
-        # 检查5：光影要求（必选）
-        # 支持两种格式：字符串（旧格式）和dict（框架格式）
+        # 檢查5：光影要求（必選）
+        # 支援兩種格式：字串（舊格式）和dict（框架格式）
         lighting = intent.get('lighting', 'natural')
         if isinstance(lighting, dict):
             lighting = lighting.get('lighting_type', 'natural')
@@ -654,28 +654,28 @@ class IntelligentGenerator:
             missing.append({
                 'requirement': 'lighting',
                 'expected': expected_kws,
-                'description': f"用户要求'{lighting}'光影，但提示词中未找到相关描述",
-                'suggestion': f"应包含: {', '.join(expected_kws[:3])}"
+                'description': f"使用者要求'{lighting}'光影，但提示詞中未找到相關描述",
+                'suggestion': f"應包含: {', '.join(expected_kws[:3])}"
             })
 
         return missing
 
     def resolve_conflicts(self, elements: List[Dict], issues: List[Dict]) -> Tuple[List[Dict], List[str]]:
         """
-        解决检测到的冲突
+        解決檢測到的衝突
 
-        返回：(修正后的元素列表, 修正说明列表)
+        返回：(修正後的元素列表, 修正說明列表)
         """
         fixed_elements = elements.copy()
         fixes_applied = []
 
         for issue in issues:
             if issue['type'] == 'ethnicity_eye_mismatch':
-                # 替换为符合人种的眼睛（选择almond/brown等合适的）
+                # 替換為符合人種的眼睛（選擇almond/brown等合適的）
                 ethnicity_elem = self.find_element_by_category(fixed_elements, 'ethnicity')
                 ethnicity_name = self.extract_ethnicity_name(ethnicity_elem['name']) if ethnicity_elem else 'East_Asian'
 
-                # 为不同人种选择合适的眼型
+                # 為不同人種選擇合適的眼型
                 if ethnicity_name == 'East_Asian':
                     new_eye_elem = self.get_element_by_category('portrait', 'eye_types', 'almond brown')
                     if not new_eye_elem:
@@ -684,18 +684,18 @@ class IntelligentGenerator:
                     new_eye_elem = self.get_element_by_category('portrait', 'eye_types')
 
                 if new_eye_elem:
-                    # 移除旧的eye元素
+                    # 移除舊的eye元素
                     fixed_elements = [e for e in fixed_elements if e['category'] != 'eye_types']
-                    # 添加新的
+                    # 新增新的
                     fixed_elements.append(new_eye_elem)
 
                     fixes_applied.append(
                         f"✓ 修正眼睛: '{issue['current_eye']}' → '{new_eye_elem['template']}' "
-                        f"(符合{issue['current_ethnicity']}特征)"
+                        f"(符合{issue['current_ethnicity']}特徵)"
                     )
 
             elif issue['type'] == 'ethnicity_hair_mismatch':
-                # 替换发色
+                # 替換髮色
                 suggested_color = issue['typical_hair'][0]
                 new_hair_elem = self.get_element_by_category('portrait', 'hair_colors', suggested_color)
 
@@ -704,12 +704,12 @@ class IntelligentGenerator:
                     fixed_elements.append(new_hair_elem)
 
                     fixes_applied.append(
-                        f"✓ 修正发色: '{issue['current_hair']}' → '{new_hair_elem['template']}' "
-                        f"(符合{issue['current_ethnicity']}特征)"
+                        f"✓ 修正髮色: '{issue['current_hair']}' → '{new_hair_elem['template']}' "
+                        f"(符合{issue['current_ethnicity']}特徵)"
                     )
 
             elif issue['type'] == 'duplicate_category':
-                # 保留第一个，删除其他
+                # 保留第一個，刪除其他
                 cat = issue['category']
                 kept = False
                 new_list = []
@@ -722,19 +722,19 @@ class IntelligentGenerator:
                         new_list.append(elem)
 
                 fixed_elements = new_list
-                fixes_applied.append(f"✓ 移除重复的'{cat}'类别元素")
+                fixes_applied.append(f"✓ 移除重複的'{cat}'類別元素")
 
         return fixed_elements, fixes_applied
 
     def find_element_by_category(self, elements: List[Dict], category: str) -> Optional[Dict]:
-        """从元素列表中查找指定类别的元素"""
+        """從元素列表中查詢指定類別的元素"""
         for elem in elements:
             if elem['category'] == category:
                 return elem
         return None
 
     def extract_ethnicity_name(self, name: str) -> str:
-        """从元素名称提取人种标准名称"""
+        """從元素名稱提取人種標準名稱"""
         mapping = {
             'east_asian': 'East_Asian',
             'southeast_asian': 'Southeast_Asian',
@@ -749,14 +749,14 @@ class IntelligentGenerator:
     def compose_prompt(self, elements: List[Dict], mode: str = 'auto',
                       keywords_limit: int = 3) -> str:
         """
-        组合元素生成最终提示词（带去重和过滤）
+        組合元素生成最終提示詞（帶去重和過濾）
 
         mode: 'simple', 'auto', 'detailed'
         """
         all_keywords = []
-        seen_concepts = set()  # 用于去重
+        seen_concepts = set()  # 用於去重
 
-        # 同义词组（用于去重）
+        # 同義詞組（用於去重）
         synonym_groups = {
             'woman': ['woman', 'female', 'lady', 'girl'],
             'man': ['man', 'male', 'gentleman', 'boy'],
@@ -775,13 +775,13 @@ class IntelligentGenerator:
             'pose': ['relaxed', 'casual stance', 'natural pose', 'pose'],
         }
 
-        # 无关/错误的关键词黑名单（明显不属于人像）
+        # 無關/錯誤的關鍵詞黑名單（明顯不屬於人像）
         blacklist = {
             'bottle', 'highlighting', 'condensa', 'elements', 'surroundings',
             'practical', 'string', 'lanterns', 'vintage lamps', 'accent lights'
         }
 
-        # 反向映射：关键词 → 代表词
+        # 反向對映：關鍵詞 → 代表詞
         concept_map = {}
         for representative, synonyms in synonym_groups.items():
             for syn in synonyms:
@@ -791,7 +791,7 @@ class IntelligentGenerator:
             template = elem.get('template', '')
             keywords = elem.get('keywords')
 
-            # 选择文本
+            # 選擇文字
             if mode == 'simple':
                 text = template
             elif mode == 'detailed' and keywords and len(keywords) > 0:
@@ -802,41 +802,41 @@ class IntelligentGenerator:
                 text = template
                 text_list = None
 
-            # 如果有keywords列表，逐个处理
+            # 如果有keywords列表，逐個處理
             if text_list:
                 for kw in text_list:
-                    # 过滤无效关键词
+                    # 過濾無效關鍵詞
                     if not kw or len(kw.strip()) == 0:
                         continue
 
                     kw_stripped = kw.strip()
                     kw_lower = kw_stripped.lower()
 
-                    # 黑名单过滤
+                    # 黑名單過濾
                     if any(blackword in kw_lower for blackword in blacklist):
                         continue
 
                     words = kw_stripped.split()
 
-                    # 过滤单个词碎片（<4字符或明显无关）
+                    # 過濾單個詞碎片（<4字元或明顯無關）
                     if len(words) == 1:
-                        # 单词过滤：短于4字符，或在黑名单
+                        # 單詞過濾：短於4字元，或在黑名單
                         if len(kw_stripped) < 4 or kw_lower in blacklist:
                             continue
 
-                    # 去重检查 - 检查完整短语
+                    # 去重檢查 - 檢查完整短語
                     concept = concept_map.get(kw_lower, None)
 
-                    # 如果没有精确匹配，检查是否完全匹配已知概念
-                    # 注意：只对完整短语进行同义词匹配，不做子串匹配
+                    # 如果沒有精確匹配，檢查是否完全匹配已知概念
+                    # 注意：只對完整短語進行同義詞匹配，不做子串匹配
                     if not concept:
-                        # 先尝试精确匹配整个短语
+                        # 先嚐試精確匹配整個短語
                         for rep, syns in synonym_groups.items():
                             if kw_lower in [s.lower() for s in syns]:
                                 concept = rep
                                 break
 
-                    # 如果还是没找到概念，用完整短语作为唯一标识
+                    # 如果還是沒找到概念，用完整短語作為唯一標識
                     if not concept:
                         concept = kw_lower
 
@@ -849,14 +849,14 @@ class IntelligentGenerator:
                     text_stripped = text.strip()
                     text_lower = text_stripped.lower()
 
-                    # 黑名单过滤
+                    # 黑名單過濾
                     if any(blackword in text_lower for blackword in blacklist):
                         continue
 
-                    # 去重检查
+                    # 去重檢查
                     concept = concept_map.get(text_lower, None)
 
-                    # 检查是否完全匹配已知概念（不做子串匹配）
+                    # 檢查是否完全匹配已知概念（不做子串匹配）
                     if not concept:
                         for rep, syns in synonym_groups.items():
                             if text_lower in [s.lower() for s in syns]:
@@ -873,19 +873,19 @@ class IntelligentGenerator:
         return ', '.join(all_keywords)
 
     def close(self):
-        """关闭数据库连接"""
+        """關閉資料庫連線"""
         self.conn.close()
 
 
 def test_intelligent_generator():
-    """测试智能生成器"""
+    """測試智慧生成器"""
     gen = IntelligentGenerator()
 
     print("="*80)
-    print("测试智能提示词生成器")
+    print("測試智慧提示詞生成器")
     print("="*80)
 
-    # 测试intent
+    # 測試intent
     intent = {
         'subject': {
             'gender': 'female',
@@ -900,50 +900,50 @@ def test_intelligent_generator():
         }
     }
 
-    print("\n1. 基于intent选择元素...")
+    print("\n1. 基於intent選擇元素...")
     elements = gen.select_elements_by_intent(intent)
-    print(f"   选择了 {len(elements)} 个元素")
+    print(f"   選擇了 {len(elements)} 個元素")
 
-    print("\n2. 检查一致性...")
+    print("\n2. 檢查一致性...")
     issues = gen.check_consistency(elements)
 
     if issues:
-        print(f"   发现 {len(issues)} 个问题:")
+        print(f"   發現 {len(issues)} 個問題:")
         for issue in issues:
             print(f"   - [{issue['severity']}] {issue['description']}")
             print(f"     {issue['suggestion']}")
 
-        print("\n3. 修正冲突...")
+        print("\n3. 修正衝突...")
         fixed_elements, fixes = gen.resolve_conflicts(elements, issues)
         for fix in fixes:
             print(f"   {fix}")
     else:
-        print("   ✓ 没有发现问题")
+        print("   ✓ 沒有發現問題")
         fixed_elements = elements
 
-    print("\n4. 生成最终提示词...")
+    print("\n4. 生成最終提示詞...")
     prompt = gen.compose_prompt(fixed_elements, mode='auto')
     print(f"\n{prompt}")
 
-    print("\n5. 检查完整性...")
+    print("\n5. 檢查完整性...")
     missing = gen.check_completeness(intent, prompt)
     if missing:
-        print(f"   ⚠️ 发现 {len(missing)} 个缺失的需求:")
+        print(f"   ⚠️ 發現 {len(missing)} 個缺失的需求:")
         for item in missing:
             print(f"   - {item['description']}")
             print(f"     {item['suggestion']}")
     else:
-        print("   ✓ 提示词满足所有用户要求")
+        print("   ✓ 提示詞滿足所有使用者要求")
 
     gen.close()
 
 
 def query_candidates_by_intent(intent: dict, db_path: str = 'extracted_results/elements.db') -> dict:
     """
-    【执行层】根据Intent查询所有候选元素
+    【執行層】根據Intent查詢所有候選元素
 
-    输入：Intent字典（由SKILL构造）
-    输出：候选字典 {field: [elements]}
+    輸入：Intent字典（由SKILL構造）
+    輸出：候選字典 {field: [elements]}
     """
     from framework_loader import FrameworkDrivenGenerator
 
@@ -955,13 +955,13 @@ def query_candidates_by_intent(intent: dict, db_path: str = 'extracted_results/e
 
 def assemble_prompt_from_elements(elements: list, subject_desc: str = '') -> str:
     """
-    【执行层】从元素列表拼接提示词
+    【執行層】從元素列表拼接提示詞
 
-    输入：
-    - elements: 元素列表（由SKILL选择）
-    - subject_desc: 主体描述（可选，如"A young woman"）
+    輸入：
+    - elements: 元素列表（由SKILL選擇）
+    - subject_desc: 主體描述（可選，如"A young woman"）
 
-    输出：完整提示词字符串
+    輸出：完整提示詞字串
     """
     parts = []
 
@@ -981,20 +981,20 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
                          quality_score: float = 9.0,
                          db_path: str = 'extracted_results/elements.db') -> int:
     """
-    【执行层】保存生成的Prompt到数据库
+    【執行層】儲存生成的Prompt到資料庫
 
-    这是prompt-analyzer工作的数据来源！
+    這是prompt-analyzer工作的資料來源！
 
-    参数：
-    - prompt_text: 完整的提示词文本
-    - user_intent: 用户的原始需求描述
-    - elements_used: 使用的元素列表（每个元素应包含element_id, category, field_name）
-    - style_tag: 风格标签（如ancient_chinese, modern_sci_fi等）
-    - quality_score: 质量评分（由SKILL评估，默认9.0）
-    - db_path: 数据库路径
+    引數：
+    - prompt_text: 完整的提示詞文字
+    - user_intent: 使用者的原始需求描述
+    - elements_used: 使用的元素列表（每個元素應包含element_id, category, field_name）
+    - style_tag: 風格標籤（如ancient_chinese, modern_sci_fi等）
+    - quality_score: 質量評分（由SKILL評估，預設9.0）
+    - db_path: 資料庫路徑
 
     返回：
-    - prompt_id: 保存后的Prompt ID
+    - prompt_id: 儲存後的Prompt ID
     """
     import sqlite3
     from datetime import datetime
@@ -1003,7 +1003,7 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
     cursor = conn.cursor()
 
     try:
-        # 1. 保存到generated_prompts表
+        # 1. 儲存到generated_prompts表
         cursor.execute('''
             INSERT INTO generated_prompts
             (prompt_text, user_intent, quality_score, style_tag, generation_date)
@@ -1012,24 +1012,24 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
 
         prompt_id = cursor.lastrowid
 
-        # 2. 保存元素关联到prompt_elements表
+        # 2. 儲存元素關聯到prompt_elements表
         for element in elements_used:
             element_id = element.get('element_id')
             category = element.get('category')
             field_name = element.get('field_name', '')
 
-            if element_id:  # 只保存有效的element_id
+            if element_id:  # 只儲存有效的element_id
                 cursor.execute('''
                     INSERT INTO prompt_elements
                     (prompt_id, element_id, category, field_name)
                     VALUES (?, ?, ?, ?)
                 ''', (prompt_id, element_id, category, field_name))
 
-        # 3. 更新元素使用统计
+        # 3. 更新元素使用統計
         for element in elements_used:
             element_id = element.get('element_id')
             if element_id:
-                # 检查是否已存在统计记录
+                # 檢查是否已存在統計記錄
                 cursor.execute('''
                     SELECT usage_count, avg_quality
                     FROM element_usage_stats
@@ -1039,7 +1039,7 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
                 existing = cursor.fetchone()
 
                 if existing:
-                    # 更新统计
+                    # 更新統計
                     old_count = existing[0]
                     old_avg = existing[1]
                     new_count = old_count + 1
@@ -1051,7 +1051,7 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
                         WHERE element_id = ?
                     ''', (new_count, new_avg, datetime.now(), element_id))
                 else:
-                    # 创建新统计记录
+                    # 建立新統計記錄
                     cursor.execute('''
                         INSERT INTO element_usage_stats
                         (element_id, usage_count, avg_quality, last_used)
@@ -1059,17 +1059,17 @@ def save_generated_prompt(prompt_text: str, user_intent: str,
                     ''', (element_id, quality_score, datetime.now()))
 
         conn.commit()
-        print(f"✅ Prompt已保存到数据库，ID: #{prompt_id}")
+        print(f"✅ Prompt已儲存到資料庫，ID: #{prompt_id}")
         return prompt_id
 
     except Exception as e:
         conn.rollback()
-        print(f"❌ 保存Prompt失败: {e}")
+        print(f"❌ 儲存Prompt失敗: {e}")
         raise
     finally:
         conn.close()
 
 
 if __name__ == '__main__':
-    # 测试：旧的Intent-based流程
+    # 測試：舊的Intent-based流程
     test_intelligent_generator()

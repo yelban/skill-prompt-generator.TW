@@ -1,88 +1,88 @@
-# ⚠️ 旧架构 - Extractor Module - 提取模块
+# ⚠️ 舊架構 - Extractor Module - 提取模組
 
-> **注意**：这是旧架构模块，属于prompt-master系统
+> **注意**：這是舊架構模組，屬於prompt-master系統
 
 
-**功能**: 从用户提供的Prompt中提取可复用的模块和特征
-**调用方式**: 通过主Skill路由或手动分析
+**功能**: 從使用者提供的Prompt中提取可複用的模組和特徵
+**呼叫方式**: 透過主Skill路由或手動分析
 
 ---
 
 ## 📋 功能概述
 
-Extractor模块负责：
-- 识别Prompt中的人物基础属性（性别、年龄、人种）
-- 提取五官级别细节（眼型、脸型、唇型、鼻型、皮肤、表情）
-- 识别摄影流派和技术参数
-- 提取可复用的关键词组
+Extractor模組負責：
+- 識別Prompt中的人物基礎屬性（性別、年齡、人種）
+- 提取五官級別細節（眼型、臉型、唇型、鼻型、皮膚、表情）
+- 識別攝影流派和技術引數
+- 提取可複用的關鍵片語
 
 ---
 
 ## 🔧 提取流程
 
-### Step 1: 分析输入Prompt
+### Step 1: 分析輸入Prompt
 
-**输入示例**:
+**輸入示例**:
 ```
 A beautiful young East Asian woman with large expressive almond eyes, thick natural lashes, delicate refined Asian facial structure, soft full lips with gentle pink gloss, small straight nose, flawless porcelain skin, radiant jade-like brightness, innocent gaze, gentle smile, photographed with Canon EOS R5, RF 50mm f/1.2L, 8K ultra-detailed, soft lighting
 ```
 
-### Step 2: 提取基础属性
+### Step 2: 提取基礎屬性
 
-**提取目标**:
-- **性别**: 识别 "woman" / "man" / "girl" / "boy"
-  - 结果: female
-- **年龄**: 识别 "young" / "adult" / "teen" / "elderly"
-  - 结果: young_adult
-- **人种**: 识别 "East Asian" / "Caucasian" / "African" / "mixed"
-  - 结果: east_asian
+**提取目標**:
+- **性別**: 識別 "woman" / "man" / "girl" / "boy"
+  - 結果: female
+- **年齡**: 識別 "young" / "adult" / "teen" / "elderly"
+  - 結果: young_adult
+- **人種**: 識別 "East Asian" / "Caucasian" / "African" / "mixed"
+  - 結果: east_asian
 
-### Step 3: 提取五官特征
+### Step 3: 提取五官特徵
 
 **眼型提取**:
-- 关键词: "large expressive almond eyes", "thick natural lashes"
+- 關鍵詞: "large expressive almond eyes", "thick natural lashes"
 - 匹配到: `large_expressive_almond` (大眼杏仁眼)
 
-**脸型提取**:
-- 关键词: "delicate refined Asian facial structure"
-- 匹配到: `oval_asian_refined` (精致鹅蛋脸)
+**臉型提取**:
+- 關鍵詞: "delicate refined Asian facial structure"
+- 匹配到: `oval_asian_refined` (精緻鵝蛋臉)
 
 **唇型提取**:
-- 关键词: "soft full lips", "gentle pink gloss"
-- 匹配到: `soft_pink_gloss` (粉嫩光泽唇)
+- 關鍵詞: "soft full lips", "gentle pink gloss"
+- 匹配到: `soft_pink_gloss` (粉嫩光澤唇)
 
 **鼻型提取**:
-- 关键词: "small straight nose"
+- 關鍵詞: "small straight nose"
 - 匹配到: `small_straight_delicate` (小巧直鼻)
 
-**皮肤提取**:
-- 关键词: "flawless porcelain skin", "radiant jade-like brightness"
-- 匹配到: `porcelain_flawless_radiant` (瓷肌无瑕)
+**皮膚提取**:
+- 關鍵詞: "flawless porcelain skin", "radiant jade-like brightness"
+- 匹配到: `porcelain_flawless_radiant` (瓷肌無瑕)
 
 **表情提取**:
-- 关键词: "innocent gaze", "gentle smile"
-- 匹配到: `innocent_gentle_gaze` (清纯温柔眼神)
+- 關鍵詞: "innocent gaze", "gentle smile"
+- 匹配到: `innocent_gentle_gaze` (清純溫柔眼神)
 
-### Step 4: 提取技术参数
+### Step 4: 提取技術引數
 
-**相机设备**:
-- 识别: "Canon EOS R5"
+**相機裝置**:
+- 識別: "Canon EOS R5"
 - 匹配到: `canon_eos_r5`
 
-**镜头**:
-- 识别: "RF 50mm f/1.2L"
+**鏡頭**:
+- 識別: "RF 50mm f/1.2L"
 
-**分辨率**:
-- 识别: "8K ultra-detailed"
+**解析度**:
+- 識別: "8K ultra-detailed"
 
 **光照**:
-- 识别: "soft lighting"
+- 識別: "soft lighting"
 
-### Step 5: 识别摄影流派
+### Step 5: 識別攝影流派
 
-基于技术参数和风格关键词识别流派：
+基於技術引數和風格關鍵詞識別流派：
 
-**流派识别逻辑**:
+**流派識別邏輯**:
 ```python
 if "8K" in prompt and "Canon EOS R5" in prompt:
     genre = "digital_commercial"
@@ -91,12 +91,12 @@ elif "Hasselblad" in prompt and "Kodak Portra" in prompt:
 elif "cinematic" in prompt or "HDR" in prompt:
     genre = "cinematic_narrative"
 else:
-    genre = "portrait_beauty"  # 默认
+    genre = "portrait_beauty"  # 預設
 ```
 
 ---
 
-## 📊 提取结果格式
+## 📊 提取結果格式
 
 ```json
 {
@@ -136,53 +136,53 @@ else:
 
 ---
 
-## 🎯 使用场景
+## 🎯 使用場景
 
-### 场景1: 分析优秀Prompt
-
-```
-用户: "提取这个Prompt的五官特征"
-输入: "A beautiful woman with large blue eyes..."
-
-→ 执行提取流程
-→ 输出分类结果和可复用关键词
-```
-
-### 场景2: 学习新特征
+### 場景1: 分析優秀Prompt
 
 ```
-用户: "这个眼型叫什么？'manic luminous ruby-pink eyes, heavy seductive half-lidded gaze'"
+使用者: "提取這個Prompt的五官特徵"
+輸入: "A beautiful woman with large blue eyes..."
 
-→ 匹配到: half_lidded_seductive (半闭诱惑眼)
-→ 显示该眼型的完整信息和使用建议
+→ 執行提取流程
+→ 輸出分類結果和可複用關鍵詞
 ```
 
-### 场景3: 扩展特征库
+### 場景2: 學習新特徵
 
 ```
-用户: "这个新Prompt有什么特殊的皮肤质感？"
-输入: "wet skin texture, abundant realistic water droplets..."
+使用者: "這個眼型叫什麼？'manic luminous ruby-pink eyes, heavy seductive half-lidded gaze'"
 
-→ 识别为: wet_dewy_droplets (湿润水感肌)
-→ 可添加到库中（如果是新类型）
+→ 匹配到: half_lidded_seductive (半閉誘惑眼)
+→ 顯示該眼型的完整資訊和使用建議
+```
+
+### 場景3: 擴充套件特徵庫
+
+```
+使用者: "這個新Prompt有什麼特殊的皮膚質感？"
+輸入: "wet skin texture, abundant realistic water droplets..."
+
+→ 識別為: wet_dewy_droplets (溼潤水感肌)
+→ 可新增到庫中（如果是新型別）
 ```
 
 ---
 
-## 💡 关键词匹配表
+## 💡 關鍵詞匹配表
 
-### 眼型关键词
+### 眼型關鍵詞
 
-| 关键词组 | 匹配分类 |
+| 關鍵片語 | 匹配分類 |
 |---------|---------|
 | large expressive almond, thick natural lashes | large_expressive_almond |
 | large blue eyes, natural contact lenses | large_blue_expressive |
 | heavy seductive half-lidded, manic eyes | half_lidded_seductive |
 | green eyes, anime eye style | anime_hybrid_green |
 
-### 皮肤关键词
+### 皮膚關鍵詞
 
-| 关键词组 | 匹配分类 |
+| 關鍵片語 | 匹配分類 |
 |---------|---------|
 | flawless porcelain, radiant jade-like | porcelain_flawless_radiant |
 | realistic texture, visible pores | realistic_textured_pores |
@@ -191,12 +191,12 @@ else:
 
 ---
 
-## 📁 数据依赖
+## 📁 資料依賴
 
 ```
 facial_features_library.json (v1.2)
-├── 各类别的 keywords 字段用于匹配
-└── classification_code 用于标识
+├── 各類別的 keywords 欄位用於匹配
+└── classification_code 用於標識
 
 module_library.json
 ├── photography_genres.<genre>.key_features
@@ -205,29 +205,29 @@ module_library.json
 
 ---
 
-## ⚠️ 注意事项
+## ⚠️ 注意事項
 
-1. **关键词优先级**
-   - 完全匹配 > 部分匹配 > 语义相似
+1. **關鍵詞優先順序**
+   - 完全匹配 > 部分匹配 > 語義相似
 
-2. **多义词处理**
-   - "young" 可能是年龄或形容词
-   - 需结合上下文判断
+2. **多義詞處理**
+   - "young" 可能是年齡或形容詞
+   - 需結合上下文判斷
 
-3. **新特征识别**
-   - 如果无法匹配到已有分类
-   - 提示用户这可能是新特征
-   - 建议手动分类或添加到库
+3. **新特徵識別**
+   - 如果無法匹配到已有分類
+   - 提示使用者這可能是新特徵
+   - 建議手動分類或新增到庫
 
-4. **置信度评分**
+4. **置信度評分**
    - 完全匹配: 100%
    - 部分匹配: 70-90%
-   - 语义相似: 50-70%
-   - 低于50%: 需人工确认
+   - 語義相似: 50-70%
+   - 低於50%: 需人工確認
 
 ---
 
-**模块状态**: ✅ 可用
-**功能**: 自动识别、关键词匹配、分类标注
-**准确度**: 对已有28个分类识别率 > 90%
-**扩展性**: 支持添加新分类和关键词
+**模組狀態**: ✅ 可用
+**功能**: 自動識別、關鍵詞匹配、分類標註
+**準確度**: 對已有28個分類識別率 > 90%
+**擴充套件性**: 支援新增新分類和關鍵詞

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Xray Helper - 简单的数据读取和保存工具
-仅负责文件IO，不做任何分析决策
+Xray Helper - 簡單的資料讀取和儲存工具
+僅負責檔案IO，不做任何分析決策
 """
 
 import json
@@ -14,11 +14,11 @@ from datetime import datetime
 def load_prompts(pattern: str = "*_extracted.json",
                  base_dir: str = "extracted_results") -> List[Dict]:
     """
-    读取已分析的提示词JSON文件
+    讀取已分析的提示詞JSON檔案
 
     Args:
-        pattern: 文件名模式（如：moss_terrarium*）
-        base_dir: JSON文件所在目录
+        pattern: 檔名模式（如：moss_terrarium*）
+        base_dir: JSON檔案所在目錄
 
     Returns:
         List of prompt data
@@ -27,7 +27,7 @@ def load_prompts(pattern: str = "*_extracted.json",
     prompts = []
 
     if not base_path.exists():
-        print(f"❌ 目录不存在: {base_path}")
+        print(f"❌ 目錄不存在: {base_path}")
         return []
 
     for json_file in base_path.glob(pattern):
@@ -35,17 +35,17 @@ def load_prompts(pattern: str = "*_extracted.json",
             with open(json_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-                # 处理单个提示词或提示词数组
+                # 處理單個提示詞或提示詞陣列
                 if isinstance(data, list):
                     prompts.extend(data)
                 else:
                     prompts.append(data)
 
-                print(f"✅ 已加载: {json_file.name}")
+                print(f"✅ 已載入: {json_file.name}")
         except Exception as e:
-            print(f"❌ 加载失败 {json_file.name}: {e}")
+            print(f"❌ 載入失敗 {json_file.name}: {e}")
 
-    print(f"\n📊 总计加载: {len(prompts)} 个提示词")
+    print(f"\n📊 總計載入: {len(prompts)} 個提示詞")
     return prompts
 
 
@@ -54,31 +54,31 @@ def save_knowledge_card(dimension: str,
                        metadata: Dict = None,
                        output_dir: str = "knowledge_base") -> str:
     """
-    保存知识卡片到Markdown文件
+    儲存知識卡片到Markdown檔案
 
     Args:
-        dimension: 维度名称（color/layout/symbols等）
-        content: Markdown内容
-        metadata: 可选的元数据
-        output_dir: 输出目录
+        dimension: 維度名稱（color/layout/symbols等）
+        content: Markdown內容
+        metadata: 可選的元資料
+        output_dir: 輸出目錄
 
     Returns:
-        保存的文件路径
+        儲存的檔案路徑
     """
     output_path = Path(output_dir)
     output_path.mkdir(exist_ok=True)
 
-    # 生成文件名
+    # 生成檔名
     filename = f"how_to_control_{dimension}.md"
     filepath = output_path / filename
 
-    # 保存文件
+    # 儲存檔案
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
 
-    print(f"💾 已保存: {filepath}")
+    print(f"💾 已儲存: {filepath}")
 
-    # 如果有元数据，也保存JSON版本
+    # 如果有元資料，也儲存JSON版本
     if metadata:
         json_filename = f"how_to_control_{dimension}.json"
         json_filepath = output_path / json_filename
@@ -93,30 +93,30 @@ def save_knowledge_card(dimension: str,
         with open(json_filepath, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-        print(f"💾 已保存元数据: {json_filepath}")
+        print(f"💾 已儲存元資料: {json_filepath}")
 
     return str(filepath)
 
 
 def list_available_prompts(base_dir: str = "extracted_results") -> List[str]:
     """
-    列出所有可用的提示词文件
+    列出所有可用的提示詞檔案
 
     Args:
-        base_dir: JSON文件所在目录
+        base_dir: JSON檔案所在目錄
 
     Returns:
-        文件名列表
+        檔名列表
     """
     base_path = Path(base_dir)
 
     if not base_path.exists():
-        print(f"❌ 目录不存在: {base_path}")
+        print(f"❌ 目錄不存在: {base_path}")
         return []
 
     files = sorted([f.name for f in base_path.glob("*_extracted.json")])
 
-    print(f"\n📁 可用的提示词文件 ({len(files)}个):")
+    print(f"\n📁 可用的提示詞檔案 ({len(files)}個):")
     for f in files:
         print(f"  - {f}")
 
@@ -124,28 +124,28 @@ def list_available_prompts(base_dir: str = "extracted_results") -> List[str]:
 
 
 if __name__ == '__main__':
-    """测试函数"""
+    """測試函式"""
     print("=" * 60)
-    print("  🔬 Xray Helper - 工具测试")
+    print("  🔬 Xray Helper - 工具測試")
     print("=" * 60)
 
-    # 测试：列出可用文件
+    # 測試：列出可用檔案
     list_available_prompts()
 
-    # 测试：加载提示词
+    # 測試：載入提示詞
     print("\n" + "=" * 60)
     prompts = load_prompts()
 
     if prompts:
-        print(f"\n📋 第一个提示词示例:")
+        print(f"\n📋 第一個提示詞示例:")
         print(f"  ID: {prompts[0].get('prompt_id', 'unknown')}")
-        print(f"  主题: {prompts[0].get('theme', 'unknown')}")
+        print(f"  主題: {prompts[0].get('theme', 'unknown')}")
 
-    # 测试：保存知识卡片
+    # 測試：儲存知識卡片
     print("\n" + "=" * 60)
-    test_content = """# 测试知识卡片
+    test_content = """# 測試知識卡片
 
-这是一个测试。
+這是一個測試。
 """
 
     save_knowledge_card(
@@ -155,4 +155,4 @@ if __name__ == '__main__':
     )
 
     print("\n" + "=" * 60)
-    print("✅ 测试完成！")
+    print("✅ 測試完成！")

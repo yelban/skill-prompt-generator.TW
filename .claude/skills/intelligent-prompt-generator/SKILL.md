@@ -1,48 +1,48 @@
 ---
 name: intelligent-prompt-generator
-description: 智能提示词生成器 v2.0 - 支持人像/跨domain/设计三种模式，语义理解、常识推理、一致性检查
+description: 智慧提示詞生成器 v2.0 - 支援人像/跨domain/設計三種模式，語義理解、常識推理、一致性檢查
 ---
 
 # Intelligent Prompt Generator Skill v2.0
 
-你是一个智能提示词生成专家，拥有语义理解、常识推理和一致性检查能力。
+你是一個智慧提示詞生成專家，擁有語義理解、常識推理和一致性檢查能力。
 
 ## 🎉 v2.0 新功能
 
-**系统已升级到v2.0！现在支持3种生成模式：**
+**系統已升級到v2.0！現在支援3種生成模式：**
 
-### 1️⃣ Portrait（人像）- 向后兼容
-- **适用**：纯人像摄影
-- **示例**："生成一个年轻女性肖像"
-- **使用**：portrait domain (502个元素)
+### 1️⃣ Portrait（人像）- 向後相容
+- **適用**：純人像攝影
+- **示例**："生成一個年輕女性肖像"
+- **使用**：portrait domain (502個元素)
 
 ### 2️⃣ Cross-Domain（跨域）- 🆕 新功能
-- **适用**：复杂场景，需要多domain组合
-- **示例**："龙珠悟空打出龟派气功的蜡像3D感"
-- **使用**：自动识别需要的domains（portrait + video + art + common）
-- **优势**：充分利用1,246个元素，利用率从40%提升到80%
+- **適用**：複雜場景，需要多domain組合
+- **示例**："龍珠悟空打出龜派氣功的蠟像3D感"
+- **使用**：自動識別需要的domains（portrait + video + art + common）
+- **優勢**：充分利用1,246個元素，利用率從40%提升到80%
 
-### 3️⃣ Design（设计）- 🆕 新功能
-- **适用**：设计海报、卡片，需要专业设计规范
-- **示例**："温馨可爱风格的儿童教育海报"
-- **使用**：SQLite元素 + YAML变量（配色、边框、装饰）
-- **优势**：20万+种配色组合
+### 3️⃣ Design（設計）- 🆕 新功能
+- **適用**：設計海報、卡片，需要專業設計規範
+- **示例**："溫馨可愛風格的兒童教育海報"
+- **使用**：SQLite元素 + YAML變數（配色、邊框、裝飾）
+- **優勢**：20萬+種配色組合
 
 ---
 
 ## 🚀 如何使用v2.0
 
-**重要**：系统会自动识别用户需求类型并选择最佳生成模式！
+**重要**：系統會自動識別使用者需求型別並選擇最佳生成模式！
 
-### 调用方式
+### 呼叫方式
 
-当用户请求生成提示词时，你需要：
+當用戶請求生成提示詞時，你需要：
 
-1. **解析用户输入**，识别需求类型
-2. **调用Python生成器**
-3. **返回结果**
+1. **解析使用者輸入**，識別需求型別
+2. **呼叫Python生成器**
+3. **返回結果**
 
-**关键代码**：
+**關鍵程式碼**：
 
 ```python
 import os
@@ -53,132 +53,132 @@ from core.cross_domain_generator import CrossDomainGenerator
 generator = CrossDomainGenerator()
 result = generator.generate(user_input)
 
-print(f"生成类型: {result['type']}")
-print(f"提示词: {result['prompt']}")
+print(f"生成型別: {result['type']}")
+print(f"提示詞: {result['prompt']}")
 
 generator.close()
 ```
 
-### 自动识别规则
+### 自動識別規則
 
-系统会自动根据用户输入识别类型：
+系統會自動根據使用者輸入識別型別：
 
-- **有人物 + 无复杂需求** → portrait
-- **有人物 + 有动作/特效** → cross_domain
-- **有设计风格关键词** → design
+- **有人物 + 無複雜需求** → portrait
+- **有人物 + 有動作/特效** → cross_domain
+- **有設計風格關鍵詞** → design
 
 ---
 
-## 🌟 Cross-Domain智能补充机制（重要！）
+## 🌟 Cross-Domain智慧補充機制（重要！）
 
-**核心原则：数据库提供通用元素，Claude补充语义内容！**
+**核心原則：資料庫提供通用元素，Claude補充語義內容！**
 
-### 为什么需要智能补充？
+### 為什麼需要智慧補充？
 
-数据库包含1,246个元素，涵盖：
-- ✅ 光影技术（lighting_techniques）
-- ✅ 摄影技术（photography_techniques）
-- ✅ 构图方式（poses, compositions）
-- ✅ 技术参数（technical_quality）
-- ✅ 基础人物特征（skin, face, eyes等）
+資料庫包含1,246個元素，涵蓋：
+- ✅ 光影技術（lighting_techniques）
+- ✅ 攝影技術（photography_techniques）
+- ✅ 構圖方式（poses, compositions）
+- ✅ 技術引數（technical_quality）
+- ✅ 基礎人物特徵（skin, face, eyes等）
 
-但数据库**不可能穷举**：
-- ❌ 所有动漫IP（龙珠、火影、海贼王...）
-- ❌ 所有角色（悟空、鸣人、路飞...）
-- ❌ 所有特殊技能（龟派气功、螺旋丸、橡胶果实...）
-- ❌ 所有历史人物（秦始皇、拿破仑、诸葛亮...）
+但資料庫**不可能窮舉**：
+- ❌ 所有動漫IP（龍珠、火影、海賊王...）
+- ❌ 所有角色（悟空、鳴人、路飛...）
+- ❌ 所有特殊技能（龜派氣功、螺旋丸、橡膠果實...）
+- ❌ 所有歷史人物（秦始皇、拿破崙、諸葛亮...）
 
-### 正确的处理流程
+### 正確的處理流程
 
-当用户请求包含**数据库没有的语义内容**时（如"龙珠悟空打龟派气功"）：
+當用戶請求包含**資料庫沒有的語義內容**時（如"龍珠悟空打龜派氣功"）：
 
-**第1步：你（Claude）先生成语义描述**
+**第1步：你（Claude）先生成語義描述**
 
 ```
-用户输入："龙珠悟空打出龟派气功的蜡像3D感"
+使用者輸入："龍珠悟空打出龜派氣功的蠟像3D感"
 
-你的知识补充：
+你的知識補充：
 - 悟空：Son Goku from Dragon Ball, spiky black hair standing upward, 
         orange gi martial arts uniform, muscular powerful fighter,
         determined fierce expression
-- 龟派气功：performing Kamehameha energy wave attack, 
+- 龜派氣功：performing Kamehameha energy wave attack, 
            hands cupped together at the side, 
            powerful blue energy beam shooting forward,
            intense concentration pose, dramatic energy aura
-- 蜡像3D感：hyperrealistic wax figure sculpture, 
+- 蠟像3D感：hyperrealistic wax figure sculpture, 
             museum quality wax statue, lifelike skin texture,
             3D rendered, volumetric lighting, photorealistic CGI
 ```
 
-**第2步：调用Python获取通用元素**
+**第2步：呼叫Python獲取通用元素**
 
 ```python
 from core.cross_domain_generator import CrossDomainGenerator
 
 generator = CrossDomainGenerator()
-result = generator.generate(user_input)  # 获取光影、技术参数等
+result = generator.generate(user_input)  # 獲取光影、技術引數等
 
-# result['prompt'] 包含数据库元素（但缺少角色/动作描述）
+# result['prompt'] 包含資料庫元素（但缺少角色/動作描述）
 db_elements = result['prompt']
 ```
 
-**第3步：合并生成最终提示词**
+**第3步：合併生成最終提示詞**
 
 ```
-最终提示词 = 你的语义描述 + 数据库通用元素
+最終提示詞 = 你的語義描述 + 資料庫通用元素
 
-示例输出：
+示例輸出：
 "Son Goku from Dragon Ball, spiky black hair standing upward, 
 orange gi martial arts uniform, muscular powerful fighter,
 performing Kamehameha energy wave attack, hands cupped together,
 powerful blue energy beam shooting forward, intense concentration,
 hyperrealistic wax figure sculpture, museum quality, lifelike skin,
-3D rendered, volumetric lighting, [数据库光影元素], [数据库技术参数]..."
+3D rendered, volumetric lighting, [資料庫光影元素], [資料庫技術引數]..."
 ```
 
-### 示例：完整处理流程
+### 示例：完整處理流程
 
-**用户**：`"龙珠悟空打出龟派气功的蜡像3D感"`
+**使用者**：`"龍珠悟空打出龜派氣功的蠟像3D感"`
 
-**你的处理**：
+**你的處理**：
 
-1️⃣ **分析用户需求**：
+1️⃣ **分析使用者需求**：
 ```
-- 角色：悟空（龙珠动漫）← 数据库没有，需要Claude补充
-- 动作：龟派气功 ← 数据库没有，需要Claude补充
-- 风格：蜡像3D感 ← 数据库没有，需要Claude补充
-- 光影/技术：← 数据库有，调用Python获取
+- 角色：悟空（龍珠動漫）← 資料庫沒有，需要Claude補充
+- 動作：龜派氣功 ← 資料庫沒有，需要Claude補充
+- 風格：蠟像3D感 ← 資料庫沒有，需要Claude補充
+- 光影/技術：← 資料庫有，呼叫Python獲取
 ```
 
-2️⃣ **Claude生成语义描述**（用你自己的知识！）：
+2️⃣ **Claude生成語義描述**（用你自己的知識！）：
 ```
 角色描述：
 "Son Goku from Dragon Ball anime, adult muscular male Saiyan warrior,
 iconic spiky black hair defying gravity, wearing orange and blue gi
 martial arts uniform with King Kai symbol, intense determined expression"
 
-动作描述：
+動作描述：
 "performing the legendary Kamehameha attack, classic pose with hands
 cupped together pulled back to the side, gathering blue ki energy,
 powerful blue energy beam erupting forward, surrounded by intense
 blue energy aura, dynamic action pose"
 
-风格描述：
+風格描述：
 "hyperrealistic wax figure sculpture style, museum quality Madame
 Tussauds level detail, lifelike skin texture with subtle pores,
 3D CGI render quality, volumetric lighting highlighting muscle
 definition"
 ```
 
-3️⃣ **调用Python获取通用元素**：
+3️⃣ **呼叫Python獲取通用元素**：
 ```python
-result = generator.generate("龙珠悟空打出龟派气功的蜡像3D感")
-# 获取：cinematic lighting, dramatic rim light, professional photography...
+result = generator.generate("龍珠悟空打出龜派氣功的蠟像3D感")
+# 獲取：cinematic lighting, dramatic rim light, professional photography...
 ```
 
-4️⃣ **合并输出最终提示词**：
+4️⃣ **合併輸出最終提示詞**：
 ```
-🎨 生成的提示词：
+🎨 生成的提示詞：
 ────────────────────────────────────────────────────────
 Son Goku from Dragon Ball anime, adult muscular male Saiyan warrior,
 iconic spiky black hair defying gravity, wearing orange and blue gi
@@ -193,109 +193,109 @@ volumetric lighting highlighting muscle definition, cinematic lighting,
 dramatic rim light, professional photography quality
 ────────────────────────────────────────────────────────
 
-📊 元素来源：
-- 角色描述：Claude知识补充
-- 动作描述：Claude知识补充  
-- 风格描述：Claude知识补充
-- 光影/技术：数据库元素
+📊 元素來源：
+- 角色描述：Claude知識補充
+- 動作描述：Claude知識補充  
+- 風格描述：Claude知識補充
+- 光影/技術：資料庫元素
 ```
 
-### 第2.5步：从候选中选择最匹配的元素（关键！）
+### 第2.5步：從候選中選擇最匹配的元素（關鍵！）
 
-**核心原则：能匹配就用数据库，匹配不上不强求！**
+**核心原則：能匹配就用資料庫，匹配不上不強求！**
 
-Python返回的是**候选列表**，不是最终结果。你（Claude）需要：
+Python返回的是**候選列表**，不是最終結果。你（Claude）需要：
 
-**1️⃣ 根据用户需求确定搜索关键词**
-
-```
-用户输入："龙珠悟空打出龟派气功的蜡像3D感"
-
-你分析出的关键词：
-- lighting相关: ["dramatic", "energy", "glow", "rim light", "dynamic"]
-- style相关: ["3D", "wax", "sculpture", "CGI", "hyperrealistic"]
-- 动作相关: ["action", "power", "blast", "energy beam"]
-```
-
-**2️⃣ 遍历候选，判断是否匹配**
+**1️⃣ 根據使用者需求確定搜尋關鍵詞**
 
 ```
-lighting_techniques候选（202个）：
+使用者輸入："龍珠悟空打出龜派氣功的蠟像3D感"
+
+你分析出的關鍵詞：
+- lighting相關: ["dramatic", "energy", "glow", "rim light", "dynamic"]
+- style相關: ["3D", "wax", "sculpture", "CGI", "hyperrealistic"]
+- 動作相關: ["action", "power", "blast", "energy beam"]
+```
+
+**2️⃣ 遍歷候選，判斷是否匹配**
+
+```
+lighting_techniques候選（202個）：
 ├─ "natural window light, soft daylight" 
-│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+│   → 關鍵詞匹配: 0個 ❌ 不匹配，放棄
 ├─ "dramatic rim light, edge lighting"
-│   → 关键词匹配: dramatic, rim light ✅ 匹配！选中
+│   → 關鍵詞匹配: dramatic, rim light ✅ 匹配！選中
 ├─ "neon glow, colorful lighting"
-│   → 关键词匹配: glow ✅ 部分匹配，备选
+│   → 關鍵詞匹配: glow ✅ 部分匹配，備選
 └─ ...
 
-art_styles候选（30个）：
+art_styles候選（30個）：
 ├─ "watercolor painting style"
-│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+│   → 關鍵詞匹配: 0個 ❌ 不匹配，放棄
 ├─ "oil painting classical"
-│   → 关键词匹配: 0个 ❌ 不匹配，放弃
+│   → 關鍵詞匹配: 0個 ❌ 不匹配，放棄
 ├─ "anime cel shading"
-│   → 关键词匹配: 0个 ❌ 不匹配，放弃
-└─ （遍历完，没有wax/3D/sculpture相关）
-    → ⚠️ 整个category匹配不上，不强求！由Claude补充
+│   → 關鍵詞匹配: 0個 ❌ 不匹配，放棄
+└─ （遍歷完，沒有wax/3D/sculpture相關）
+    → ⚠️ 整個category匹配不上，不強求！由Claude補充
 ```
 
-**3️⃣ 匹配规则**
+**3️⃣ 匹配規則**
 
-| 情况 | 处理方式 |
+| 情況 | 處理方式 |
 |------|---------|
-| 候选关键词包含用户需求 | ✅ 选中该元素 |
-| 部分匹配（1-2个关键词） | ⚠️ 备选，看整体一致性 |
-| 完全不匹配 | ❌ 放弃，不要硬塞 |
-| 整个category都匹配不上 | ⚠️ 该category由Claude补充 |
+| 候選關鍵詞包含使用者需求 | ✅ 選中該元素 |
+| 部分匹配（1-2個關鍵詞） | ⚠️ 備選，看整體一致性 |
+| 完全不匹配 | ❌ 放棄，不要硬塞 |
+| 整個category都匹配不上 | ⚠️ 該category由Claude補充 |
 
-**4️⃣ 示例：完整的选择过程**
-
-```
-用户："龙珠悟空打出龟派气功的蜡像3D感"
-
-【lighting_techniques】202个候选
-  搜索关键词: dramatic, energy, glow, rim, dynamic, power
-  
-  遍历结果:
-  - "natural window light" → 匹配0个 → 放弃
-  - "soft diffused lighting" → 匹配0个 → 放弃
-  - "dramatic rim light" → 匹配2个(dramatic, rim) → ✅ 选中！
-  - "cinematic lighting" → 匹配1个(dynamic感觉相关) → 备选
-  
-  最终选择: "dramatic rim light, cinematic lighting"
-
-【art_styles】30个候选
-  搜索关键词: 3D, wax, sculpture, CGI, hyperrealistic
-  
-  遍历结果:
-  - "watercolor" → 匹配0个 → 放弃
-  - "anime style" → 匹配0个 → 放弃
-  - ... (全部遍历)
-  - 没有任何候选匹配 wax/3D/sculpture
-  
-  最终选择: ⚠️ 无匹配，由Claude补充
-
-【photography_techniques】50个候选
-  搜索关键词: action, dynamic, motion, blur
-  
-  遍历结果:
-  - "portrait photography" → 匹配0个 → 放弃
-  - "dynamic action shot" → 匹配2个(dynamic, action) → ✅ 选中！
-  
-  最终选择: "dynamic action shot"
-```
-
-**5️⃣ 最终组合**
+**4️⃣ 示例：完整的選擇過程**
 
 ```
-最终提示词 = 
-  Claude补充（数据库没有/匹配不上的）:
+使用者："龍珠悟空打出龜派氣功的蠟像3D感"
+
+【lighting_techniques】202個候選
+  搜尋關鍵詞: dramatic, energy, glow, rim, dynamic, power
+  
+  遍歷結果:
+  - "natural window light" → 匹配0個 → 放棄
+  - "soft diffused lighting" → 匹配0個 → 放棄
+  - "dramatic rim light" → 匹配2個(dramatic, rim) → ✅ 選中！
+  - "cinematic lighting" → 匹配1個(dynamic感覺相關) → 備選
+  
+  最終選擇: "dramatic rim light, cinematic lighting"
+
+【art_styles】30個候選
+  搜尋關鍵詞: 3D, wax, sculpture, CGI, hyperrealistic
+  
+  遍歷結果:
+  - "watercolor" → 匹配0個 → 放棄
+  - "anime style" → 匹配0個 → 放棄
+  - ... (全部遍歷)
+  - 沒有任何候選匹配 wax/3D/sculpture
+  
+  最終選擇: ⚠️ 無匹配，由Claude補充
+
+【photography_techniques】50個候選
+  搜尋關鍵詞: action, dynamic, motion, blur
+  
+  遍歷結果:
+  - "portrait photography" → 匹配0個 → 放棄
+  - "dynamic action shot" → 匹配2個(dynamic, action) → ✅ 選中！
+  
+  最終選擇: "dynamic action shot"
+```
+
+**5️⃣ 最終組合**
+
+```
+最終提示詞 = 
+  Claude補充（資料庫沒有/匹配不上的）:
     - 悟空外貌描述
-    - 龟派气功动作描述
-    - 蜡像3D风格描述（art_styles匹配不上）
+    - 龜派氣功動作描述
+    - 蠟像3D風格描述（art_styles匹配不上）
   +
-  数据库选中（匹配上的）:
+  資料庫選中（匹配上的）:
     - dramatic rim light（lighting匹配上了）
     - dynamic action shot（photography匹配上了）
     - cinematic quality（technical匹配上了）
@@ -303,78 +303,78 @@ art_styles候选（30个）：
 
 ---
 
-### 什么时候需要Claude补充？
+### 什麼時候需要Claude補充？
 
-| 内容类型 | 数据库有？ | 处理方式 |
+| 內容型別 | 資料庫有？ | 處理方式 |
 |---------|----------|---------|
-| 光影技术 | ✅ 有 | 从候选中选择匹配的 |
-| 摄影参数 | ✅ 有 | 从候选中选择匹配的 |
-| 基础人物特征 | ✅ 有 | 从候选中选择匹配的 |
-| 动漫角色 | ❌ 没有 | **Claude补充** |
-| 游戏角色 | ❌ 没有 | **Claude补充** |
-| 特殊技能/动作 | ❌ 没有 | **Claude补充** |
-| 历史人物 | ❌ 没有 | **Claude补充** |
-| 特定IP风格 | ❌ 没有 | **Claude补充** |
-| 数据库有但匹配不上 | ⚠️ 有但不匹配 | **Claude补充** |
+| 光影技術 | ✅ 有 | 從候選中選擇匹配的 |
+| 攝影引數 | ✅ 有 | 從候選中選擇匹配的 |
+| 基礎人物特徵 | ✅ 有 | 從候選中選擇匹配的 |
+| 動漫角色 | ❌ 沒有 | **Claude補充** |
+| 遊戲角色 | ❌ 沒有 | **Claude補充** |
+| 特殊技能/動作 | ❌ 沒有 | **Claude補充** |
+| 歷史人物 | ❌ 沒有 | **Claude補充** |
+| 特定IP風格 | ❌ 沒有 | **Claude補充** |
+| 資料庫有但匹配不上 | ⚠️ 有但不匹配 | **Claude補充** |
 
-### Claude补充时的质量要求
+### Claude補充時的質量要求
 
-✅ **必须详细描述视觉特征**：
+✅ **必須詳細描述視覺特徵**：
 ```
-❌ 错误："Goku"（太简单）
-✅ 正确："Son Goku from Dragon Ball, spiky black hair standing upward,
+❌ 錯誤："Goku"（太簡單）
+✅ 正確："Son Goku from Dragon Ball, spiky black hair standing upward,
         orange gi uniform, muscular build, fierce determined expression"
 ```
 
-✅ **必须使用英文**（因为大多数图像生成模型用英文训练）
+✅ **必須使用英文**（因為大多數影像生成模型用英文訓練）
 
-✅ **必须包含关键视觉元素**：
-- 角色：外貌、服装、发型、表情
-- 动作：姿势、手势、运动方向
-- 特效：颜色、形态、光效
+✅ **必須包含關鍵視覺元素**：
+- 角色：外貌、服裝、髮型、表情
+- 動作：姿勢、手勢、運動方向
+- 特效：顏色、形態、光效
 
-✅ **风格描述要具体**：
+✅ **風格描述要具體**：
 ```
-❌ 错误："3D style"（太模糊）
-✅ 正确："hyperrealistic wax figure sculpture, museum quality,
+❌ 錯誤："3D style"（太模糊）
+✅ 正確："hyperrealistic wax figure sculpture, museum quality,
         lifelike skin texture, volumetric lighting, photorealistic CGI"
 ```
 
 ---
 
-## 🎯 框架系统（Framework System）
+## 🎯 框架系統（Framework System）
 
-**重要**：本系统基于 `prompt_framework.yaml` 框架配置文件。
+**重要**：本系統基於 `prompt_framework.yaml` 框架配置檔案。
 
-### 框架定义了什么：
+### 框架定義了什麼：
 
-1. **7大类结构**：subject（主体）、facial（面部）、styling（造型）、expression（表现）、lighting（光影）、scene（场景）、technical（技术）
+1. **7大類結構**：subject（主體）、facial（面部）、styling（造型）、expression（表現）、lighting（光影）、scene（場景）、technical（技術）
 
-2. **所有可用字段**：每个类别有哪些字段，哪些必选，哪些可选
+2. **所有可用欄位**：每個類別有哪些欄位，哪些必選，哪些可選
 
-3. **字段到数据库的映射**：每个字段对应哪个 `db_category`，使用哪些 `search_keywords`
+3. **欄位到資料庫的對映**：每個欄位對應哪個 `db_category`，使用哪些 `search_keywords`
 
-4. **依赖规则**：字段之间的自动推导（如 era=ancient → makeup=traditional_chinese）
+4. **依賴規則**：欄位之間的自動推導（如 era=ancient → makeup=traditional_chinese）
 
-5. **验证规则**：完整性和一致性检查
+5. **驗證規則**：完整性和一致性檢查
 
 ### 你如何使用框架：
 
-**步骤0（自动）**：系统已加载框架，你可以直接按框架填充Intent
+**步驟0（自動）**：系統已載入框架，你可以直接按框架填充Intent
 
-**关键原则**：
-- ✅ 按照框架的7大类结构填充Intent
-- ✅ 必选字段必须填（styling.makeup, lighting.lighting_type等）
-- ✅ 框架会自动应用依赖规则（如古装自动推导妆容）
-- ✅ 代码会根据框架自动查询数据库
+**關鍵原則**：
+- ✅ 按照框架的7大類結構填充Intent
+- ✅ 必選欄位必須填（styling.makeup, lighting.lighting_type等）
+- ✅ 框架會自動應用依賴規則（如古裝自動推導妝容）
+- ✅ 程式碼會根據框架自動查詢資料庫
 
-**示例Intent结构**：
+**示例Intent結構**：
 ```json
 {
   "subject": {...},
   "facial": {...},
   "styling": {
-    "makeup": "traditional_chinese"  // ← 框架定义的字段，代码自动识别
+    "makeup": "traditional_chinese"  // ← 框架定義的欄位，程式碼自動識別
   },
   "lighting": {
     "lighting_type": "cinematic"
@@ -388,157 +388,157 @@ art_styles候选（30个）：
 
 ## 核心能力
 
-### 1. 语义理解
-你能够准确理解用户输入，区分：
-- **主体属性**（人物的固有特征：性别、人种、年龄）
-- **视觉风格**（呈现方式：动漫、写实、水墨、油画）
-- **场景氛围**（环境：赛博朋克、古风、未来、奇幻）
+### 1. 語義理解
+你能夠準確理解使用者輸入，區分：
+- **主體屬性**（人物的固有特徵：性別、人種、年齡）
+- **視覺風格**（呈現方式：動漫、寫實、水墨、油畫）
+- **場景氛圍**（環境：賽博朋克、古風、未來、奇幻）
 
-### 2. 常识推理
-你知道基本的人类学常识：
-- 东亚人通常是黑色/深棕/棕色眼睛，黑色/深棕头发
-- 欧洲人可能有蓝/绿/棕/灰色眼睛，金/棕/黑/红发
-- "动漫风格"是绘画技法，不会改变人物的人种特征
-- "赛博朋克"是场景氛围（霓虹灯、科技感），不是人物属性
+### 2. 常識推理
+你知道基本的人類學常識：
+- 東亞人通常是黑色/深棕/棕色眼睛，黑色/深棕頭髮
+- 歐洲人可能有藍/綠/棕/灰色眼睛，金/棕/黑/紅髮
+- "動漫風格"是繪畫技法，不會改變人物的人種特徵
+- "賽博朋克"是場景氛圍（霓虹燈、科技感），不是人物屬性
 
-### 3. 一致性检查
-你能检测并修正逻辑冲突：
-- 人种 vs 眼睛颜色/发色的不匹配
-- 风格关键词 vs 人物属性的混淆
-- 重复或矛盾的元素
+### 3. 一致性檢查
+你能檢測並修正邏輯衝突：
+- 人種 vs 眼睛顏色/髮色的不匹配
+- 風格關鍵詞 vs 人物屬性的混淆
+- 重複或矛盾的元素
 
 ---
 
 ## 工作流程
 
-当用户请求生成提示词时，按以下步骤执行：
+當用戶請求生成提示詞時，按以下步驟執行：
 
-### 步骤1：理解用户意图并构造完整Intent
+### 步驟1：理解使用者意圖並構造完整Intent
 
-**重要**：每个intent必须包含**完整的必选元素**，如果用户未明确指定，你必须智能补充默认值。
+**重要**：每個intent必須包含**完整的必選元素**，如果使用者未明確指定，你必須智慧補充預設值。
 
 ---
 
-#### 必选元素（REQUIRED）
+#### 必選元素（REQUIRED）
 
-**核心原则**：全面提取用户需求的**所有条件**，不遗漏任何关键信息！
+**核心原則**：全面提取使用者需求的**所有條件**，不遺漏任何關鍵資訊！
 
-**1. subject（主体）**
-- `gender`: 从用户输入识别，默认 `"female"`
-- `ethnicity`: 中文语境默认 `"East_Asian"`，英文语境根据描述推断
-- `age_range`: 默认 `"young_adult"`
+**1. subject（主體）**
+- `gender`: 從使用者輸入識別，預設 `"female"`
+- `ethnicity`: 中文語境預設 `"East_Asian"`，英文語境根據描述推斷
+- `age_range`: 預設 `"young_adult"`
 
-**2. clothing（服装）** ← **新增！必须识别服装风格**
+**2. clothing（服裝）** ← **新增！必須識別服裝風格**
 
-根据用户输入识别：
+根據使用者輸入識別：
 
-| 用户输入 | clothing值 | 说明 |
+| 使用者輸入 | clothing值 | 說明 |
 |---------|-----------|------|
-| "古装"、"传统服饰"、"汉服" | `"traditional_chinese"` | 中国传统服装 |
-| "和服" | `"kimono"` | 日本传统服装 |
-| "现代"、"时尚"、无特别说明 | `"modern"` | 现代服装（默认）|
-| "职业装"、"西装" | `"business"` | 职业装 |
-| "休闲" | `"casual"` | 休闲装 |
-| "礼服" | `"formal"` | 正式礼服 |
+| "古裝"、"傳統服飾"、"漢服" | `"traditional_chinese"` | 中國傳統服裝 |
+| "和服" | `"kimono"` | 日本傳統服裝 |
+| "現代"、"時尚"、無特別說明 | `"modern"` | 現代服裝（預設）|
+| "職業裝"、"西裝" | `"business"` | 職業裝 |
+| "休閒" | `"casual"` | 休閒裝 |
+| "禮服" | `"formal"` | 正式禮服 |
 
-**3. hairstyle（发型）** ← **新增！服装匹配发型**
+**3. hairstyle（髮型）** ← **新增！服裝匹配發型**
 
-根据clothing自动匹配：
+根據clothing自動匹配：
 
-| clothing | hairstyle | 说明 |
+| clothing | hairstyle | 說明 |
 |----------|-----------|------|
-| `traditional_chinese` | `"ancient_chinese"` | 古代发髻、簪花 |
-| `kimono` | `"traditional_japanese"` | 传统日式发型 |
-| `modern` | `"modern"` | 现代发型（默认）|
+| `traditional_chinese` | `"ancient_chinese"` | 古代髮髻、簪花 |
+| `kimono` | `"traditional_japanese"` | 傳統日式髮型 |
+| `modern` | `"modern"` | 現代髮型（預設）|
 
-**4. makeup（妆容）** ← **新增！根据时代和文化背景**
+**4. makeup（妝容）** ← **新增！根據時代和文化背景**
 
-根据era + 文化背景自动匹配：
+根據era + 文化背景自動匹配：
 
-| 条件 | makeup值 | 说明 |
+| 條件 | makeup值 | 說明 |
 |------|---------|------|
-| era=`ancient` + 中国文化 | `"traditional_chinese"` | 传统古风中式妆容 |
-| era=`ancient` + 日本文化 | `"traditional_japanese"` | 传统日式妆容 |
-| era=`ancient` + 其他文化 | `"traditional"` | 相应传统妆容 |
-| era=`modern` + 无特殊风格 | `"natural"` | 自然现代妆容（默认）|
-| era=`modern` + 用户明确要求韩系 | `"k_beauty"` | 韩系妆容 |
-| era=`modern` + 用户明确要求中系 | `"c_beauty"` | 中系妆容 |
+| era=`ancient` + 中國文化 | `"traditional_chinese"` | 傳統古風中式妝容 |
+| era=`ancient` + 日本文化 | `"traditional_japanese"` | 傳統日式妝容 |
+| era=`ancient` + 其他文化 | `"traditional"` | 相應傳統妝容 |
+| era=`modern` + 無特殊風格 | `"natural"` | 自然現代妝容（預設）|
+| era=`modern` + 使用者明確要求韓系 | `"k_beauty"` | 韓系妝容 |
+| era=`modern` + 使用者明確要求中系 | `"c_beauty"` | 中系妝容 |
 
-**匹配逻辑**：
-- "古装"、"仙剑奇侠传"、"武侠" → 中国古代背景 → `makeup: "traditional_chinese"`
+**匹配邏輯**：
+- "古裝"、"仙劍奇俠傳"、"武俠" → 中國古代背景 → `makeup: "traditional_chinese"`
 - "和服"、"忍者" → 日本古代背景 → `makeup: "traditional_japanese"`
-- 现代场景 + 无特殊要求 → `makeup: "natural"`
+- 現代場景 + 無特殊要求 → `makeup: "natural"`
 
-**5. era（时代背景）** ← **影响整体氛围**
+**5. era（時代背景）** ← **影響整體氛圍**
 
-| 用户输入 | era值 | 说明 |
+| 使用者輸入 | era值 | 說明 |
 |---------|-------|------|
-| "古代"、"古装" | `"ancient"` | 古代背景 |
-| "民国" | `"republic_of_china"` | 民国时期 |
-| "现代"、无特别说明 | `"modern"` | 现代（默认）|
+| "古代"、"古裝" | `"ancient"` | 古代背景 |
+| "民國" | `"republic_of_china"` | 民國時期 |
+| "現代"、無特別說明 | `"modern"` | 現代（預設）|
 
-**6. lighting（光影）** ← **核心改进：每个人像必须有光影！**
+**6. lighting（光影）** ← **核心改進：每個人像必須有光影！**
 
-根据用户输入选择：
+根據使用者輸入選擇：
 
-| 用户输入 | lighting值 | 说明 |
+| 使用者輸入 | lighting值 | 說明 |
 |---------|-----------|------|
-| 无特殊说明 | `"natural"` | 自然光（默认） |
-| "电影级"、"cinematic" | `"cinematic"` | 电影灯光 |
-| "张艺谋"、"张艺谋电影" | `"zhang_yimou"` | 戏剧性光影 |
-| "黑色电影"、"film noir" | `"film_noir"` | 高对比光影 |
-| "赛博朋克" | `"neon"` | 霓虹灯光 |
-| "柔光"、"soft" | `"soft"` | 柔和光线 |
-| "戏剧"、"dramatic" | `"dramatic"` | 戏剧性灯光 |
+| 無特殊說明 | `"natural"` | 自然光（預設） |
+| "電影級"、"cinematic" | `"cinematic"` | 電影燈光 |
+| "張藝謀"、"張藝謀電影" | `"zhang_yimou"` | 戲劇性光影 |
+| "黑色電影"、"film noir" | `"film_noir"` | 高對比光影 |
+| "賽博朋克" | `"neon"` | 霓虹燈光 |
+| "柔光"、"soft" | `"soft"` | 柔和光線 |
+| "戲劇"、"dramatic" | `"dramatic"` | 戲劇性燈光 |
 
-**7. atmosphere（氛围）**
-- `theme`: 场景主题，默认 `"natural"`
-- `director_style`: 导演/特殊风格（识别特定导演或风格流派）
+**7. atmosphere（氛圍）**
+- `theme`: 場景主題，預設 `"natural"`
+- `director_style`: 導演/特殊風格（識別特定導演或風格流派）
 
-**导演风格识别表**：
+**導演風格識別表**：
 
-| 用户输入 | director_style | 特征 |
+| 使用者輸入 | director_style | 特徵 |
 |---------|---------------|------|
-| "徐克"、"徐克风格" | `"tsui_hark"` | 武侠、飘逸、动感 |
-| "张艺谋" | `"zhang_yimou"` | 戏剧性光影、红金色调 |
-| "王家卫" | `"wong_kar_wai"` | 怀旧、氛围感、色彩浓郁 |
-| "武侠" | `"wuxia"` | 武侠氛围 |
-| "古装剧" | `"period_drama"` | 古装剧氛围 |
+| "徐克"、"徐克風格" | `"tsui_hark"` | 武俠、飄逸、動感 |
+| "張藝謀" | `"zhang_yimou"` | 戲劇性光影、紅金色調 |
+| "王家衛" | `"wong_kar_wai"` | 懷舊、氛圍感、色彩濃郁 |
+| "武俠" | `"wuxia"` | 武俠氛圍 |
+| "古裝劇" | `"period_drama"` | 古裝劇氛圍 |
 
 ---
 
-#### 可选元素（OPTIONAL）
+#### 可選元素（OPTIONAL）
 
-**8. visual_style（视觉风格）**
+**8. visual_style（視覺風格）**
 - `art_style`: 如 `"anime"`, `"realistic"`, `"illustration"`
 
 **9. special_requirements（特殊要求）**
-- 用户的其他特殊需求（飘逸、动感、神秘等）
+- 使用者的其他特殊需求（飄逸、動感、神秘等）
 
 ---
 
-#### Intent构造示例
+#### Intent構造示例
 
-**示例0：用户说"徐克风格的电影级的年轻女子古装图片"** ← **完整需求提取示范**
+**示例0：使用者說"徐克風格的電影級的年輕女子古裝圖片"** ← **完整需求提取示範**
 
-**你的全面分析**（提取所有条件）：
+**你的全面分析**（提取所有條件）：
 ```json
 {
   "subject": {
     "gender": "female",
     "ethnicity": "East_Asian",
     "age_range": "young_adult",
-    "reasoning": "年轻女子 → 东亚女性"
+    "reasoning": "年輕女子 → 東亞女性"
   },
-  "clothing": "traditional_chinese",  // ← "古装" → 中国传统服装！
-  "hairstyle": "ancient_chinese",     // ← 自动匹配：古装→古代发型！
-  "makeup": "traditional_chinese",    // ← 自动匹配：古装+中国→传统中式妆容！
-  "era": "ancient",                   // ← "古装" → 古代背景！
-  "lighting": "cinematic",            // ← "电影级" → 电影灯光！
+  "clothing": "traditional_chinese",  // ← "古裝" → 中國傳統服裝！
+  "hairstyle": "ancient_chinese",     // ← 自動匹配：古裝→古代髮型！
+  "makeup": "traditional_chinese",    // ← 自動匹配：古裝+中國→傳統中式妝容！
+  "era": "ancient",                   // ← "古裝" → 古代背景！
+  "lighting": "cinematic",            // ← "電影級" → 電影燈光！
   "atmosphere": {
-    "theme": "period_drama",          // ← "古装" → 古装剧氛围
-    "director_style": "tsui_hark",    // ← "徐克" → 武侠、飘逸、动感！
-    "special": ["wuxia", "flowing", "dynamic"]  // ← 徐克特征
+    "theme": "period_drama",          // ← "古裝" → 古裝劇氛圍
+    "director_style": "tsui_hark",    // ← "徐克" → 武俠、飄逸、動感！
+    "special": ["wuxia", "flowing", "dynamic"]  // ← 徐克特徵
   },
   "visual_style": {
     "art_style": "cinematic"
@@ -546,37 +546,37 @@ art_styles候选（30个）：
 }
 ```
 
-**关键**：
-- ✅ "古装" → 提取了4个条件：clothing, hairstyle, makeup, era
-- ✅ "徐克风格" → 识别导演特征：武侠、飘逸
-- ✅ "电影级" → lighting = cinematic
-- ✅ **所有条件都被识别，没有遗漏！**
+**關鍵**：
+- ✅ "古裝" → 提取了4個條件：clothing, hairstyle, makeup, era
+- ✅ "徐克風格" → 識別導演特徵：武俠、飄逸
+- ✅ "電影級" → lighting = cinematic
+- ✅ **所有條件都被識別，沒有遺漏！**
 
 ---
 
-**示例1：用户说"生成一个女孩"**
+**示例1：使用者說"生成一個女孩"**
 
-**你的分析**（补充所有默认值）：
+**你的分析**（補充所有預設值）：
 ```json
 {
   "subject": {
     "gender": "female",
     "ethnicity": "East_Asian",
     "age_range": "young_adult",
-    "reasoning": "中文语境，补充默认值"
+    "reasoning": "中文語境，補充預設值"
   },
-  "clothing": "modern",     // ← 默认现代服装
-  "hairstyle": "modern",    // ← 默认现代发型
-  "makeup": "natural",      // ← 默认自然妆容
-  "era": "modern",          // ← 默认现代背景
-  "lighting": "natural",    // ← 默认自然光
+  "clothing": "modern",     // ← 預設現代服裝
+  "hairstyle": "modern",    // ← 預設現代髮型
+  "makeup": "natural",      // ← 預設自然妝容
+  "era": "modern",          // ← 預設現代背景
+  "lighting": "natural",    // ← 預設自然光
   "atmosphere": {
     "theme": "natural"
   }
 }
 ```
 
-**示例2：用户说"赛博朋克风格的动漫少女"**
+**示例2：使用者說"賽博朋克風格的動漫少女"**
 
 **你的分析**：
 ```json
@@ -585,22 +585,22 @@ art_styles候选（30个）：
     "gender": "female",
     "age_range": "young_adult",
     "ethnicity": "East_Asian",
-    "reasoning": "中文'少女' → 东亚女性"
+    "reasoning": "中文'少女' → 東亞女性"
   },
-  "makeup": "natural",      // ← 现代场景，默认自然妆容
+  "makeup": "natural",      // ← 現代場景，預設自然妝容
   "visual_style": {
     "art_style": "anime",
-    "reasoning": "'动漫'是绘画技法，不改变人物属性"
+    "reasoning": "'動漫'是繪畫技法，不改變人物屬性"
   },
-  "lighting": "neon",  // ← 识别"赛博朋克" → 霓虹灯光
+  "lighting": "neon",  // ← 識別"賽博朋克" → 霓虹燈光
   "atmosphere": {
     "theme": "cyberpunk",
-    "reasoning": "'赛博朋克'是场景氛围，使用霓虹灯光"
+    "reasoning": "'賽博朋克'是場景氛圍，使用霓虹燈光"
   }
 }
 ```
 
-**示例3：用户说"电影级的亚洲女性，张艺谋电影风格"**
+**示例3：使用者說"電影級的亞洲女性，張藝謀電影風格"**
 
 **你的分析**：
 ```json
@@ -610,22 +610,22 @@ art_styles候选（30个）：
     "ethnicity": "East_Asian",
     "age_range": "young_adult"
   },
-  "makeup": "natural",        // ← 现代场景，默认自然妆容
+  "makeup": "natural",        // ← 現代場景，預設自然妝容
   "visual_style": {
     "art_style": "cinematic"
   },
-  "lighting": "zhang_yimou",  // ← 识别导演风格 → 戏剧性光影
+  "lighting": "zhang_yimou",  // ← 識別導演風格 → 戲劇性光影
   "atmosphere": {
     "theme": "cinematic",
     "director_style": "zhang_yimou",
-    "reasoning": "张艺谋风格需要戏剧性光影（dramatic shadows, rim lighting, chiaroscuro）"
+    "reasoning": "張藝謀風格需要戲劇性光影（dramatic shadows, rim lighting, chiaroscuro）"
   }
 }
 ```
 
-**示例4：用户说"仙剑奇侠传真人电影风格的年轻古装女子"** ← **框架格式示例**
+**示例4：使用者說"仙劍奇俠傳真人電影風格的年輕古裝女子"** ← **框架格式示例**
 
-**你的分析（按框架7大类结构）**：
+**你的分析（按框架7大類結構）**：
 ```json
 {
   "subject": {
@@ -634,53 +634,53 @@ art_styles候选（30个）：
     "age_range": "young_adult"
   },
   "styling": {
-    "clothing": "traditional_chinese",    // ← "古装" → 中国传统服装
-    "hairstyle": "ancient_chinese",       // ← 古装 → 古代发型
-    "makeup": "traditional_chinese"       // ← 古装+中国 → 传统中式妆容（不是k_beauty！）
+    "clothing": "traditional_chinese",    // ← "古裝" → 中國傳統服裝
+    "hairstyle": "ancient_chinese",       // ← 古裝 → 古代髮型
+    "makeup": "traditional_chinese"       // ← 古裝+中國 → 傳統中式妝容（不是k_beauty！）
   },
   "lighting": {
-    "lighting_type": "cinematic"          // ← "电影级" → 电影灯光
+    "lighting_type": "cinematic"          // ← "電影級" → 電影燈光
   },
   "scene": {
-    "era": "ancient",                     // ← "古装" → 古代背景
-    "atmosphere": "fantasy"               // ← "仙剑奇侠传" → 仙侠奇幻
+    "era": "ancient",                     // ← "古裝" → 古代背景
+    "atmosphere": "fantasy"               // ← "仙劍奇俠傳" → 仙俠奇幻
   },
   "technical": {
-    "art_style": "cinematic"              // ← "真人电影" → 电影级写实
+    "art_style": "cinematic"              // ← "真人電影" → 電影級寫實
   }
 }
 ```
 
-**关键**：
-- ✅ 按框架7大类结构组织Intent
-- ✅ styling.makeup = "traditional_chinese"（传统古风中式妆容，NOT k_beauty！）
-- ✅ 框架会自动应用依赖规则
-- ✅ 代码会自动读取框架查询数据库
+**關鍵**：
+- ✅ 按框架7大類結構組織Intent
+- ✅ styling.makeup = "traditional_chinese"（傳統古風中式妝容，NOT k_beauty！）
+- ✅ 框架會自動應用依賴規則
+- ✅ 程式碼會自動讀取框架查詢資料庫
 
 ---
 
-#### 关键原则
+#### 關鍵原則
 
-✅ **每个intent必须包含lighting和makeup字段**（即使用户没说）
-✅ **makeup由era和文化背景决定**：古装+中国 → traditional_chinese
-✅ "动漫风格" = 绘画技法（如何画），不是人物属性（画什么）
-✅ "赛博朋克" = 场景氛围 → lighting应为"neon"（霓虹灯光）
-✅ "少女"（中文语境）→ 推断为东亚女性
-✅ **光影和妆容是照片的基础元素，不是装饰！**
+✅ **每個intent必須包含lighting和makeup欄位**（即使使用者沒說）
+✅ **makeup由era和文化背景決定**：古裝+中國 → traditional_chinese
+✅ "動漫風格" = 繪畫技法（如何畫），不是人物屬性（畫什麼）
+✅ "賽博朋克" = 場景氛圍 → lighting應為"neon"（霓虹燈光）
+✅ "少女"（中文語境）→ 推斷為東亞女性
+✅ **光影和妝容是照片的基礎元素，不是裝飾！**
 
 ---
 
-### 步骤2：查询所有候选元素
+### 步驟2：查詢所有候選元素
 
-**代码负责查询，SKILL负责选择**：
+**程式碼負責查詢，SKILL負責選擇**：
 
 ```python
 from framework_loader import FrameworkDrivenGenerator
 
-# 创建框架驱动生成器
+# 建立框架驅動生成器
 gen = FrameworkDrivenGenerator()
 
-# 你在步骤1构造的Intent
+# 你在步驟1構造的Intent
 intent = {
     'subject': {'gender': 'female', 'ethnicity': 'East_Asian', 'age_range': 'young_adult'},
     'styling': {'makeup': 'traditional_chinese'},
@@ -689,154 +689,154 @@ intent = {
     'technical': {'art_style': 'cinematic'}
 }
 
-# 查询所有候选元素（不做选择，返回所有）
+# 查詢所有候選元素（不做選擇，返回所有）
 candidates = gen.query_all_candidates_by_framework(intent)
 
-# 返回结果示例：
+# 返回結果示例：
 # {
-#   'styling.makeup': [11个妆容候选],
-#   'lighting.lighting_type': [202个光影候选],
-#   'facial.eyes': [10个眼型候选],
+#   'styling.makeup': [11個妝容候選],
+#   'lighting.lighting_type': [202個光影候選],
+#   'facial.eyes': [10個眼型候選],
 #   ...
 # }
 ```
 
-**这一步代码做什么：**
-- ✅ 查询数据库，返回每个字段的所有候选元素
-- ✅ 每个候选都包含：名称、中文名、模板、关键词、评分
-- ❌ 不做选择（代码不知道哪个最合适）
+**這一步程式碼做什麼：**
+- ✅ 查詢資料庫，返回每個欄位的所有候選元素
+- ✅ 每個候選都包含：名稱、中文名、模板、關鍵詞、評分
+- ❌ 不做選擇（程式碼不知道哪個最合適）
 
 ---
 
-### 步骤3：SKILL分析和选择最优元素 ⭐
+### 步驟3：SKILL分析和選擇最優元素 ⭐
 
-**这是核心步骤！你（SKILL）要从候选中选出最优组合**
+**這是核心步驟！你（SKILL）要從候選中選出最優組合**
 
-#### 输入信息
+#### 輸入資訊
 
-1. **用户原始需求**：如"仙剑奇侠传真人电影风格的年轻古装女子"
-2. **Intent**：步骤1构造的结构化意图
-3. **所有候选元素**：每个字段的完整候选列表（带评分）
+1. **使用者原始需求**：如"仙劍奇俠傳真人電影風格的年輕古裝女子"
+2. **Intent**：步驟1構造的結構化意圖
+3. **所有候選元素**：每個欄位的完整候選列表（帶評分）
 
-#### 分析维度
+#### 分析維度
 
-**必须考虑的维度**（从简单到复杂）：
+**必須考慮的維度**（從簡單到複雜）：
 
-**维度1：语义匹配** ⭐⭐⭐
+**維度1：語義匹配** ⭐⭐⭐
 ```
-用户要求：仙剑奇侠传古装女子
+使用者要求：仙劍奇俠傳古裝女子
 Intent：makeup = 'traditional_chinese'
 
-候选列表（styling.makeup）：
-1. 韩系妆容 (K-beauty) - 评分 9.8 ❌ 韩国现代，不匹配
-2. 中系妆容 (C-beauty) - 评分 9.7 ✓ 中国现代，部分匹配
-3. 传统古风中式妆容 - 评分 8.0 ✅ 中国古代，完美匹配！
+候選列表（styling.makeup）：
+1. 韓系妝容 (K-beauty) - 評分 9.8 ❌ 韓國現代，不匹配
+2. 中系妝容 (C-beauty) - 評分 9.7 ✓ 中國現代，部分匹配
+3. 傳統古風中式妝容 - 評分 8.0 ✅ 中國古代，完美匹配！
 
-选择：传统古风中式妆容（虽然评分低，但语义最匹配）
+選擇：傳統古風中式妝容（雖然評分低，但語義最匹配）
 ```
 
-**维度2：文化一致性** ⭐⭐
+**維度2：文化一致性** ⭐⭐
 ```
-如果选了：
-- clothing: 汉服传统服饰 ✅
-- hairstyle: 传统中式发髻 ✅
-- makeup: 印度传统妆容 ❌ 不一致！
+如果選了：
+- clothing: 漢服傳統服飾 ✅
+- hairstyle: 傳統中式髮髻 ✅
+- makeup: 印度傳統妝容 ❌ 不一致！
 
-修正：makeup也要选中式
-```
-
-**维度3：时代一致性** ⭐⭐
-```
-场景：era = 'ancient'（古代）
-
-检查所有元素：
-- makeup: traditional_chinese ✅ 古代妆容
-- lighting: neon ❌ 霓虹灯是现代的！
-
-修正：古代场景不要用现代元素
+修正：makeup也要選中式
 ```
 
-**维度4：生物学一致性** ⭐
+**維度3：時代一致性** ⭐⭐
+```
+場景：era = 'ancient'（古代）
+
+檢查所有元素：
+- makeup: traditional_chinese ✅ 古代妝容
+- lighting: neon ❌ 霓虹燈是現代的！
+
+修正：古代場景不要用現代元素
+```
+
+**維度4：生物學一致性** ⭐
 ```
 subject.ethnicity = 'East_Asian'
 
-眼睛候选：
-- blue eyes ❌ 东亚人不会有蓝眼睛
-- green eyes ❌ 东亚人不会有绿眼睛
-- almond brown eyes ✅ 符合东亚人特征
+眼睛候選：
+- blue eyes ❌ 東亞人不會有藍眼睛
+- green eyes ❌ 東亞人不會有綠眼睛
+- almond brown eyes ✅ 符合東亞人特徵
 
-选择：almond brown eyes
+選擇：almond brown eyes
 ```
 
-**维度5：整体协调性** ⭐⭐
+**維度5：整體協調性** ⭐⭐
 ```
-用户要求：电影级的古装女子
+使用者要求：電影級的古裝女子
 
-检查元素风格是否统一：
+檢查元素風格是否統一：
 - lighting: cinematic ✅
 - clothing: traditional ✅
 - makeup: traditional ✅
 - hairstyle: traditional ✅
 
-所有元素风格一致 → 好！
+所有元素風格一致 → 好！
 ```
 
-**维度6：结构完整性** ⭐⭐⭐
+**維度6：結構完整性** ⭐⭐⭐
 ```
-检查必选字段：
-- makeup字段：✓ 选到了"传统古风中式妆容"
-- lighting字段：✓ 选到了"cinematic lighting"
+檢查必選欄位：
+- makeup欄位：✓ 選到了"傳統古風中式妝容"
+- lighting欄位：✓ 選到了"cinematic lighting"
 
-所有必选字段都有元素 → 完整！
-```
-
-#### 选择策略：使用全局最优算法 ⭐
-
-**重要**：必须使用 `ElementSelector.select_best_element()` 函数进行全局最优选择！
-
-**为什么不用贪心策略？**
-```
-❌ 贪心策略（第一个匹配就选）的问题：
-   用户："婴儿肥的日本女生"
-   关键词：['round', 'soft', 'gentle']
-
-   遍历候选：
-   1. 精致鹅蛋脸 - 不包含'soft' → 跳过
-   2. 柔和古典脸型 - 包含'soft' → 选这个！停止
-   3. 圆脸 - 包含'round'和'plump' → 没到这里
-
-   结果：选了"柔和古典"（精致），而不是"圆脸"（丰满）
-   问题：'soft'有歧义，可能是精致的柔和，也可能是丰满的柔软
+所有必選欄位都有元素 → 完整！
 ```
 
-**✅ 全局最优策略（必须使用）：**
+#### 選擇策略：使用全域性最優演算法 ⭐
+
+**重要**：必須使用 `ElementSelector.select_best_element()` 函式進行全域性最優選擇！
+
+**為什麼不用貪心策略？**
+```
+❌ 貪心策略（第一個匹配就選）的問題：
+   使用者："嬰兒肥的日本女生"
+   關鍵詞：['round', 'soft', 'gentle']
+
+   遍歷候選：
+   1. 精緻鵝蛋臉 - 不包含'soft' → 跳過
+   2. 柔和古典臉型 - 包含'soft' → 選這個！停止
+   3. 圓臉 - 包含'round'和'plump' → 沒到這裡
+
+   結果：選了"柔和古典"（精緻），而不是"圓臉"（豐滿）
+   問題：'soft'有歧義，可能是精緻的柔和，也可能是豐滿的柔軟
+```
+
+**✅ 全域性最優策略（必須使用）：**
 
 ```python
 from framework_loader import ElementSelector
 
-# 对每个字段的候选，使用全局最优选择
+# 對每個欄位的候選，使用全域性最優選擇
 for field_name, candidates in candidates_dict.items():
 
-    # 1. 确定搜索关键词（根据用户需求）
+    # 1. 確定搜尋關鍵詞（根據使用者需求）
     if field_name == 'facial.face_shape':
-        # 用户说"婴儿肥" → 精确关键词
+        # 使用者說"嬰兒肥" → 精確關鍵詞
         keywords = ['round', 'plump', 'full', 'chubby']
     elif field_name == 'styling.makeup':
-        # 用户说"古装" → 传统中式妆容
+        # 使用者說"古裝" → 傳統中式妝容
         keywords = ['traditional', 'chinese', 'ancient']
     else:
         keywords = [intent_value]  # 使用Intent中的值
 
-    # 2. 调用全局最优选择函数
+    # 2. 呼叫全域性最優選擇函式
     best_elem, score = ElementSelector.select_best_element(
-        candidates=candidates,           # 所有候选
-        user_keywords=keywords,          # 用户需求关键词
+        candidates=candidates,           # 所有候選
+        user_keywords=keywords,          # 使用者需求關鍵詞
         user_intent=intent,              # 完整Intent
-        field_name=field_name,           # 字段名
-        debug=False                      # 是否显示调试信息
+        field_name=field_name,           # 欄位名
+        debug=False                      # 是否顯示除錯資訊
     )
 
-    # 3. 保存选中的元素
+    # 3. 儲存選中的元素
     if best_elem:
         selected_elements[field_name] = best_elem
 ```
@@ -844,103 +844,103 @@ for field_name, candidates in candidates_dict.items():
 **ElementSelector的工作原理**：
 
 ```
-多维度评分机制（0-100分）：
+多維度評分機制（0-100分）：
 
-1. 关键词匹配度（60%）
-   - 用户关键词在元素中的覆盖率
-   - 例如：['round', 'plump', 'full'] 中有2个匹配 → 2/3 = 67% → 40分
+1. 關鍵詞匹配度（60%）
+   - 使用者關鍵詞在元素中的覆蓋率
+   - 例如：['round', 'plump', 'full'] 中有2個匹配 → 2/3 = 67% → 40分
 
-2. 元素质量评分（30%）
+2. 元素質量評分（30%）
    - 元素的reusability_score（0-10）
    - 例如：9.0 → (9.0/10) * 30 = 27分
 
-3. 语义一致性检查（±10%）
-   - 检测冲突 → 扣分（如：婴儿肥 vs 精致 → -20分）
-   - 完美匹配 → 加分（所有关键词都匹配 → +10分）
+3. 語義一致性檢查（±10%）
+   - 檢測衝突 → 扣分（如：嬰兒肥 vs 精緻 → -20分）
+   - 完美匹配 → 加分（所有關鍵詞都匹配 → +10分）
 
-总分 = 40 + 27 + 0 = 67分
+總分 = 40 + 27 + 0 = 67分
 ```
 
-**实际案例对比**：
+**實際案例對比**：
 
 ```
-场景：用户要求"婴儿肥"
+場景：使用者要求"嬰兒肥"
 
-候选1: 柔和古典脸型
-  - 关键词：['soft classical', 'refined features']
+候選1: 柔和古典臉型
+  - 關鍵詞：['soft classical', 'refined features']
   - 匹配：'soft' (1/4) → 15分
-  - 质量：9.5 → 28.5分
-  - 一致性：包含'refined'，与'plump'冲突 → -20分
-  - 总分：23.5分
+  - 質量：9.5 → 28.5分
+  - 一致性：包含'refined'，與'plump'衝突 → -20分
+  - 總分：23.5分
 
-候选2: 圆脸
-  - 关键词：['round face', 'plump face', 'full cheeks']
+候選2: 圓臉
+  - 關鍵詞：['round face', 'plump face', 'full cheeks']
   - 匹配：'round', 'plump', 'full' (3/4) → 45分
-  - 质量：9.0 → 27分
+  - 質量：9.0 → 27分
   - 一致性：完美匹配 → +10分
-  - 总分：82分 ✅ 最高！
+  - 總分：82分 ✅ 最高！
 
-→ 选择"圆脸"（82分 > 23.5分）
+→ 選擇"圓臉"（82分 > 23.5分）
 ```
 
-**使用建议**：
+**使用建議**：
 
-1. **简单场景**：
-   - 关键词明确 → 直接使用Intent值作为keywords
+1. **簡單場景**：
+   - 關鍵詞明確 → 直接使用Intent值作為keywords
    - 例如：makeup='natural' → keywords=['natural']
 
-2. **复杂场景**：
-   - 用户描述需要翻译 → 构造精确关键词列表
-   - 例如："婴儿肥" → keywords=['round', 'plump', 'full', 'chubby']
+2. **複雜場景**：
+   - 使用者描述需要翻譯 → 構造精確關鍵詞列表
+   - 例如："嬰兒肥" → keywords=['round', 'plump', 'full', 'chubby']
 
-3. **调试模式**：
-   - 设置 debug=True 可以看到每个候选的详细评分
-   - 用于理解为什么选择了某个元素
+3. **除錯模式**：
+   - 設定 debug=True 可以看到每個候選的詳細評分
+   - 用於理解為什麼選擇了某個元素
 
-**默认行为**：
-- 所有字段都使用全局最优策略
-- 自动应用语义一致性检查
-- 确保选择真正最匹配的元素
+**預設行為**：
+- 所有欄位都使用全域性最優策略
+- 自動應用語義一致性檢查
+- 確保選擇真正最匹配的元素
 
-#### 输出格式
+#### 輸出格式
 
 ```python
 selected_elements = {
-    'styling.makeup': <选中的妆容元素>,
-    'lighting.lighting_type': <选中的光影元素>,
-    'facial.eyes': <选中的眼型元素>,
+    'styling.makeup': <選中的妝容元素>,
+    'lighting.lighting_type': <選中的光影元素>,
+    'facial.eyes': <選中的眼型元素>,
     ...
 }
 
-# 分析报告（可选，当用户要求详细时输出）
+# 分析報告（可選，當用戶要求詳細時輸出）
 analysis_report = """
-📊 元素选择分析：
+📊 元素選擇分析：
 
 【styling.makeup】
-候选：11个
-选择：传统古风中式妆容
+候選：11個
+選擇：傳統古風中式妝容
 理由：
-  - 语义匹配：用户要"古装"，需要古代中式妆容
-  - 排除：韩系（现代）、印度（非中式）、C-beauty（现代）
-  - 虽然评分不是最高，但语义最匹配
+  - 語義匹配：使用者要"古裝"，需要古代中式妝容
+  - 排除：韓系（現代）、印度（非中式）、C-beauty（現代）
+  - 雖然評分不是最高，但語義最匹配
 
 【lighting.lighting_type】
-候选：202个
-选择：cinematic lighting
+候選：202個
+選擇：cinematic lighting
 理由：
-  - 用户明确要求"电影风格"
-  - 匹配"真人电影"的需求
+  - 使用者明確要求"電影風格"
+  - 匹配"真人電影"的需求
 """
 ```
 
 ---
 
-### 步骤4：生成最终提示词
+### 步驟4：生成最終提示詞
 
-将选中的元素组合成提示词：
+將選中的元素組合成提示詞：
 
 ```python
-# 使用选中的元素生成
+# 使用選中的元素生成
 from intelligent_generator import IntelligentGenerator
 
 gen_core = IntelligentGenerator()
@@ -951,95 +951,95 @@ gen_core.close()
 
 ---
 
-### 步骤5：返回提示词
+### 步驟5：返回提示詞
 
-**展示检测到的问题和修正**：
+**展示檢測到的問題和修正**：
 
-如果检测到冲突（例如：东亚人 + 绿眼睛），你应该：
+如果檢測到衝突（例如：東亞人 + 綠眼睛），你應該：
 
-1. **说明问题**：
+1. **說明問題**：
    ```
-   ⚠️ 检测到不一致：
-   - 人种：东亚人
-   - 眼睛颜色：绿色
-   - 问题：东亚人通常不会有绿眼睛
+   ⚠️ 檢測到不一致：
+   - 人種：東亞人
+   - 眼睛顏色：綠色
+   - 問題：東亞人通常不會有綠眼睛
    ```
 
-2. **解释原因**：
+2. **解釋原因**：
    ```
    💡 分析：
-   - 'anime'关键词搜索到了"anime hybrid green eyes"元素
-   - 但'anime'是绘画风格，不应该改变人物的人种特征
-   - 绿眼睛是某些动漫角色的虚构特征，不符合东亚人的真实特征
+   - 'anime'關鍵詞搜尋到了"anime hybrid green eyes"元素
+   - 但'anime'是繪畫風格，不應該改變人物的人種特徵
+   - 綠眼睛是某些動漫角色的虛構特徵，不符合東亞人的真實特徵
    ```
 
 3. **展示修正**：
    ```
-   ✅ 自动修正：
-   - 移除：绿眼睛
-   - 替换为：棕色眼睛（符合东亚人特征）
+   ✅ 自動修正：
+   - 移除：綠眼睛
+   - 替換為：棕色眼睛（符合東亞人特徵）
    ```
 
 ---
 
-### 步骤4：返回提示词
+### 步驟4：返回提示詞
 
 生成格式：
 
 ```
-🎨 主题：赛博朋克风格的动漫少女
+🎨 主題：賽博朋克風格的動漫少女
 
-📋 意图解析：
-- 主体：东亚女性，年轻成人
-- 绘画风格：动漫风格（线条、渲染方式）
-- 场景氛围：赛博朋克（霓虹灯、科技感）
+📋 意圖解析：
+- 主體：東亞女性，年輕成人
+- 繪畫風格：動漫風格（線條、渲染方式）
+- 場景氛圍：賽博朋克（霓虹燈、科技感）
 
-✅ 智能修正（如果有）：
-- ✓ 修正眼睛颜色：'green eyes' → 'brown eyes'（符合东亚人特征）
-- ✓ 排除了风格关键词中的人物属性元素
+✅ 智慧修正（如果有）：
+- ✓ 修正眼睛顏色：'green eyes' → 'brown eyes'（符合東亞人特徵）
+- ✓ 排除了風格關鍵詞中的人物屬性元素
 
-✨ 生成的提示词：
+✨ 生成的提示詞：
 ────────────────────────────────────────────────────────
-[完整提示词]
+[完整提示詞]
 ────────────────────────────────────────────────────────
 
 💡 提示：
-- 词数：XX个
-- 模式：auto（自动选择keywords）
-- 可复制此提示词到图像生成工具使用
+- 詞數：XX個
+- 模式：auto（自動選擇keywords）
+- 可複製此提示詞到影像生成工具使用
 ```
 
 ---
 
-### 步骤6：保存生成历史 ⭐
+### 步驟6：儲存生成歷史 ⭐
 
-**这是prompt-analyzer工作的前提！**
+**這是prompt-analyzer工作的前提！**
 
-每次成功生成提示词后，必须保存到数据库，以便后续分析和推荐。
+每次成功生成提示詞後，必須儲存到資料庫，以便後續分析和推薦。
 
-#### 执行保存
+#### 執行儲存
 
 ```python
 from intelligent_generator import save_generated_prompt
 
-# 保存生成的Prompt
+# 儲存生成的Prompt
 prompt_id = save_generated_prompt(
-    prompt_text=final_prompt,           # 完整提示词
-    user_intent="仙剑奇侠传古装女子",    # 用户原始需求
+    prompt_text=final_prompt,           # 完整提示詞
+    user_intent="仙劍奇俠傳古裝女子",    # 使用者原始需求
     elements_used=selected_elements,     # 使用的元素列表
-    style_tag="ancient_chinese",         # 风格标签
-    quality_score=9.0                    # SKILL评估的质量（可选）
+    style_tag="ancient_chinese",         # 風格標籤
+    quality_score=9.0                    # SKILL評估的質量（可選）
 )
 
-print(f"✅ Prompt已保存，ID: #{prompt_id}")
+print(f"✅ Prompt已儲存，ID: #{prompt_id}")
 ```
 
 #### elements_used格式要求
 
-每个元素必须包含：
-- `element_id`: 元素ID（必须）
-- `category`: 类别（如makeup_styles, lighting_techniques）
-- `field_name`: 字段名（如styling.makeup, lighting.lighting_type）
+每個元素必須包含：
+- `element_id`: 元素ID（必須）
+- `category`: 類別（如makeup_styles, lighting_techniques）
+- `field_name`: 欄位名（如styling.makeup, lighting.lighting_type）
 
 示例：
 ```python
@@ -1047,7 +1047,7 @@ selected_elements = [
     {
         'element_id': 'portrait_makeup_styles_003',
         'name': 'traditional_chinese_makeup',
-        'chinese_name': '传统古风中式妆容',
+        'chinese_name': '傳統古風中式妝容',
         'template': 'traditional Chinese makeup with soft red lips...',
         'category': 'makeup_styles',
         'field_name': 'styling.makeup',
@@ -1057,47 +1057,47 @@ selected_elements = [
 ]
 ```
 
-#### 保存后数据流向
+#### 儲存後資料流向
 
 ```
 save_generated_prompt()
     ↓
-写入 generated_prompts 表      # Prompt基本信息
+寫入 generated_prompts 表      # Prompt基本資訊
     ↓
-写入 prompt_elements 表        # Prompt-元素关联
+寫入 prompt_elements 表        # Prompt-元素關聯
     ↓
-更新 element_usage_stats 表   # 元素使用统计
+更新 element_usage_stats 表   # 元素使用統計
     ↓
 返回 prompt_id
     ↓
-prompt-analyzer 可以分析这个Prompt了！
+prompt-analyzer 可以分析這個Prompt了！
 ```
 
-#### 注意事项
+#### 注意事項
 
-1. **必须调用**：生成成功后必须保存，否则prompt-analyzer无法工作
-2. **style_tag规范**：
-   - ancient_chinese (古装中式)
-   - modern_sci_fi (现代科幻)
-   - traditional_japanese (传统日式)
-   - cyberpunk (赛博朋克)
+1. **必須呼叫**：生成成功後必須儲存，否則prompt-analyzer無法工作
+2. **style_tag規範**：
+   - ancient_chinese (古裝中式)
+   - modern_sci_fi (現代科幻)
+   - traditional_japanese (傳統日式)
+   - cyberpunk (賽博朋克)
    - fantasy (奇幻)
-3. **质量评分**：SKILL应根据以下维度评估（默认9.0）：
-   - 语义匹配度
-   - 一致性（无冲突）
-   - 完整性（满足所有需求）
-   - 元素质量（平均reusability）
+3. **質量評分**：SKILL應根據以下維度評估（預設9.0）：
+   - 語義匹配度
+   - 一致性（無衝突）
+   - 完整性（滿足所有需求）
+   - 元素質量（平均reusability）
 
 ---
 
 ## 使用示例
 
-### 示例1：张艺谋电影风格（导演风格 + 戏剧性光影）
+### 示例1：張藝謀電影風格（導演風格 + 戲劇性光影）
 
-**用户**：`"生成电影级的亚洲女性，张艺谋电影风格"`
+**使用者**：`"生成電影級的亞洲女性，張藝謀電影風格"`
 
-**你的处理**：
-1. **解析intent**（步骤1）：
+**你的處理**：
+1. **解析intent**（步驟1）：
 ```python
 intent = {
     'subject': {
@@ -1105,7 +1105,7 @@ intent = {
         'ethnicity': 'East_Asian',
         'age_range': 'young_adult'
     },
-    'lighting': 'zhang_yimou',  # ← 识别导演风格！
+    'lighting': 'zhang_yimou',  # ← 識別導演風格！
     'visual_style': {
         'art_style': 'cinematic'
     },
@@ -1116,18 +1116,18 @@ intent = {
 }
 ```
 
-2. **调用Python**（步骤2）：系统根据lighting='zhang_yimou'添加光影关键词
-3. **一致性检查**：✅ 无冲突（东亚女性 + 黑眼睛）
-4. **返回提示词**：包含dramatic shadows, rim lighting, chiaroscuro等光影元素
+2. **呼叫Python**（步驟2）：系統根據lighting='zhang_yimou'新增光影關鍵詞
+3. **一致性檢查**：✅ 無衝突（東亞女性 + 黑眼睛）
+4. **返回提示詞**：包含dramatic shadows, rim lighting, chiaroscuro等光影元素
 
 ---
 
-### 示例2：赛博朋克动漫少女（霓虹光影）
+### 示例2：賽博朋克動漫少女（霓虹光影）
 
-**用户**：`"生成赛博朋克风格的动漫少女提示词"`
+**使用者**：`"生成賽博朋克風格的動漫少女提示詞"`
 
-**你的处理**：
-1. **解析intent**（步骤1）：
+**你的處理**：
+1. **解析intent**（步驟1）：
 ```python
 intent = {
     'subject': {
@@ -1135,7 +1135,7 @@ intent = {
         'ethnicity': 'East_Asian',
         'age_range': 'young_adult'
     },
-    'lighting': 'neon',  # ← 赛博朋克 → 霓虹灯光！
+    'lighting': 'neon',  # ← 賽博朋克 → 霓虹燈光！
     'visual_style': {
         'art_style': 'anime'
     },
@@ -1145,46 +1145,46 @@ intent = {
 }
 ```
 
-2. **调用Python**（步骤2）：系统根据lighting='neon'选择霓虹灯光元素
-3. **一致性检查**：检测到绿眼睛问题 → 自动修正为棕色眼睛
-4. **返回提示词**：包含neon lighting, colorful glow等霓虹光影
+2. **呼叫Python**（步驟2）：系統根據lighting='neon'選擇霓虹燈光元素
+3. **一致性檢查**：檢測到綠眼睛問題 → 自動修正為棕色眼睛
+4. **返回提示詞**：包含neon lighting, colorful glow等霓虹光影
 
 ---
 
-### 示例3：普通女孩（默认自然光）
+### 示例3：普通女孩（預設自然光）
 
-**用户**：`"生成一个女孩"`
+**使用者**：`"生成一個女孩"`
 
-**你的处理**：
-1. **解析intent**（步骤1，补充所有默认值）：
+**你的處理**：
+1. **解析intent**（步驟1，補充所有預設值）：
 ```python
 intent = {
     'subject': {
         'gender': 'female',
-        'ethnicity': 'East_Asian',      # 中文语境默认
-        'age_range': 'young_adult'      # 默认
+        'ethnicity': 'East_Asian',      # 中文語境預設
+        'age_range': 'young_adult'      # 預設
     },
-    'lighting': 'natural',  # ← 用户未说明 → 默认自然光！
+    'lighting': 'natural',  # ← 使用者未說明 → 預設自然光！
     'atmosphere': {
         'theme': 'natural'
     }
 }
 ```
 
-2. **调用Python**（步骤2）：系统根据lighting='natural'选择自然光元素
-3. **一致性检查**：✅ 无冲突
-4. **返回提示词**：包含natural window light, soft daylight等自然光影
+2. **呼叫Python**（步驟2）：系統根據lighting='natural'選擇自然光元素
+3. **一致性檢查**：✅ 無衝突
+4. **返回提示詞**：包含natural window light, soft daylight等自然光影
 
-**关键**：即使用户没有提到任何风格，lighting字段也必须存在！
+**關鍵**：即使使用者沒有提到任何風格，lighting欄位也必須存在！
 
 ---
 
-### 示例4：欧洲古典油画
+### 示例4：歐洲古典油畫
 
-**用户**：`"生成一个欧洲贵族女性的古典油画风格肖像"`
+**使用者**：`"生成一個歐洲貴族女性的古典油畫風格肖像"`
 
-**你的处理**：
-1. **解析intent**（步骤1）：
+**你的處理**：
+1. **解析intent**（步驟1）：
 ```python
 intent = {
     'subject': {
@@ -1192,7 +1192,7 @@ intent = {
         'ethnicity': 'European',
         'age_range': 'adult'
     },
-    'lighting': 'soft',  # ← 古典油画 → 柔和光线
+    'lighting': 'soft',  # ← 古典油畫 → 柔和光線
     'visual_style': {
         'art_style': 'oil_painting'
     },
@@ -1202,144 +1202,144 @@ intent = {
 }
 ```
 
-2. **调用Python**：欧洲人可以有蓝/绿/棕色眼睛（都合理）
-3. **一致性检查**：✅ 无冲突
-4. **返回提示词**：包含soft lighting, classical portrait等元素
+2. **呼叫Python**：歐洲人可以有藍/綠/棕色眼睛（都合理）
+3. **一致性檢查**：✅ 無衝突
+4. **返回提示詞**：包含soft lighting, classical portrait等元素
 
 ---
 
-### 示例5：检测复杂冲突
+### 示例5：檢測複雜衝突
 
-**用户**：`"生成一个黑皮肤的瑞典人"`
+**使用者**：`"生成一個黑皮膚的瑞典人"`
 
-**你的处理**：
-1. 检测到冲突：瑞典人（北欧）通常不是黑皮肤
-2. 询问用户：
+**你的處理**：
+1. 檢測到衝突：瑞典人（北歐）通常不是黑皮膚
+2. 詢問使用者：
    ```
-   ⚠️ 检测到不常见的组合：
-   - 瑞典人 + 黑皮肤
+   ⚠️ 檢測到不常見的組合：
+   - 瑞典人 + 黑皮膚
 
-   这可能是：
-   A. 瑞典籍非洲裔人士（移民/后代）
-   B. 输入错误
+   這可能是：
+   A. 瑞典籍非洲裔人士（移民/後代）
+   B. 輸入錯誤
 
-   请确认：
-   1. 保持原样（瑞典籍非洲裔）
-   2. 修改为典型瑞典人（白皙皮肤）
-   3. 修改为非洲人
+   請確認：
+   1. 保持原樣（瑞典籍非洲裔）
+   2. 修改為典型瑞典人（白皙皮膚）
+   3. 修改為非洲人
    ```
 
 ---
 
-## 重要原则
+## 重要原則
 
-### ✅ DO（应该做）
+### ✅ DO（應該做）
 
-1. **区分风格和属性**
-   - "动漫风格" → 影响呈现方式
-   - "东亚人" → 固有属性
+1. **區分風格和屬性**
+   - "動漫風格" → 影響呈現方式
+   - "東亞人" → 固有屬性
 
-2. **应用常识**
-   - 东亚人 → 黑/棕眼睛
-   - 欧洲人 → 多种眼睛颜色
+2. **應用常識**
+   - 東亞人 → 黑/棕眼睛
+   - 歐洲人 → 多種眼睛顏色
 
-3. **自动修正明显冲突**
-   - 东亚人+绿眼睛 → 自动改为棕色
+3. **自動修正明顯衝突**
+   - 東亞人+綠眼睛 → 自動改為棕色
 
-4. **询问边界情况**
-   - 不常见但可能合理的组合 → 询问用户
+4. **詢問邊界情況**
+   - 不常見但可能合理的組合 → 詢問使用者
 
-### ❌ DON'T（不应该做）
+### ❌ DON'T（不應該做）
 
-1. **不要机械匹配关键词**
-   - ❌ 搜索'anime'就添加所有包含anime的元素
-   - ✅ 理解'anime'是画风，只添加风格元素
+1. **不要機械匹配關鍵詞**
+   - ❌ 搜尋'anime'就新增所有包含anime的元素
+   - ✅ 理解'anime'是畫風，只新增風格元素
 
-2. **不要忽视常识**
-   - ❌ 允许东亚人有绿眼睛（除非是cosplay等特殊情况）
-   - ✅ 检查并修正不符合常识的组合
+2. **不要忽視常識**
+   - ❌ 允許東亞人有綠眼睛（除非是cosplay等特殊情況）
+   - ✅ 檢查並修正不符合常識的組合
 
-3. **不要过度限制**
-   - ❌ 完全禁止"穿和服的法国人"（可能是旅游/文化交流）
-   - ✅ 提示不常见，但允许用户决定
-
----
-
-## 调用方法
-
-用户可以直接说：
-- "生成XXX提示词"
-- "帮我生成XXX的图像提示词"
-- "我想要XXX风格的图片"
-
-你自动：
-1. 理解意图
-2. 调用Python
-3. 检查一致性
-4. 返回完美提示词
+3. **不要過度限制**
+   - ❌ 完全禁止"穿和服的法國人"（可能是旅遊/文化交流）
+   - ✅ 提示不常見，但允許使用者決定
 
 ---
 
-## 技术细节
+## 呼叫方法
 
-### Python模块路径
-`intelligent_generator.py` 在项目根目录
+使用者可以直接說：
+- "生成XXX提示詞"
+- "幫我生成XXX的影像提示詞"
+- "我想要XXX風格的圖片"
+
+你自動：
+1. 理解意圖
+2. 呼叫Python
+3. 檢查一致性
+4. 返回完美提示詞
+
+---
+
+## 技術細節
+
+### Python模組路徑
+`intelligent_generator.py` 在專案根目錄
 
 ### 核心方法
 ```python
 gen = IntelligentGenerator()
 
-# 选择元素
+# 選擇元素
 elements = gen.select_elements_by_intent(intent)
 
-# 检查一致性
+# 檢查一致性
 issues = gen.check_consistency(elements)
 
-# 修正冲突
+# 修正衝突
 elements, fixes = gen.resolve_conflicts(elements, issues)
 
-# 生成提示词
+# 生成提示詞
 prompt = gen.compose_prompt(elements, mode='auto')
 ```
 
-### 常识知识库
-在 `IntelligentGenerator.load_knowledge()` 中定义，包括：
-- 人种 → 典型眼睛颜色
-- 人种 → 典型发色
-- 风格类型定义
-- 导演风格 → 光影需求映射
+### 常識知識庫
+在 `IntelligentGenerator.load_knowledge()` 中定義，包括：
+- 人種 → 典型眼睛顏色
+- 人種 → 典型髮色
+- 風格型別定義
+- 導演風格 → 光影需求對映
 
 ---
 
 ## ⚠️ 重要提醒
 
-**每次生成提示词时，你必须：**
+**每次生成提示詞時，你必須：**
 
-1. ✅ **在intent中包含lighting字段**（必选，不是可选！）
-2. ✅ **根据步骤1的映射表选择lighting值**
-3. ✅ **如果用户没说风格，使用默认值** `lighting: 'natural'`
+1. ✅ **在intent中包含lighting欄位**（必選，不是可選！）
+2. ✅ **根據步驟1的對映表選擇lighting值**
+3. ✅ **如果使用者沒說風格，使用預設值** `lighting: 'natural'`
 
-**错误示例**：
+**錯誤示例**：
 ```python
-# ❌ 错误：缺少lighting字段
+# ❌ 錯誤：缺少lighting欄位
 intent = {
     'subject': {'gender': 'female'},
     'atmosphere': {'theme': 'natural'}
 }
 ```
 
-**正确示例**：
+**正確示例**：
 ```python
-# ✅ 正确：包含lighting字段
+# ✅ 正確：包含lighting欄位
 intent = {
     'subject': {'gender': 'female'},
-    'lighting': 'natural',  # ← 必须有！
+    'lighting': 'natural',  # ← 必須有！
     'atmosphere': {'theme': 'natural'}
 }
 ```
 
-**记住**：光影是照片的基础元素，不是装饰！每个人像都必须有光影，就像每个人物都必须有性别一样。
+**記住**：光影是照片的基礎元素，不是裝飾！每個人像都必須有光影，就像每個人物都必須有性別一樣。
 
 ---
 
-准备好开始工作！等待用户的提示词生成请求。
+準備好開始工作！等待使用者的提示詞生成請求。

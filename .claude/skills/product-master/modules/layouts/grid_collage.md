@@ -1,55 +1,55 @@
-# Grid Collage 布局模板
+# Grid Collage 佈局模板
 
 **版本**: 1.0
-**用途**: 多角度产品展示的网格拼贴布局
-**参考**: 基于专业时尚摄影的9宫格框架
+**用途**: 多角度產品展示的網格拼貼布局
+**參考**: 基於專業時尚攝影的9宮格框架
 
 ---
 
-## 📐 支持的布局类型
+## 📐 支援的佈局型別
 
-### 3×3 Grid (9宫格) - 推荐
+### 3×3 Grid (9宮格) - 推薦
 
-**适用场景**：
-- 全方位产品展示
-- 高端电商详情页
-- 社交媒体轮播图
-- 产品宣传海报
+**適用場景**：
+- 全方位產品展示
+- 高階電商詳情頁
+- 社交媒體輪播圖
+- 產品宣傳海報
 
-**特点**：
-- 8格可见 + 1格中间遮挡 = 9格总数
-- 中间3D产品巨大突出
-- 最佳视觉冲击力
+**特點**：
+- 8格可見 + 1格中間遮擋 = 9格總數
+- 中間3D產品巨大突出
+- 最佳視覺衝擊力
 
-### 2×2 Grid (4宫格)
+### 2×2 Grid (4宮格)
 
-**适用场景**：
-- 简洁对比展示
-- 移动端优化
-- 快速产品预览
+**適用場景**：
+- 簡潔對比展示
+- 移動端最佳化
+- 快速產品預覽
 
-**特点**：
-- 4格全部可见或3格可见+1格遮挡
-- 适合简约风格
+**特點**：
+- 4格全部可見或3格可見+1格遮擋
+- 適合簡約風格
 
-### 4×1 Carousel (轮播条)
+### 4×1 Carousel (輪播條)
 
-**适用场景**：
-- 移动端横向滑动
-- 产品细节展示
-- 故事化叙事
+**適用場景**：
+- 移動端橫向滑動
+- 產品細節展示
+- 故事化敘事
 
-**特点**：
-- 横向4格排列
-- 适合移动设备
+**特點**：
+- 橫向4格排列
+- 適合移動裝置
 
 ---
 
-## 🎨 3×3 Grid 完整框架（专业模板）
+## 🎨 3×3 Grid 完整框架（專業模板）
 
-以下是用于生成9宫格产品摄影的完整提示词框架：
+以下是用於生成9宮格產品攝影的完整提示詞框架：
 
-### 基础结构
+### 基礎結構
 
 ```
 Create a 2:3 portrait luxury product poster featuring THE SAME [PRODUCT] shown in 9 different product photography styles with 3D pop-out effect:
@@ -57,19 +57,19 @@ Create a 2:3 portrait luxury product poster featuring THE SAME [PRODUCT] shown i
 
 ---
 
-### PRODUCT CONSISTENCY (产品一致性规则)
+### PRODUCT CONSISTENCY (產品一致性規則)
 
 **CRITICAL - HIGHEST PRIORITY**
 
-THE SAME [产品类型] appears in ALL 9 positions:
+THE SAME [產品型別] appears in ALL 9 positions:
 - Same product model, same design, same brand
-- [产品具体描述：材质、颜色、特征]
-- [关键细节1]
-- [关键细节2]
-- [关键细节3]
+- [產品具體描述：材質、顏色、特徵]
+- [關鍵細節1]
+- [關鍵細節2]
+- [關鍵細節3]
 - Its identity NEVER changes across all 9 appearances
 
-**示例（手表）**：
+**示例（手錶）**：
 ```
 THE SAME luxury timepiece appears in ALL 9 positions:
 - Same watch model, same design, same brand
@@ -84,32 +84,32 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 ---
 
-### BACKGROUND LAYER (Z=0) - 8格背景摄影
+### BACKGROUND LAYER (Z=0) - 8格背景攝影
 
 **Grid Structure & Occlusion:**
 - Standard 3×3 layout = 9 product photography shots
 - **8 visible cells** (center cell [2,2] COMPLETELY OCCLUDED by 3D product)
 - Cells separated by DISTINCT THICK WHITE LINES (3-4px) for clear separation
 
-**8个不同摄影角度定义**：
+**8個不同攝影角度定義**：
 
 ```
-[1,1] Top View - [产品顶视角]:
+[1,1] Top View - [產品頂視角]:
 - Same product, face-up/top-down perspective
 - Style: Macro close-up of top details
 - Lighting: Soft top light, minimal shadows
 - Sharp focus, clear details
 
-[1,2] [关键细节1] Detail:
-- Same product, [具体角度]
+[1,2] [關鍵細節1] Detail:
+- Same product, [具體角度]
 - Style: Macro detail of [特定部位]
-- Lighting: Rim light highlighting [材质]
+- Lighting: Rim light highlighting [材質]
 - Sharp focus, clear details
 
-[1,3] [关键细节2] Detail:
-- Same product, [具体角度]
-- Style: [拍摄风格]
-- Lighting: Controlled reflection on [材质]
+[1,3] [關鍵細節2] Detail:
+- Same product, [具體角度]
+- Style: [拍攝風格]
+- Lighting: Controlled reflection on [材質]
 - Sharp focus, clear details
 
 [2,1] 45-Degree Hero Angle:
@@ -119,20 +119,20 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 - Sharp focus, clear details
 
 [2,3] [特殊角度] View:
-- Same product, [具体描述]
-- Style: [技术/艺术特点]
+- Same product, [具體描述]
+- Style: [技術/藝術特點]
 - Lighting: [光照方式]
 - Sharp focus, clear details
 
 [3,1] Lifestyle/Context Shot:
 - Same product, in use or lifestyle context
-- Style: [场景描述]
+- Style: [場景描述]
 - Lighting: Natural elegant ambient light
 - Sharp focus, clear details
 
-[3,2] [材质/纹理] Detail:
+[3,2] [材質/紋理] Detail:
 - Same product, texture close-up
-- Style: Macro focus on [材质细节]
+- Style: Macro focus on [材質細節]
 - Lighting: Gradient light revealing texture
 - Sharp focus, clear details
 
@@ -143,19 +143,19 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 - Sharp focus, clear details
 ```
 
-**手表示例**：
-- [1,1] Top View - Dial Detail（表盘俯视）
-- [1,2] Crown & Case Side Detail（表冠侧面）
-- [1,3] Clasp Mechanism Detail（表扣细节）
-- [2,1] 45-Degree Hero Angle（经典45度角）
-- [2,3] Case Back Exhibition（底盖/机芯）
+**手錶示例**：
+- [1,1] Top View - Dial Detail（錶盤俯視）
+- [1,2] Crown & Case Side Detail（錶冠側面）
+- [1,3] Clasp Mechanism Detail（表扣細節）
+- [2,1] 45-Degree Hero Angle（經典45度角）
+- [2,3] Case Back Exhibition（底蓋/機芯）
 - [3,1] On-Wrist Lifestyle Shot（上手效果）
-- [3,2] Bracelet Link Detail（表带链节）
-- [3,3] Packaging & Presentation（包装盒）
+- [3,2] Bracelet Link Detail（錶帶鏈節）
+- [3,3] Packaging & Presentation（包裝盒）
 
 ---
 
-### CRITICAL TECHNICAL SPECS (背景网格技术规范)
+### CRITICAL TECHNICAL SPECS (背景網格技術規範)
 
 - Deep depth of field (f/16) - ALL products sharp and clear
 - NO bokeh, NO blur, NO out-of-focus areas
@@ -166,7 +166,7 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 ---
 
-### FOREGROUND LAYER (Z=5-10cm forward) - 3D突出产品
+### FOREGROUND LAYER (Z=5-10cm forward) - 3D突出產品
 
 **THE SAME [PRODUCT] (Center Dominant Presentation):**
 
@@ -178,35 +178,35 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 **Presentation Style:**
 - Dynamic floating perspective with slight rotation
-- [具体角度，如：30-degree tilt showing both front and side]
-- Suspended in space, [无背景干扰]
+- [具體角度，如：30-degree tilt showing both front and side]
+- Suspended in space, [無背景干擾]
 - Direct frontal presentation, commanding presence
 - Full product visible from top to bottom
 
 **Technical Execution:**
 - Product extends 5-10cm forward from background plane
 - Hyper-realistic 3D render (Blender/Cinema 4D quality)
-- Substance 3D material: [材质列表：polished metal, glass, leather等]
+- Substance 3D material: [材質列表：polished metal, glass, leather等]
 - +20% saturation compared to background for "pop forward" effect
 - Slightly sharper focus than background (but background still sharp)
 - Photorealistic reflections and refractions
-- Visible [产品特征] clearly rendered
+- Visible [產品特徵] clearly rendered
 
 ---
 
-### OCCLUSION MECHANICS (遮挡机制)
+### OCCLUSION MECHANICS (遮擋機制)
 
-**9格 - 1格遮挡 = 8格可见**
+**9格 - 1格遮擋 = 8格可見**
 
 **Complete Occlusion:**
 - Product body COMPLETELY covers center cell [2,2] (100% invisible)
 - Center shot is fully hidden behind 3D product
 
 **Partial Occlusion (Natural Edge Overlap):**
-- Top [1,2]: [产品顶部] overlaps 10-15% into top detail shot
-- Left [2,1]: [产品左侧] overlaps 15-20% into hero angle shot
-- Right [2,3]: [产品右侧] overlaps 15-20% into right view shot
-- Bottom [3,2]: [产品底部] overlaps 10-15% into bottom detail shot
+- Top [1,2]: [產品頂部] overlaps 10-15% into top detail shot
+- Left [2,1]: [產品左側] overlaps 15-20% into hero angle shot
+- Right [2,3]: [產品右側] overlaps 15-20% into right view shot
+- Bottom [3,2]: [產品底部] overlaps 10-15% into bottom detail shot
 - Overlaps break the white grid boundaries naturally
 
 **Edge Treatment:**
@@ -245,14 +245,14 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 ---
 
-### CONSISTENCY RULES (一致性规则)
+### CONSISTENCY RULES (一致性規則)
 
 **Same Product Verification:**
 - Same product model in all 9 positions
-- Same [特征1] with identical [细节]
-- Same [特征2] with same [细节]
-- Same [特征3]
-- Same [关键元素] position
+- Same [特徵1] with identical [細節]
+- Same [特徵2] with same [細節]
+- Same [特徵3]
+- Same [關鍵元素] position
 - Same brand logo placement
 
 **What Changes:**
@@ -263,13 +263,13 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 **What NEVER Changes:**
 - ❌ The product model or brand
-- ❌ The [核心特征1]
-- ❌ The [核心特征2]
+- ❌ The [核心特徵1]
+- ❌ The [核心特徵2]
 - ❌ Any product specifications
 
 ---
 
-### TECHNICAL SPECIFICATIONS (技术规格)
+### TECHNICAL SPECIFICATIONS (技術規格)
 
 **Image Composition:**
 - Aspect ratio: 2:3 portrait (or 9:16 vertical)
@@ -298,14 +298,14 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 - Editorial luxury advertising feel
 
 **Material Rendering (3D Product):**
-[根据产品类型定制材质列表]
-- [材质1]: [具体效果描述]
-- [材质2]: [具体效果描述]
-- [材质3]: [具体效果描述]
+[根據產品型別定製材質列表]
+- [材質1]: [具體效果描述]
+- [材質2]: [具體效果描述]
+- [材質3]: [具體效果描述]
 
 ---
 
-### FORBIDDEN ELEMENTS (严格禁止)
+### FORBIDDEN ELEMENTS (嚴格禁止)
 
 **Product:**
 - ❌ Different product models in different cells
@@ -331,7 +331,7 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 
 ---
 
-### QUALITY CHECKLIST (质量检查清单)
+### QUALITY CHECKLIST (質量檢查清單)
 
 **Before Generation:**
 - [ ] Same product model in all 9 positions?
@@ -354,12 +354,12 @@ THE SAME luxury timepiece appears in ALL 9 positions:
 ### MIDJOURNEY COMMAND FORMAT
 
 ```
-/imagine prompt: A surreal 3x3 luxury [product type] grid collage with THICK WHITE LINES separating cells. Background shows THE SAME [product description] in 8 different professional product photography styles ([列出8个角度]) - various angles but identical product. CENTER CELL HIDDEN. OVERLAID by a massive hyper-realistic 3D rendered floating version of THE SAME PRODUCT, top touching top edge, bottom touching bottom edge, [angle description]. ALL products in background sharp and in focus, deep depth of field f/16, no blur anywhere, bright studio lighting, clear white grid lines visible, strong 3D pop-out effect with drop shadows, professional commercial product photography, same product 9 times, photorealistic Substance 3D materials, [material list], 8k resolution --ar 2:3 --v 6.1 --style raw --quality 2
+/imagine prompt: A surreal 3x3 luxury [product type] grid collage with THICK WHITE LINES separating cells. Background shows THE SAME [product description] in 8 different professional product photography styles ([列出8個角度]) - various angles but identical product. CENTER CELL HIDDEN. OVERLAID by a massive hyper-realistic 3D rendered floating version of THE SAME PRODUCT, top touching top edge, bottom touching bottom edge, [angle description]. ALL products in background sharp and in focus, deep depth of field f/16, no blur anywhere, bright studio lighting, clear white grid lines visible, strong 3D pop-out effect with drop shadows, professional commercial product photography, same product 9 times, photorealistic Substance 3D materials, [material list], 8k resolution --ar 2:3 --v 6.1 --style raw --quality 2
 ```
 
 ---
 
-### MATHEMATICAL LOGIC (数学逻辑)
+### MATHEMATICAL LOGIC (數學邏輯)
 
 ```
 Same product × 9 different photography styles arranged in 3×3 grid.
@@ -371,21 +371,21 @@ Center style completely occluded by 3D foreground version =
 
 ---
 
-## 🎯 产品类型适配
+## 🎯 產品型別適配
 
-### 手表 (Luxury Watch)
+### 手錶 (Luxury Watch)
 
-**8个角度**：
-1. 表盘俯视 (Top View - Dial Detail)
-2. 表冠侧面 (Crown & Case Side Detail)
-3. 表扣细节 (Clasp Mechanism Detail)
-4. 经典45度角 (45-Degree Hero Angle)
-5. 底盖/机芯 (Case Back Exhibition)
+**8個角度**：
+1. 錶盤俯視 (Top View - Dial Detail)
+2. 錶冠側面 (Crown & Case Side Detail)
+3. 表扣細節 (Clasp Mechanism Detail)
+4. 經典45度角 (45-Degree Hero Angle)
+5. 底蓋/機芯 (Case Back Exhibition)
 6. 上手效果 (On-Wrist Lifestyle Shot)
-7. 表带链节 (Bracelet Link Detail)
-8. 包装盒 (Packaging & Presentation)
+7. 錶帶鏈節 (Bracelet Link Detail)
+8. 包裝盒 (Packaging & Presentation)
 
-**材质渲染**：
+**材質渲染**：
 - Polished stainless steel: mirror reflections
 - Brushed steel: subtle linear grain
 - Sapphire crystal: transparent with refraction
@@ -393,35 +393,35 @@ Center style completely occluded by 3D foreground version =
 
 ### 香水 (Perfume Bottle)
 
-**8个角度**：
-1. 瓶盖俯视 (Cap Top View)
-2. 瓶身侧面 (Bottle Side Profile)
-3. 品牌Logo特写 (Brand Logo Detail)
-4. 经典45度角 (45-Degree Hero Angle)
-5. 瓶底设计 (Base Design Detail)
-6. 使用场景 (Lifestyle Context Shot)
-7. 液体/渐变 (Liquid Gradient Detail)
-8. 包装盒 (Luxury Box Presentation)
+**8個角度**：
+1. 瓶蓋俯視 (Cap Top View)
+2. 瓶身側面 (Bottle Side Profile)
+3. 品牌Logo特寫 (Brand Logo Detail)
+4. 經典45度角 (45-Degree Hero Angle)
+5. 瓶底設計 (Base Design Detail)
+6. 使用場景 (Lifestyle Context Shot)
+7. 液體/漸變 (Liquid Gradient Detail)
+8. 包裝盒 (Luxury Box Presentation)
 
-**材质渲染**：
+**材質渲染**：
 - Glass bottle: transparency, light refraction
 - Gold cap: metallic sheen
 - Liquid: color gradient, translucency
 - Embossed logo: subtle depth
 
-### 电子产品 (Electronics)
+### 電子產品 (Electronics)
 
-**8个角度**：
-1. 正面屏幕 (Front Screen View)
-2. 侧面端口 (Side Ports Detail)
+**8個角度**：
+1. 正面螢幕 (Front Screen View)
+2. 側面埠 (Side Ports Detail)
 3. 背面Logo (Back Logo & Design)
-4. 经典45度角 (45-Degree Hero Angle)
-5. 内部结构 (Internal Structure/Components)
-6. 使用场景 (In-Use Lifestyle Shot)
-7. 材质纹理 (Material Texture Close-up)
-8. 包装全家福 (Unboxing All Contents)
+4. 經典45度角 (45-Degree Hero Angle)
+5. 內部結構 (Internal Structure/Components)
+6. 使用場景 (In-Use Lifestyle Shot)
+7. 材質紋理 (Material Texture Close-up)
+8. 包裝全家福 (Unboxing All Contents)
 
-**材质渲染**：
+**材質渲染**：
 - Aluminum body: brushed metal finish
 - Glass screen: anti-glare coating
 - Plastic: matte or glossy finish
@@ -429,15 +429,15 @@ Center style completely occluded by 3D foreground version =
 
 ---
 
-## 💡 使用建议
+## 💡 使用建議
 
-1. **选择合适的产品角度**：根据产品特点选择最能展示特征的8个角度
-2. **保持一致性**：所有9个位置必须是同一产品
-3. **材质真实性**：3D渲染的材质要与实物照片一致
-4. **光照统一**：背景8格用均匀光照，前景3D用戏剧性光照
-5. **深景深必须**：f/16确保所有格子都清晰，避免bokeh
+1. **選擇合適的產品角度**：根據產品特點選擇最能展示特徵的8個角度
+2. **保持一致性**：所有9個位置必須是同一產品
+3. **材質真實性**：3D渲染的材質要與實物照片一致
+4. **光照統一**：背景8格用均勻光照，前景3D用戲劇性光照
+5. **深景深必須**：f/16確保所有格子都清晰，避免bokeh
 
 ---
 
-**最后更新**: 2026-01-04
-**维护者**: Product Master Skill System
+**最後更新**: 2026-01-04
+**維護者**: Product Master Skill System

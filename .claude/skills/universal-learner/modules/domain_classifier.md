@@ -1,33 +1,33 @@
-# Domain Classifier - 领域分类器模块
+# Domain Classifier - 領域分類器模組
 
-**功能**: 识别Prompt属于哪个领域（或多个领域）
+**功能**: 識別Prompt屬於哪個領域（或多個領域）
 
 ---
 
-## 🎯 7大领域定义
+## 🎯 7大領域定義
 
-| 领域ID | 中文名 | 关键词 | 示例Prompts |
+| 領域ID | 中文名 | 關鍵詞 | 示例Prompts |
 |--------|--------|--------|-------------|
-| **portrait** | 人像摄影 | person, face, woman, man, beauty, makeup, facial | #5, #10, #11, #17, #18 |
-| **product** | 产品摄影 | product, object, item, book, watch, bottle, package | #1, #6, #14, #16 |
-| **design** | 平面设计 | poster, layout, UI, graphic, typography, bento grid | #2, #3, #7, #9, #13 |
-| **art** | 艺术风格 | art, painting, surreal, artistic, illustration, effect | #8, #12, #15 |
-| **video** | 视频生成 | video, scene, motion, cinematic, camera movement | #4 |
-| **interior** | 室内设计 | interior, room, furniture, living room, bedroom | (v4.0新建) |
-| **common** | 通用摄影 | photography, camera, lighting, lens, technical | (跨领域) |
+| **portrait** | 人像攝影 | person, face, woman, man, beauty, makeup, facial | #5, #10, #11, #17, #18 |
+| **product** | 產品攝影 | product, object, item, book, watch, bottle, package | #1, #6, #14, #16 |
+| **design** | 平面設計 | poster, layout, UI, graphic, typography, bento grid | #2, #3, #7, #9, #13 |
+| **art** | 藝術風格 | art, painting, surreal, artistic, illustration, effect | #8, #12, #15 |
+| **video** | 影片生成 | video, scene, motion, cinematic, camera movement | #4 |
+| **interior** | 室內設計 | interior, room, furniture, living room, bedroom | (v4.0新建) |
+| **common** | 通用攝影 | photography, camera, lighting, lens, technical | (跨領域) |
 
 ---
 
-## 📋 分类流程
+## 📋 分類流程
 
-### Step 1: 扫描关键词
+### Step 1: 掃描關鍵詞
 
 ```python
 def classify_domain(prompt_text: str) -> Dict:
-    # 1. 转为小写
+    # 1. 轉為小寫
     text_lower = prompt_text.lower()
 
-    # 2. 关键词匹配
+    # 2. 關鍵詞匹配
     domain_scores = {
         'portrait': 0,
         'product': 0,
@@ -38,7 +38,7 @@ def classify_domain(prompt_text: str) -> Dict:
         'common': 0
     }
 
-    # 3. 领域关键词权重表
+    # 3. 領域關鍵詞權重表
     keywords = {
         'portrait': {
             'face': 3, 'woman': 3, 'man': 3, 'person': 3,
@@ -75,7 +75,7 @@ def classify_domain(prompt_text: str) -> Dict:
         }
     }
 
-    # 4. 计算各领域得分
+    # 4. 計算各領域得分
     for domain, kw_dict in keywords.items():
         for keyword, weight in kw_dict.items():
             if keyword in text_lower:
@@ -91,23 +91,23 @@ def classify_domain(prompt_text: str) -> Dict:
     return sorted_domains
 ```
 
-### Step 2: 确定主次领域
+### Step 2: 確定主次領域
 
 ```python
 def determine_primary_secondary(sorted_domains):
     primary = None
     secondary = []
 
-    # 主领域：得分最高且 > 5
+    # 主領域：得分最高且 > 5
     if sorted_domains[0][1] > 5:
         primary = sorted_domains[0][0]
 
-    # 次领域：得分 > 3 但不是主领域
+    # 次領域：得分 > 3 但不是主領域
     for domain, score in sorted_domains[1:]:
         if score > 3:
             secondary.append(domain)
 
-    # common通常作为次领域
+    # common通常作為次領域
     if 'common' in [d[0] for d in sorted_domains if d[1] > 2]:
         if primary != 'common':
             secondary.append('common')
@@ -115,17 +115,17 @@ def determine_primary_secondary(sorted_domains):
     return {
         'primary': primary,
         'secondary': secondary,
-        'confidence': sorted_domains[0][1] / 20  # 归一化为0-1
+        'confidence': sorted_domains[0][1] / 20  # 歸一化為0-1
     }
 ```
 
 ---
 
-## 📊 分类示例
+## 📊 分類示例
 
-### 示例1: Prompt #1 (产品摄影)
+### 示例1: Prompt #1 (產品攝影)
 
-**输入**:
+**輸入**:
 ```
 A premium collector's edition book photographed with Phase One medium format camera,
 featuring Italian calfskin leather binding with gold-embossed title...
@@ -139,7 +139,7 @@ featuring Italian calfskin leather binding with gold-embossed title...
 - `camera` +2 (common)
 - `photography` +2 (common)
 
-**输出**:
+**輸出**:
 ```json
 {
   "primary": "product",
@@ -155,9 +155,9 @@ featuring Italian calfskin leather binding with gold-embossed title...
 
 ---
 
-### 示例2: Prompt #5 (人像摄影)
+### 示例2: Prompt #5 (人像攝影)
 
-**输入**:
+**輸入**:
 ```
 A young Asian woman with large expressive almond eyes, porcelain fair skin tone,
 wearing elegant red silk qipao dress...
@@ -170,7 +170,7 @@ wearing elegant red silk qipao dress...
 - `facial features` context +3
 - `beauty` implied +2
 
-**输出**:
+**輸出**:
 ```json
 {
   "primary": "portrait",
@@ -185,9 +185,9 @@ wearing elegant red silk qipao dress...
 
 ---
 
-### 示例3: Prompt #2 (设计)
+### 示例3: Prompt #2 (設計)
 
-**输入**:
+**輸入**:
 ```
 A modern Bento grid layout poster design with glassmorphism effects,
 asymmetric card arrangement...
@@ -201,7 +201,7 @@ asymmetric card arrangement...
 - `grid` +2
 - `card` +1
 
-**输出**:
+**輸出**:
 ```json
 {
   "primary": "design",
@@ -216,29 +216,29 @@ asymmetric card arrangement...
 
 ---
 
-## 🚨 边界情况处理
+## 🚨 邊界情況處理
 
-### 1. 多领域Prompt
+### 1. 多領域Prompt
 
 ```
 A woman holding a premium product in modern interior
 ```
 
-**处理**:
+**處理**:
 - primary: "portrait" (woman +3, face implied)
 - secondary: ["product", "interior"]
-- 策略：提取多个领域的元素
+- 策略：提取多個領域的元素
 
-### 2. 无法明确分类
+### 2. 無法明確分類
 
 ```
 High-resolution 8K photography
 ```
 
-**处理**:
+**處理**:
 - primary: "common"
 - secondary: []
-- 策略：只提取通用摄影技术元素
+- 策略：只提取通用攝影技術元素
 
 ### 3. 含糊描述
 
@@ -246,14 +246,14 @@ High-resolution 8K photography
 Beautiful scene with great composition
 ```
 
-**处理**:
+**處理**:
 - 得分都很低 (<5)
 - primary: None
-- 策略：跳过，提示用户提供更具体的Prompt
+- 策略：跳過，提示使用者提供更具體的Prompt
 
 ---
 
-## ✅ 输出格式
+## ✅ 輸出格式
 
 ```json
 {
@@ -272,5 +272,5 @@ Beautiful scene with great composition
 
 ---
 
-**状态**: ✅ 已实现
-**准确率目标**: >90%
+**狀態**: ✅ 已實現
+**準確率目標**: >90%

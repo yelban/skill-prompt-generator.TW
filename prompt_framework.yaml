@@ -1,23 +1,23 @@
 # ============================================================
-# 人像提示词生成框架 - 7大类模板
+# 人像提示詞生成框架 - 7大類模板
 # Portrait Prompt Generation Framework - 7 Categories
 # ============================================================
 
 framework_version: "1.0"
-description: "定义人像提示词生成的完整规则和结构"
+description: "定義人像提示詞生成的完整規則和結構"
 last_updated: "2026-01-02"
 
 # ============================================================
-# 七大类 (7 Categories)
+# 七大類 (7 Categories)
 # ============================================================
 
 categories:
 
-  # ==================== 1. 主体 (Subject) ====================
+  # ==================== 1. 主體 (Subject) ====================
   subject:
     priority: 1
     required: true
-    description: "人物主体的基础身份属性"
+    description: "人物主體的基礎身份屬性"
     fields:
 
       gender:
@@ -58,7 +58,7 @@ categories:
   facial:
     priority: 2
     required: true
-    description: "面部详细特征"
+    description: "面部詳細特徵"
     fields:
 
       eyes:
@@ -117,7 +117,7 @@ categories:
   styling:
     priority: 3
     required: true
-    description: "整体造型（服装、发型、妆容、配饰）"
+    description: "整體造型（服裝、髮型、妝容、配飾）"
     fields:
 
       clothing:
@@ -180,11 +180,11 @@ categories:
           jewelry: ["jewelry", "necklace", "earring"]
           none: []
 
-  # ==================== 4. 表现 (Expression) ====================
+  # ==================== 4. 表現 (Expression) ====================
   expression:
     priority: 4
     required: false
-    description: "表情、姿态和动作"
+    description: "表情、姿態和動作"
     fields:
 
       facial_expression:
@@ -213,7 +213,7 @@ categories:
   lighting:
     priority: 5
     required: true
-    description: "光影设置（必选）"
+    description: "光影設定（必選）"
     fields:
 
       lighting_type:
@@ -230,11 +230,11 @@ categories:
           dramatic: ["dramatic", "shadow", "contrast"]
           golden_hour: ["golden hour", "warm", "sunset"]
 
-  # ==================== 6. 场景 (Scene) ====================
+  # ==================== 6. 場景 (Scene) ====================
   scene:
     priority: 6
     required: false
-    description: "场景环境和时代氛围"
+    description: "場景環境和時代氛圍"
     fields:
 
       era:
@@ -280,11 +280,11 @@ categories:
           - "zhang_yimou"
           - "wong_kar_wai"
 
-  # ==================== 7. 技术 (Technical) ====================
+  # ==================== 7. 技術 (Technical) ====================
   technical:
     priority: 7
     required: false
-    description: "技术参数和渲染风格"
+    description: "技術引數和渲染風格"
     fields:
 
       art_style:
@@ -326,13 +326,13 @@ categories:
           - "high_resolution"
 
 # ============================================================
-# 依赖关系规则 (Dependency Rules)
+# 依賴關係規則 (Dependency Rules)
 # ============================================================
 
 dependencies:
 
-  # 规则1：古装自动推导
-  - name: "古装自动推导"
+  # 規則1：古裝自動推導
+  - name: "古裝自動推導"
     when:
       scene.era: "ancient"
     then:
@@ -340,16 +340,16 @@ dependencies:
       styling.hairstyle: "ancient_chinese"
       styling.makeup: "traditional_chinese"
 
-  # 规则2：东亚人种自动推导发色
-  - name: "东亚人种默认发色"
+  # 規則2：東亞人種自動推導髮色
+  - name: "東亞人種預設髮色"
     when:
       subject.ethnicity: "East_Asian"
       styling.hair_color: "auto"
     then:
       styling.hair_color: "black"
 
-  # 规则3：东亚人种自动推导眼型
-  - name: "东亚人种默认眼型"
+  # 規則3：東亞人種自動推導眼型
+  - name: "東亞人種預設眼型"
     when:
       subject.ethnicity: "East_Asian"
       facial.eyes: "auto"
@@ -357,33 +357,33 @@ dependencies:
       facial.eyes: "almond"
 
 # ============================================================
-# 验证规则 (Validation Rules)
+# 驗證規則 (Validation Rules)
 # ============================================================
 
 validation:
 
-  # 必选字段检查
+  # 必選欄位檢查
   required_fields:
     - field: "lighting.lighting_type"
-      error_message: "每个人像必须有光影设置"
+      error_message: "每個人像必須有光影設定"
     - field: "styling.makeup"
-      error_message: "每个人像必须有妆容设置"
+      error_message: "每個人像必須有妝容設定"
 
-  # 逻辑一致性检查
+  # 邏輯一致性檢查
   consistency_checks:
 
-    - name: "妆容与时代匹配"
+    - name: "妝容與時代匹配"
       when:
         scene.era: "ancient"
         styling.makeup: ["k_beauty", "natural", "western_glam"]
       severity: "error"
-      message: "古装场景不应该使用现代妆容"
-      suggestion: "应该使用 traditional_chinese 或 traditional_japanese"
+      message: "古裝場景不應該使用現代妝容"
+      suggestion: "應該使用 traditional_chinese 或 traditional_japanese"
 
-    - name: "人种与眼睛颜色匹配"
+    - name: "人種與眼睛顏色匹配"
       when:
         subject.ethnicity: "East_Asian"
         facial.eyes: ["green", "blue"]
       severity: "warning"
-      message: "东亚人通常不会有绿色/蓝色眼睛"
-      suggestion: "建议使用 almond 或 dark brown eyes"
+      message: "東亞人通常不會有綠色/藍色眼睛"
+      suggestion: "建議使用 almond 或 dark brown eyes"

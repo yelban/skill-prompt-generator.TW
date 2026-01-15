@@ -1,190 +1,190 @@
-# 提示词生成 Skill 路由使用指南
+# 提示詞生成 Skill 路由使用指南
 
-本指南详细说明如何根据用户请求自动路由到正确的 Skill，包含每个步骤的详细解释和实际示例。
-
----
-
-## 📚 目录
-
-1. [架构概览](#架构概览)
-2. [路由流程 4 步骤](#路由流程-4-步骤)
-3. [每个 Skill 的详细示例](#每个-skill-的详细示例)
-4. [常见问题处理](#常见问题处理)
+本指南詳細說明如何根據使用者請求自動路由到正確的 Skill，包含每個步驟的詳細解釋和實際示例。
 
 ---
 
-## 架构概览
+## 📚 目錄
 
-### 数据存储结构
+1. [架構概覽](#架構概覽)
+2. [路由流程 4 步驟](#路由流程-4-步驟)
+3. [每個 Skill 的詳細示例](#每個-skill-的詳細示例)
+4. [常見問題處理](#常見問題處理)
+
+---
+
+## 架構概覽
+
+### 資料儲存結構
 
 ```
-elements.db (统一数据库)
+elements.db (統一資料庫)
     ├─ portrait domain (491 元素) → intelligent-prompt-generator
     ├─ art domain (51 元素) → art-master
     ├─ design domain (59 元素) → design-master
     ├─ product domain (77 元素) → product-master
     ├─ video domain (49 元素) → video-master
-    └─ 其他 7 个 domain (common, interior, creative 等)
+    └─ 其他 7 個 domain (common, interior, creative 等)
 ```
 
-### 为什么需要不同的 Skill？
+### 為什麼需要不同的 Skill？
 
-虽然所有数据在同一个数据库，但访问方式不同：
+雖然所有資料在同一個資料庫，但訪問方式不同：
 
-- **intelligent-prompt-generator**: 使用 `prompt_framework.yaml`（人像专用框架），包含 eyes, nose, lips, makeup, hairstyle, pose 等人像专用字段
-- **domain expert skills**: 直接查询对应领域，无需人像框架
+- **intelligent-prompt-generator**: 使用 `prompt_framework.yaml`（人像專用框架），包含 eyes, nose, lips, makeup, hairstyle, pose 等人像專用欄位
+- **domain expert skills**: 直接查詢對應領域，無需人像框架
 
-**关键**：风景画、产品、海报不需要 "眼睛"、"妆容"、"姿势" 这些字段 → 必须用专门的 domain expert skills
+**關鍵**：風景畫、產品、海報不需要 "眼睛"、"妝容"、"姿勢" 這些欄位 → 必須用專門的 domain expert skills
 
 ---
 
-## 路由流程 4 步骤
+## 路由流程 4 步驟
 
-### STEP 1: 判断主体（最重要）
+### STEP 1: 判斷主體（最重要）
 
-**问题**：请求中是否包含人物？
+**問題**：請求中是否包含人物？
 
-#### 判断方法
+#### 判斷方法
 
-**有人物** 的关键词：
-- 明确的人物：女性、男性、女孩、男孩、人物、角色、肖像
-- 职业/身份：模特、女演员、武侠人物、商务人士
-- 人体部位：面部、五官、表情、姿势、妆容
+**有人物** 的關鍵詞：
+- 明確的人物：女性、男性、女孩、男孩、人物、角色、肖像
+- 職業/身份：模特、女演員、武俠人物、商務人士
+- 人體部位：面部、五官、表情、姿勢、妝容
 
-**无人物** 的关键词：
-- 风景：山水、风景、自然、树林、海洋
-- 静物：花卉、静物、桌面
-- 抽象：抽象艺术、几何图形
-- 产品：手表、香水、书籍、商品
-- 界面：海报、UI、布局、网页
+**無人物** 的關鍵詞：
+- 風景：山水、風景、自然、樹林、海洋
+- 靜物：花卉、靜物、桌面
+- 抽象：抽象藝術、幾何圖形
+- 產品：手錶、香水、書籍、商品
+- 介面：海報、UI、佈局、網頁
 
 #### 示例
 
-| 用户请求 | 有人物？ | 下一步 |
+| 使用者請求 | 有人物？ | 下一步 |
 |---------|---------|--------|
-| "生成电影级亚洲女性" | ✅ YES | 默认 → intelligent-prompt-generator |
-| "生成中国水墨画山水" | ❌ NO | 继续 STEP 2 |
-| "生成武侠人物飞身跃起" | ✅ YES | 默认 → intelligent-prompt-generator |
-| "生成奢华手表产品摄影" | ❌ NO | 继续 STEP 2 |
+| "生成電影級亞洲女性" | ✅ YES | 預設 → intelligent-prompt-generator |
+| "生成中國水墨畫山水" | ❌ NO | 繼續 STEP 2 |
+| "生成武俠人物飛身躍起" | ✅ YES | 預設 → intelligent-prompt-generator |
+| "生成奢華手錶產品攝影" | ❌ NO | 繼續 STEP 2 |
 
 ---
 
-### STEP 2: 根据主体类型选择专家
+### STEP 2: 根據主體型別選擇專家
 
-**前提**：STEP 1 判断为 "无人物"
+**前提**：STEP 1 判斷為 "無人物"
 
-#### 分类规则
+#### 分類規則
 
-**🎨 艺术作品** → `art-master`
-- 关键词：水墨画、油画、水彩画、抽象艺术、插画、绘画
-- 特征：艺术风格、绘画技法、艺术流派
+**🎨 藝術作品** → `art-master`
+- 關鍵詞：水墨畫、油畫、水彩畫、抽象藝術、插畫、繪畫
+- 特徵：藝術風格、繪畫技法、藝術流派
 - Domain: art (51 元素)
-- 专长：笔触、留白、泼墨、厚涂、肌理
+- 專長：筆觸、留白、潑墨、厚塗、肌理
 
-**🎯 平面设计** → `design-master`
-- 关键词：海报、UI、布局、Bento Grid、玻璃态、排版
-- 特征：设计布局、视觉效果、现代设计系统
+**🎯 平面設計** → `design-master`
+- 關鍵詞：海報、UI、佈局、Bento Grid、玻璃態、排版
+- 特徵：設計佈局、視覺效果、現代設計系統
 - Domain: design (59 元素)
-- 专长：Bento Grid、Glassmorphism、网格系统
+- 專長：Bento Grid、Glassmorphism、網格系統
 
-**📦 产品摄影** → `product-master`
-- 关键词：产品、商品、商业摄影、包装、展示
-- 特征：产品、商品、静物拍摄
+**📦 產品攝影** → `product-master`
+- 關鍵詞：產品、商品、商業攝影、包裝、展示
+- 特徵：產品、商品、靜物拍攝
 - Domain: product (77 元素)
-- 专长：Phase One 相机、商业布光、产品构图
+- 專長：Phase One 相機、商業布光、產品構圖
 
-**🎬 视频场景** → `video-master`
-- 关键词：视频、镜头运动、运镜、转场、动态场景、延时摄影
-- 特征：动态、镜头语言、视频效果
+**🎬 影片場景** → `video-master`
+- 關鍵詞：影片、鏡頭運動、運鏡、轉場、動態場景、延時攝影
+- 特徵：動態、鏡頭語言、影片效果
 - Domain: video (49 元素)
-- 专长：推拉摇移、转场、特效、镜头运动
+- 專長：推拉搖移、轉場、特效、鏡頭運動
 
-**👤 人像摄影** → `intelligent-prompt-generator`
-- 关键词：人物、肖像、面部、五官、表情、姿势、妆容
-- 特征：人物属性、面部特征
+**👤 人像攝影** → `intelligent-prompt-generator`
+- 關鍵詞：人物、肖像、面部、五官、表情、姿勢、妝容
+- 特徵：人物屬性、面部特徵
 - Domain: portrait (491 元素)
-- 专长：五官、妆容、表情、人种推理、一致性检查
+- 專長：五官、妝容、表情、人種推理、一致性檢查
 
 #### 示例
 
-| 用户请求 | 主体类型 | 路由选择 |
+| 使用者請求 | 主體型別 | 路由選擇 |
 |---------|---------|---------|
-| "生成中国水墨画山水，飞白技法" | 艺术作品 | art-master |
-| "生成 Bento Grid 布局海报" | 平面设计 | design-master |
-| "生成奢华手表产品摄影，柔光箱布光" | 产品摄影 | product-master |
-| "生成武侠场景推镜头运动" | 视频场景 | video-master |
+| "生成中國水墨畫山水，飛白技法" | 藝術作品 | art-master |
+| "生成 Bento Grid 佈局海報" | 平面設計 | design-master |
+| "生成奢華手錶產品攝影，柔光箱布光" | 產品攝影 | product-master |
+| "生成武俠場景推鏡頭運動" | 影片場景 | video-master |
 
 ---
 
-### STEP 3: 冲突场景处理
+### STEP 3: 衝突場景處理
 
-**场景**：请求同时涉及 **人物 + 特殊风格**
+**場景**：請求同時涉及 **人物 + 特殊風格**
 
-#### 默认策略（80% 情况）
+#### 預設策略（80% 情況）
 
-**规则**：有人物 → 优先 `intelligent-prompt-generator`
+**規則**：有人物 → 優先 `intelligent-prompt-generator`
 
 **原因**：
-- 人像框架能处理人物属性（五官、表情、妆容）
-- 风格通过 `art_style` 参数实现（如 art_style='watercolor'）
+- 人像框架能處理人物屬性（五官、表情、妝容）
+- 風格透過 `art_style` 引數實現（如 art_style='watercolor'）
 
-#### 例外情况（20% 情况）
+#### 例外情況（20% 情況）
 
-**规则**：用户明确强调艺术技法专业术语 → 使用 `art-master`
+**規則**：使用者明確強調藝術技法專業術語 → 使用 `art-master`
 
-**艺术技法关键词**：
-- 笔触、留白、泼墨（水墨画）
-- 厚涂、肌理、笔触（油画）
-- 干湿浓淡、飞白（国画）
-- 晕染、渐变（水彩）
+**藝術技法關鍵詞**：
+- 筆觸、留白、潑墨（水墨畫）
+- 厚塗、肌理、筆觸（油畫）
+- 乾溼濃淡、飛白（國畫）
+- 暈染、漸變（水彩）
 
-#### 询问用户场景
+#### 詢問使用者場景
 
-**规则**：同时强调人物细节和艺术技法 → 询问用户偏好
+**規則**：同時強調人物細節和藝術技法 → 詢問使用者偏好
 
 #### 示例
 
-| 用户请求 | 分析 | 路由选择 | 理由 |
+| 使用者請求 | 分析 | 路由選擇 | 理由 |
 |---------|------|---------|------|
-| "生成水墨画风格的女性" | 人物 + 风格 | intelligent-prompt-generator | 默认策略，水墨画作为 art_style |
-| "生成梵高风格的女性肖像" | 人物 + 风格 | intelligent-prompt-generator | 默认策略，梵高风格作为 art_style |
-| "生成女性肖像，要求水墨画的笔触和留白技法" | 人物 + 艺术技法术语 | 询问用户 | 同时强调人物和技法 |
-| "生成油画效果，要求厚涂和肌理" | 无人物 + 艺术技法 | art-master | 强调艺术技法 |
+| "生成水墨畫風格的女性" | 人物 + 風格 | intelligent-prompt-generator | 預設策略，水墨畫作為 art_style |
+| "生成梵高風格的女性肖像" | 人物 + 風格 | intelligent-prompt-generator | 預設策略，梵高風格作為 art_style |
+| "生成女性肖像，要求水墨畫的筆觸和留白技法" | 人物 + 藝術技法術語 | 詢問使用者 | 同時強調人物和技法 |
+| "生成油畫效果，要求厚塗和肌理" | 無人物 + 藝術技法 | art-master | 強調藝術技法 |
 
 ---
 
-### STEP 4: 调用对应的 Skill
+### STEP 4: 呼叫對應的 Skill
 
-根据 STEP 1-3 的判断结果，调用相应的 Skill：
+根據 STEP 1-3 的判斷結果，呼叫相應的 Skill：
 
 ```python
-# 调用示例
+# 呼叫示例
 Skill(command="intelligent-prompt-generator")  # 人像
-Skill(command="art-master")                    # 艺术
-Skill(command="design-master")                 # 设计
-Skill(command="product-master")                # 产品
-Skill(command="video-master")                  # 视频
+Skill(command="art-master")                    # 藝術
+Skill(command="design-master")                 # 設計
+Skill(command="product-master")                # 產品
+Skill(command="video-master")                  # 影片
 ```
 
 ---
 
-## 每个 Skill 的详细示例
+## 每個 Skill 的詳細示例
 
-### 1. intelligent-prompt-generator（人像专家）
+### 1. intelligent-prompt-generator（人像專家）
 
-**适用场景**：所有包含人物的请求
+**適用場景**：所有包含人物的請求
 
-#### 示例 1: 电影级亚洲女性
+#### 示例 1: 電影級亞洲女性
 
-**用户请求**：
+**使用者請求**：
 ```
-生成电影级的亚洲女性，张艺谋电影风格
+生成電影級的亞洲女性，張藝謀電影風格
 ```
 
 **路由流程**：
-1. **STEP 1**: 包含 "亚洲女性" → 有人物 ✅
-2. **结论**: intelligent-prompt-generator
-3. **调用**: `Skill(command="intelligent-prompt-generator")`
+1. **STEP 1**: 包含 "亞洲女性" → 有人物 ✅
+2. **結論**: intelligent-prompt-generator
+3. **呼叫**: `Skill(command="intelligent-prompt-generator")`
 
 **Skill 工作**：
 - 解析 intent:
@@ -195,22 +195,22 @@ Skill(command="video-master")                  # 视频
     "visual_style": {"art_style": "cinematic"}
   }
   ```
-- 查询 portrait domain (491 元素)
-- 应用人像框架（facial, styling, expression 等字段）
-- 生成包含戏剧性光影的完整人像提示词
+- 查詢 portrait domain (491 元素)
+- 應用人像框架（facial, styling, expression 等欄位）
+- 生成包含戲劇性光影的完整人像提示詞
 
-#### 示例 2: 水墨画风格的女性
+#### 示例 2: 水墨畫風格的女性
 
-**用户请求**：
+**使用者請求**：
 ```
-生成水墨画风格的女性
+生成水墨畫風格的女性
 ```
 
 **路由流程**：
 1. **STEP 1**: 包含 "女性" → 有人物 ✅
-2. **STEP 3**: 人物 + 风格，但未强调技法术语 → 默认策略
-3. **结论**: intelligent-prompt-generator
-4. **调用**: `Skill(command="intelligent-prompt-generator")`
+2. **STEP 3**: 人物 + 風格，但未強調技法術語 → 預設策略
+3. **結論**: intelligent-prompt-generator
+4. **呼叫**: `Skill(command="intelligent-prompt-generator")`
 
 **Skill 工作**：
 - 解析 intent:
@@ -220,20 +220,20 @@ Skill(command="video-master")                  # 视频
     "visual_style": {"art_style": "watercolor"}
   }
   ```
-- 通过 art_style 参数实现水墨画风格
-- 人像框架处理五官、表情、妆容
+- 透過 art_style 引數實現水墨畫風格
+- 人像框架處理五官、表情、妝容
 
-#### 示例 3: 古装女子
+#### 示例 3: 古裝女子
 
-**用户请求**：
+**使用者請求**：
 ```
-生成仙剑奇侠传真人电影风格的年轻古装女子
+生成仙劍奇俠傳真人電影風格的年輕古裝女子
 ```
 
 **路由流程**：
-1. **STEP 1**: 包含 "古装女子" → 有人物 ✅
-2. **结论**: intelligent-prompt-generator
-3. **调用**: `Skill(command="intelligent-prompt-generator")`
+1. **STEP 1**: 包含 "古裝女子" → 有人物 ✅
+2. **結論**: intelligent-prompt-generator
+3. **呼叫**: `Skill(command="intelligent-prompt-generator")`
 
 **Skill 工作**：
 - 解析 intent:
@@ -249,413 +249,413 @@ Skill(command="video-master")                  # 视频
     "scene": {"era": "ancient", "atmosphere": "fantasy"}
   }
   ```
-- 框架自动推导：era=ancient → makeup/clothing/hairstyle 自动匹配
+- 框架自動推導：era=ancient → makeup/clothing/hairstyle 自動匹配
 
 ---
 
-### 2. art-master（艺术专家）
+### 2. art-master（藝術專家）
 
-**适用场景**：无人物的艺术作品，或强调艺术技法术语
+**適用場景**：無人物的藝術作品，或強調藝術技法術語
 
-#### 示例 1: 中国水墨画山水
+#### 示例 1: 中國水墨畫山水
 
-**用户请求**：
+**使用者請求**：
 ```
-生成中国水墨画山水
+生成中國水墨畫山水
 ```
 
 **路由流程**：
-1. **STEP 1**: 山水 → 无人物 ❌
-2. **STEP 2**: 主体是艺术作品（水墨画） → art-master
-3. **调用**: `Skill(command="art-master")`
+1. **STEP 1**: 山水 → 無人物 ❌
+2. **STEP 2**: 主體是藝術作品（水墨畫） → art-master
+3. **呼叫**: `Skill(command="art-master")`
 
 **Skill 工作**：
-- 查询 art domain (51 元素)
-- 选择中国水墨画相关元素：
-  - 艺术风格：Traditional Chinese ink painting
+- 查詢 art domain (51 元素)
+- 選擇中國水墨畫相關元素：
+  - 藝術風格：Traditional Chinese ink painting
   - 技法：flowing brush strokes, varying ink density
-  - 构图：minimalist composition, negative space
-  - 特征：monochromatic, grey washes, calligraphic elements
-- 生成包含专业艺术术语的提示词
+  - 構圖：minimalist composition, negative space
+  - 特徵：monochromatic, grey washes, calligraphic elements
+- 生成包含專業藝術術語的提示詞
 
-#### 示例 2: 油画技法的厚涂效果
+#### 示例 2: 油畫技法的厚塗效果
 
-**用户请求**：
+**使用者請求**：
 ```
-生成油画效果，强调厚涂和笔触肌理
+生成油畫效果，強調厚塗和筆觸肌理
 ```
 
 **路由流程**：
-1. **STEP 1**: 无人物明确提及 → 无人物 ❌
-2. **STEP 2**: 强调艺术技法（厚涂、肌理） → art-master
-3. **调用**: `Skill(command="art-master")`
+1. **STEP 1**: 無人物明確提及 → 無人物 ❌
+2. **STEP 2**: 強調藝術技法（厚塗、肌理） → art-master
+3. **呼叫**: `Skill(command="art-master")`
 
 **Skill 工作**：
-- 查询 art domain
-- 选择油画技法元素：
+- 查詢 art domain
+- 選擇油畫技法元素：
   - 技法：impasto technique, thick paint application
-  - 笔触：visible brush strokes, textured surface
+  - 筆觸：visible brush strokes, textured surface
   - 效果：palette knife marks, layered paint
-- 生成强调技法的艺术提示词
+- 生成強調技法的藝術提示詞
 
-#### 示例 3: 超现实主义风格
+#### 示例 3: 超現實主義風格
 
-**用户请求**：
+**使用者請求**：
 ```
-生成超现实主义艺术作品，梦境氛围
+生成超現實主義藝術作品，夢境氛圍
 ```
 
 **路由流程**：
-1. **STEP 1**: 无人物 ❌
-2. **STEP 2**: 主体是艺术作品（超现实主义） → art-master
-3. **调用**: `Skill(command="art-master")`
+1. **STEP 1**: 無人物 ❌
+2. **STEP 2**: 主體是藝術作品（超現實主義） → art-master
+3. **呼叫**: `Skill(command="art-master")`
 
 **Skill 工作**：
-- 查询 art domain
-- 选择超现实主义元素：
-  - 艺术风格：surrealism, dreamlike atmosphere
-  - 特征：impossible scenarios, symbolic imagery
+- 查詢 art domain
+- 選擇超現實主義元素：
+  - 藝術風格：surrealism, dreamlike atmosphere
+  - 特徵：impossible scenarios, symbolic imagery
   - 效果：ethereal, mysterious, subconscious themes
-- 生成超现实主义风格提示词
+- 生成超現實主義風格提示詞
 
 ---
 
-### 3. design-master（设计专家）
+### 3. design-master（設計專家）
 
-**适用场景**：无人物的平面设计、UI、海报、布局
+**適用場景**：無人物的平面設計、UI、海報、佈局
 
-#### 示例 1: Bento Grid 海报
+#### 示例 1: Bento Grid 海報
 
-**用户请求**：
+**使用者請求**：
 ```
-生成 Bento Grid 布局海报
-```
-
-**路由流程**：
-1. **STEP 1**: 海报 → 无人物 ❌
-2. **STEP 2**: 主体是平面设计（Bento Grid） → design-master
-3. **调用**: `Skill(command="design-master")`
-
-**Skill 工作**：
-- 查询 design domain (59 元素)
-- 选择 Bento Grid 相关元素：
-  - 布局系统：Bento grid layout, 8 asymmetric modular cards
-  - 视觉效果：modern minimalist aesthetics
-  - 技术参数：4K resolution, clean typography
-- 生成包含专业设计术语的提示词
-
-#### 示例 2: 玻璃态 UI 设计
-
-**用户请求**：
-```
-生成玻璃态 UI 设计，现代极简风格
+生成 Bento Grid 佈局海報
 ```
 
 **路由流程**：
-1. **STEP 1**: UI → 无人物 ❌
-2. **STEP 2**: 主体是平面设计（玻璃态） → design-master
-3. **调用**: `Skill(command="design-master")`
+1. **STEP 1**: 海報 → 無人物 ❌
+2. **STEP 2**: 主體是平面設計（Bento Grid） → design-master
+3. **呼叫**: `Skill(command="design-master")`
 
 **Skill 工作**：
-- 查询 design domain
-- 选择玻璃态元素：
-  - 视觉效果：Glassmorphism, frosted glass effect
-  - 技术：80% translucency, backdrop blur filter
-  - 风格：minimalist, modern aesthetics
+- 查詢 design domain (59 元素)
+- 選擇 Bento Grid 相關元素：
+  - 佈局系統：Bento grid layout, 8 asymmetric modular cards
+  - 視覺效果：modern minimalist aesthetics
+  - 技術引數：4K resolution, clean typography
+- 生成包含專業設計術語的提示詞
+
+#### 示例 2: 玻璃態 UI 設計
+
+**使用者請求**：
+```
+生成玻璃態 UI 設計，現代極簡風格
+```
+
+**路由流程**：
+1. **STEP 1**: UI → 無人物 ❌
+2. **STEP 2**: 主體是平面設計（玻璃態） → design-master
+3. **呼叫**: `Skill(command="design-master")`
+
+**Skill 工作**：
+- 查詢 design domain
+- 選擇玻璃態元素：
+  - 視覺效果：Glassmorphism, frosted glass effect
+  - 技術：80% translucency, backdrop blur filter
+  - 風格：minimalist, modern aesthetics
   - 色彩：90% neutral colors with 10% vibrant accents
-- 生成现代设计系统提示词
+- 生成現代設計系統提示詞
 
-#### 示例 3: 包含人物头像的海报
+#### 示例 3: 包含人物頭像的海報
 
-**用户请求**：
+**使用者請求**：
 ```
-生成 Bento Grid 海报，包含人物头像
+生成 Bento Grid 海報，包含人物頭像
 ```
 
 **路由流程**：
-1. **STEP 1**: 虽然提到"人物头像"，但主体是"海报" → 无人物 ❌
-2. **STEP 2**: 主体是平面设计 → design-master
-3. **调用**: `Skill(command="design-master")`
+1. **STEP 1**: 雖然提到"人物頭像"，但主體是"海報" → 無人物 ❌
+2. **STEP 2**: 主體是平面設計 → design-master
+3. **呼叫**: `Skill(command="design-master")`
 
-**解释**：人物头像只是海报的一个元素，不是主体
+**解釋**：人物頭像只是海報的一個元素，不是主體
 
 ---
 
-### 4. product-master（产品专家）
+### 4. product-master（產品專家）
 
-**适用场景**：无人物的产品摄影、商品展示
+**適用場景**：無人物的產品攝影、商品展示
 
-#### 示例 1: 奢华手表产品摄影
+#### 示例 1: 奢華手錶產品攝影
 
-**用户请求**：
+**使用者請求**：
 ```
-生成奢华手表产品摄影
+生成奢華手錶產品攝影
 ```
 
 **路由流程**：
-1. **STEP 1**: 手表 → 无人物 ❌
-2. **STEP 2**: 主体是产品 → product-master
-3. **调用**: `Skill(command="product-master")`
+1. **STEP 1**: 手錶 → 無人物 ❌
+2. **STEP 2**: 主體是產品 → product-master
+3. **呼叫**: `Skill(command="product-master")`
 
 **Skill 工作**：
-- 查询 product domain (77 元素)
-- 选择奢华产品摄影元素：
-  - 相机：Phase One camera, macro lens
-  - 灯光：softbox lighting, rim light
-  - 构图：luxury product composition
+- 查詢 product domain (77 元素)
+- 選擇奢華產品攝影元素：
+  - 相機：Phase One camera, macro lens
+  - 燈光：softbox lighting, rim light
+  - 構圖：luxury product composition
   - 背景：premium backdrop
-- 生成商业摄影级提示词
+- 生成商業攝影級提示詞
 
 #### 示例 2: 香水瓶柔光布光
 
-**用户请求**：
+**使用者請求**：
 ```
-生成香水瓶产品摄影，柔光箱布光
+生成香水瓶產品攝影，柔光箱布光
 ```
 
 **路由流程**：
-1. **STEP 1**: 香水瓶 → 无人物 ❌
-2. **STEP 2**: 主体是产品 → product-master
-3. **调用**: `Skill(command="product-master")`
+1. **STEP 1**: 香水瓶 → 無人物 ❌
+2. **STEP 2**: 主體是產品 → product-master
+3. **呼叫**: `Skill(command="product-master")`
 
 **Skill 工作**：
-- 查询 product domain
-- 选择柔光布光元素：
-  - 灯光：softbox lighting, diffused light
-  - 相机：DSLR, shallow depth of field
+- 查詢 product domain
+- 選擇柔光布光元素：
+  - 燈光：softbox lighting, diffused light
+  - 相機：DSLR, shallow depth of field
   - 效果：elegant, premium, glass reflections
-- 生成包含专业摄影术语的提示词
+- 生成包含專業攝影術語的提示詞
 
-#### 示例 3: 女模特展示香水（边界案例）
+#### 示例 3: 女模特展示香水（邊界案例）
 
-**用户请求**：
+**使用者請求**：
 ```
 女模特展示香水瓶
 ```
 
 **路由流程**：
 1. **STEP 1**: 有 "女模特" → 有人物 ✅
-2. **STEP 3**: 焦点不明确（人物 vs 产品）
-3. **询问用户**:
+2. **STEP 3**: 焦點不明確（人物 vs 產品）
+3. **詢問使用者**:
    ```
-   我注意到你的请求涉及：
+   我注意到你的請求涉及：
    - 女模特（intelligent-prompt-generator）
-   - 香水瓶产品（product-master）
+   - 香水瓶產品（product-master）
 
-   你的焦点是：
-   A. 女模特（人物为主，香水为道具）
-   B. 香水瓶（产品为主，模特为陪衬）
+   你的焦點是：
+   A. 女模特（人物為主，香水為道具）
+   B. 香水瓶（產品為主，模特為陪襯）
 
-   请选择？
+   請選擇？
    ```
 
-#### 示例 4: 9宫格产品摄影（Grid Collage 模式）
+#### 示例 4: 9宮格產品攝影（Grid Collage 模式）
 
-**用户请求**：
+**使用者請求**：
 ```
-生成9宫格奢华手表产品摄影，中间3D突出
+生成9宮格奢華手錶產品攝影，中間3D突出
 ```
 
 **路由流程**：
-1. **STEP 1**: 手表 → 无人物 ❌
-2. **STEP 2**: 主体是产品 → product-master
-3. **调用**: `Skill(command="product-master")`
+1. **STEP 1**: 手錶 → 無人物 ❌
+2. **STEP 2**: 主體是產品 → product-master
+3. **呼叫**: `Skill(command="product-master")`
 
 **Skill 工作**：
-- 识别关键词："9宫格" → 自动切换到 **Grid Collage 模式**
-- 加载专业模板：`modules/layouts/grid_collage.md`
-- 查询 product domain (77 元素)
-- 生成包含以下特性的专业提示词：
-  - **3×3严格等分网格** + THICK WHITE LINES 分隔
-  - **8个不同角度产品摄影**（背景层，全部清晰）
-    - [1,1] 表盘俯视
-    - [1,2] 表冠侧面
-    - [1,3] 表扣细节
-    - [2,1] 经典45度角
-    - [2,3] 底盖机芯
+- 識別關鍵詞："9宮格" → 自動切換到 **Grid Collage 模式**
+- 載入專業模板：`modules/layouts/grid_collage.md`
+- 查詢 product domain (77 元素)
+- 生成包含以下特性的專業提示詞：
+  - **3×3嚴格等分網格** + THICK WHITE LINES 分隔
+  - **8個不同角度產品攝影**（背景層，全部清晰）
+    - [1,1] 錶盤俯視
+    - [1,2] 錶冠側面
+    - [1,3] 表扣細節
+    - [2,1] 經典45度角
+    - [2,3] 底蓋機芯
     - [3,1] 上手效果
-    - [3,2] 表带链节
-    - [3,3] 包装盒
-  - **1个超大3D渲染手表**（前景层）
-    - 表冠触顶边，表带触底边
-    - 占据最大垂直空间
-    - 完全遮挡中间格子[2,2]
-    - 部分遮挡周围4格（10-20%）
+    - [3,2] 錶帶鏈節
+    - [3,3] 包裝盒
+  - **1個超大3D渲染手錶**（前景層）
+    - 錶冠觸頂邊，錶帶觸底邊
+    - 佔據最大垂直空間
+    - 完全遮擋中間格子[2,2]
+    - 部分遮擋周圍4格（10-20%）
   - **深景深f/16** - 所有格子都清晰
-  - **专业深度效果**：
+  - **專業深度效果**：
     - Drop shadow (12px blur)
     - Contact shadow (8px blur)
-    - 前景+10%亮度，+20%饱和度
-  - **完整质量检查清单**
-  - **一致性规则**（9个位置同一产品）
+    - 前景+10%亮度，+20%飽和度
+  - **完整質量檢查清單**
+  - **一致性規則**（9個位置同一產品）
 
-**输出效果**：
-- 超现实拼贴艺术风格
-- 适合电商详情页、社交媒体、产品宣传海报
-- 同时展示多个角度 + 3D立体突出
+**輸出效果**：
+- 超現實拼貼藝術風格
+- 適合電商詳情頁、社交媒體、產品宣傳海報
+- 同時展示多個角度 + 3D立體突出
 
-**触发关键词**：
-- "9宫格"、"3×3布局"、"grid"
-- "多角度展示"、"多视角"
-- "中间3D突出"、"3D pop-out"
+**觸發關鍵詞**：
+- "9宮格"、"3×3佈局"、"grid"
+- "多角度展示"、"多視角"
+- "中間3D突出"、"3D pop-out"
 
 ---
 
-### 5. video-master（视频专家）
+### 5. video-master（影片專家）
 
-**适用场景**：无人物的视频场景、镜头运动、动态效果
+**適用場景**：無人物的影片場景、鏡頭運動、動態效果
 
-#### 示例 1: 武侠场景运镜
+#### 示例 1: 武俠場景運鏡
 
-**用户请求**：
+**使用者請求**：
 ```
-生成武侠场景推镜头运动
+生成武俠場景推鏡頭運動
 ```
 
 **路由流程**：
-1. **STEP 1**: 场景 + 推镜头 → 无人物 ❌
-2. **STEP 2**: 主体是视频（镜头运动） → video-master
-3. **调用**: `Skill(command="video-master")`
+1. **STEP 1**: 場景 + 推鏡頭 → 無人物 ❌
+2. **STEP 2**: 主體是影片（鏡頭運動） → video-master
+3. **呼叫**: `Skill(command="video-master")`
 
 **Skill 工作**：
-- 查询 video domain (49 元素)
-- 选择镜头运动元素：
-  - 运镜：dolly in (推镜头), slow camera movement
-  - 场景：wuxia atmosphere, ancient Chinese architecture
+- 查詢 video domain (49 元素)
+- 選擇鏡頭運動元素：
+  - 運鏡：dolly in (推鏡頭), slow camera movement
+  - 場景：wuxia atmosphere, ancient Chinese architecture
   - 效果：cinematic movement, dramatic reveal
-- 生成包含镜头语言的提示词
+- 生成包含鏡頭語言的提示詞
 
-#### 示例 2: 风景延时摄影
+#### 示例 2: 風景延時攝影
 
-**用户请求**：
+**使用者請求**：
 ```
-生成风景延时摄影，云雾流动效果
+生成風景延時攝影，雲霧流動效果
 ```
 
 **路由流程**：
-1. **STEP 1**: 风景 → 无人物 ❌
-2. **STEP 2**: 主体是视频（延时摄影） → video-master
-3. **调用**: `Skill(command="video-master")`
+1. **STEP 1**: 風景 → 無人物 ❌
+2. **STEP 2**: 主體是影片（延時攝影） → video-master
+3. **呼叫**: `Skill(command="video-master")`
 
 **Skill 工作**：
-- 查询 video domain
-- 选择延时摄影元素：
-  - 技术：time-lapse photography
+- 查詢 video domain
+- 選擇延時攝影元素：
+  - 技術：time-lapse photography
   - 效果：flowing clouds, dynamic motion
-  - 运镜：static camera, long exposure effect
-- 生成延时摄影提示词
+  - 運鏡：static camera, long exposure effect
+- 生成延時攝影提示詞
 
-#### 示例 3: 武侠人物飞身跃起（边界案例）
+#### 示例 3: 武俠人物飛身躍起（邊界案例）
 
-**用户请求**：
+**使用者請求**：
 ```
-武侠人物飞身跃起的动态镜头
+武俠人物飛身躍起的動態鏡頭
 ```
 
 **路由流程**：
-1. **STEP 1**: 包含 "武侠人物" → 有人物 ✅
-2. **分析**: 主体是人物动作 vs 镜头运动？
-3. **默认策略**: 主体是人物 → intelligent-prompt-generator
-4. **调用**: `Skill(command="intelligent-prompt-generator")`
+1. **STEP 1**: 包含 "武俠人物" → 有人物 ✅
+2. **分析**: 主體是人物動作 vs 鏡頭運動？
+3. **預設策略**: 主體是人物 → intelligent-prompt-generator
+4. **呼叫**: `Skill(command="intelligent-prompt-generator")`
 
-**解释**：
-- 人物动作通过 `expression.pose` 字段处理（人像框架支持）
-- 如果用户明确强调镜头运动（"跟随镜头"、"运镜"），则询问用户
+**解釋**：
+- 人物動作透過 `expression.pose` 欄位處理（人像框架支援）
+- 如果使用者明確強調鏡頭運動（"跟隨鏡頭"、"運鏡"），則詢問使用者
 
 ---
 
-## 常见问题处理
+## 常見問題處理
 
-### Q1: 如何判断是 "人物肖像" 还是 "人物在场景中"？
+### Q1: 如何判斷是 "人物肖像" 還是 "人物在場景中"？
 
-**答案**：看主体是什么
+**答案**：看主體是什麼
 
-| 描述 | 主体 | 路由 |
+| 描述 | 主體 | 路由 |
 |------|------|------|
 | "女性肖像" | 人物 | intelligent-prompt-generator |
-| "女性在花园里" | 人物 | intelligent-prompt-generator |
-| "花园场景，远处有人" | 场景 | 根据场景类型路由 |
-| "Bento Grid 海报，包含人物头像" | 海报 | design-master |
+| "女性在花園裡" | 人物 | intelligent-prompt-generator |
+| "花園場景，遠處有人" | 場景 | 根據場景型別路由 |
+| "Bento Grid 海報，包含人物頭像" | 海報 | design-master |
 
-### Q2: 用户说 "水墨画风格的人物"，为什么不用 art-master？
+### Q2: 使用者說 "水墨畫風格的人物"，為什麼不用 art-master？
 
-**答案**：默认策略
+**答案**：預設策略
 
-- 主体是 "人物" → 需要人像框架（facial, styling, expression）
-- "水墨画风格" 作为 `art_style` 参数实现
-- art-master 专注于艺术技法术语（笔触、留白、泼墨）
-- 除非用户明确说 "水墨画的笔触和留白技法"
+- 主體是 "人物" → 需要人像框架（facial, styling, expression）
+- "水墨畫風格" 作為 `art_style` 引數實現
+- art-master 專注於藝術技法術語（筆觸、留白、潑墨）
+- 除非使用者明確說 "水墨畫的筆觸和留白技法"
 
-### Q3: 什么时候需要询问用户？
+### Q3: 什麼時候需要詢問使用者？
 
-**答案**：两种情况
+**答案**：兩種情況
 
-1. **焦点不明确**：
-   - "女模特展示香水瓶" → 人物 vs 产品？
-   - "产品海报设计" → 产品 vs 设计？
+1. **焦點不明確**：
+   - "女模特展示香水瓶" → 人物 vs 產品？
+   - "產品海報設計" → 產品 vs 設計？
 
-2. **同时强调人物和技法**：
-   - "女性肖像，要求水墨画的笔触留白技法" → 人物细节 vs 艺术技法？
+2. **同時強調人物和技法**：
+   - "女性肖像，要求水墨畫的筆觸留白技法" → 人物細節 vs 藝術技法？
 
-### Q4: 如果用户请求不属于任何 domain 怎么办？
+### Q4: 如果使用者請求不屬於任何 domain 怎麼辦？
 
-**答案**：询问用户或直接处理
+**答案**：詢問使用者或直接處理
 
 示例：
 ```
-用户："帮我优化这段代码"
-→ 不涉及提示词生成
-→ 直接在 conversation 处理，不调用 skill
+使用者："幫我最佳化這段程式碼"
+→ 不涉及提示詞生成
+→ 直接在 conversation 處理，不呼叫 skill
 ```
 
-### Q5: 多个 domain 的组合请求怎么处理？
+### Q5: 多個 domain 的組合請求怎麼處理？
 
-**答案**：确定主 domain
+**答案**：確定主 domain
 
-| 请求 | 主 domain | 路由 |
+| 請求 | 主 domain | 路由 |
 |------|----------|------|
-| "产品海报设计" | 设计（海报） | design-master |
-| "产品摄影布光" | 产品（摄影） | product-master |
-| "人物产品广告" | 询问焦点 | 询问用户 |
+| "產品海報設計" | 設計（海報） | design-master |
+| "產品攝影布光" | 產品（攝影） | product-master |
+| "人物產品廣告" | 詢問焦點 | 詢問使用者 |
 
 ---
 
-## 总结
+## 總結
 
-### 路由决策树（完整版）
+### 路由決策樹（完整版）
 
 ```
-用户请求
+使用者請求
     ↓
-【STEP 1: 有人物吗？】
+【STEP 1: 有人物嗎？】
     ↓
   YES ─────────┐
     │         ↓
-    │    【STEP 3: 有艺术技法术语吗？】
+    │    【STEP 3: 有藝術技法術語嗎？】
     │         ↓
-    │       NO ──→ intelligent-prompt-generator (默认)
+    │       NO ──→ intelligent-prompt-generator (預設)
     │         ↓
-    │      YES ──→ 询问用户偏好
+    │      YES ──→ 詢問使用者偏好
     │
   NO
     ↓
-【STEP 2: 主体是什么？】
+【STEP 2: 主體是什麼？】
     ↓
-    ├─ 艺术作品 → art-master
-    ├─ 平面设计 → design-master
-    ├─ 产品 → product-master
-    ├─ 视频 → video-master
+    ├─ 藝術作品 → art-master
+    ├─ 平面設計 → design-master
+    ├─ 產品 → product-master
+    ├─ 影片 → video-master
     └─ 人物 → intelligent-prompt-generator
 ```
 
-### 核心原则
+### 核心原則
 
-1. **人物优先**：有人物 → 优先 intelligent-prompt-generator
-2. **技法例外**：明确艺术技法术语 → art-master
-3. **主体判断**：无人物 → 根据主体类型路由
-4. **焦点询问**：焦点不明确 → 询问用户
+1. **人物優先**：有人物 → 優先 intelligent-prompt-generator
+2. **技法例外**：明確藝術技法術語 → art-master
+3. **主體判斷**：無人物 → 根據主體型別路由
+4. **焦點詢問**：焦點不明確 → 詢問使用者
 
 ---
 
-**最后更新**: 2026-01-04
+**最後更新**: 2026-01-04
 **版本**: 1.0

@@ -1,35 +1,35 @@
-# Library Updater - 库更新器模块
+# Library Updater - 庫更新器模組
 
-**功能**: 将提取的元素写入Universal Elements Database，处理去重和ID生成
+**功能**: 將提取的元素寫入Universal Elements Database，處理去重和ID生成
 
 ---
 
 ## 🎯 核心功能
 
-1. **去重检测** - 避免重复添加已存在元素
-2. **ID生成** - 自动生成element_id
-3. **数据库写入** - 调用ElementDB.add_element()
-4. **统计更新** - 更新领域和类别计数
-5. **报告生成** - 生成学习报告
+1. **去重檢測** - 避免重複新增已存在元素
+2. **ID生成** - 自動生成element_id
+3. **資料庫寫入** - 呼叫ElementDB.add_element()
+4. **統計更新** - 更新領域和類別計數
+5. **報告生成** - 生成學習報告
 
 ---
 
 ## 📋 更新流程
 
-### Step 1: 检查元素是否已存在
+### Step 1: 檢查元素是否已存在
 
 ```python
 from element_db import ElementDB
 
 def check_element_exists(db: ElementDB, element: Dict) -> Tuple[bool, Optional[str]]:
     """
-    检查元素是否已存在
+    檢查元素是否已存在
 
     Returns:
         (exists: bool, existing_element_id: Optional[str])
     """
 
-    # 方法1: 按name精确匹配
+    # 方法1: 按name精確匹配
     existing = db.conn.cursor().execute("""
         SELECT element_id FROM elements
         WHERE domain_id = ? AND category_id = ? AND name = ?
@@ -43,7 +43,7 @@ def check_element_exists(db: ElementDB, element: Dict) -> Tuple[bool, Optional[s
         return True, existing[0]
 
     # 方法2: 按keywords相似度匹配
-    # 查找同类别的所有元素
+    # 查詢同類別的所有元素
     similar_elements = db.search_by_domain(
         element['domain_id'],
         category_id=element['category_id']
@@ -61,7 +61,7 @@ def check_element_exists(db: ElementDB, element: Dict) -> Tuple[bool, Optional[s
     return False, None
 
 def calculate_keyword_similarity(kw1: List[str], kw2: List[str]) -> float:
-    """计算关键词Jaccard相似度"""
+    """計算關鍵詞Jaccard相似度"""
     set1 = set([k.lower() for k in kw1])
     set2 = set([k.lower() for k in kw2])
 
@@ -78,11 +78,11 @@ def generate_element_id(db: ElementDB, domain_id: str, category_id: str) -> str:
     """
     生成element_id
 
-    格式: {domain}_{category}_{序号}
+    格式: {domain}_{category}_{序號}
     示例: product_product_types_001
     """
 
-    # 查询该领域+类别下的最大序号
+    # 查詢該領域+類別下的最大序號
     cursor = db.conn.cursor()
     cursor.execute("""
         SELECT element_id FROM elements
@@ -94,7 +94,7 @@ def generate_element_id(db: ElementDB, domain_id: str, category_id: str) -> str:
     last_elem = cursor.fetchone()
 
     if last_elem:
-        # 提取序号
+        # 提取序號
         last_id = last_elem[0]
         # 'product_product_types_042' -> 42
         match = re.search(r'_(\d+)$', last_id)
@@ -108,7 +108,7 @@ def generate_element_id(db: ElementDB, domain_id: str, category_id: str) -> str:
     return f"{domain_id}_{category_id}_{next_num:03d}"
 ```
 
-### Step 3: 写入数据库
+### Step 3: 寫入資料庫
 
 ```python
 def add_element_to_db(
@@ -118,13 +118,13 @@ def add_element_to_db(
     learned_from: str = "auto_learner"
 ) -> Tuple[bool, str]:
     """
-    将元素添加到数据库
+    將元素新增到資料庫
 
     Returns:
         (success: bool, element_id: str)
     """
 
-    # 1. 检查是否已存在
+    # 1. 檢查是否已存在
     exists, existing_id = check_element_exists(db, element)
     if exists:
         print(f"   ⚠️  元素已存在: {existing_id}")
@@ -137,7 +137,7 @@ def add_element_to_db(
         element['category_id']
     )
 
-    # 3. 写入数据库
+    # 3. 寫入資料庫
     success = db.add_element(
         element_id=element_id,
         domain_id=element['domain_id'],
@@ -154,14 +154,14 @@ def add_element_to_db(
     )
 
     if success:
-        print(f"   ✅ 已添加: {element_id} - {element.get('chinese_name', element['name'])}")
+        print(f"   ✅ 已新增: {element_id} - {element.get('chinese_name', element['name'])}")
         return True, element_id
     else:
-        print(f"   ❌ 添加失败: {element['name']}")
+        print(f"   ❌ 新增失敗: {element['name']}")
         return False, None
 ```
 
-### Step 4: 批量更新
+### Step 4: 批次更新
 
 ```python
 def batch_add_elements(
@@ -170,7 +170,7 @@ def batch_add_elements(
     source_prompt_id: int
 ) -> Dict:
     """
-    批量添加元素
+    批次新增元素
 
     Returns:
         {
@@ -198,7 +198,7 @@ def batch_add_elements(
             stats['element_ids'].append(element_id)
         elif element_id:  # 已存在
             stats['skipped'] += 1
-        else:  # 失败
+        else:  # 失敗
             stats['failed'] += 1
 
     return stats
@@ -206,9 +206,9 @@ def batch_add_elements(
 
 ---
 
-## 📊 学习报告生成
+## 📊 學習報告生成
 
-### Step 5: 生成学习报告
+### Step 5: 生成學習報告
 
 ```python
 def generate_learning_report(
@@ -218,25 +218,25 @@ def generate_learning_report(
     elements: List[Dict],
     stats: Dict
 ) -> str:
-    """生成学习报告"""
+    """生成學習報告"""
 
     report_lines = []
 
-    report_lines.append("# Universal Learner - 学习报告\n")
-    report_lines.append(f"**学习时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    report_lines.append("# Universal Learner - 學習報告\n")
+    report_lines.append(f"**學習時間**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     report_lines.append(f"**源Prompt**: Prompt #{prompt_id}\n")
 
-    # 1. 领域识别
-    report_lines.append("## 🎯 领域识别\n")
-    report_lines.append(f"主领域: **{domain_info['primary']}**")
+    # 1. 領域識別
+    report_lines.append("## 🎯 領域識別\n")
+    report_lines.append(f"主領域: **{domain_info['primary']}**")
     if domain_info.get('secondary'):
-        report_lines.append(f"次领域: {', '.join(domain_info['secondary'])}")
+        report_lines.append(f"次領域: {', '.join(domain_info['secondary'])}")
     report_lines.append(f"置信度: {domain_info['confidence']:.0%}\n")
 
     # 2. 提取的元素
     report_lines.append("## 📦 提取的元素\n")
 
-    # 按类别分组
+    # 按類別分組
     by_category = {}
     for elem in elements:
         category = elem['category_id']
@@ -246,35 +246,35 @@ def generate_learning_report(
 
     for category_id, category_elements in by_category.items():
         category_name = category_id.replace('_', ' ').title()
-        report_lines.append(f"### {category_name} ({len(category_elements)} 个)\n")
+        report_lines.append(f"### {category_name} ({len(category_elements)} 個)\n")
 
         for idx, elem in enumerate(category_elements, 1):
             report_lines.append(f"{idx}. **{elem.get('chinese_name', elem['name'])}**")
             report_lines.append(f"   - 模板: {elem['ai_prompt_template']}")
-            report_lines.append(f"   - 关键词: {', '.join(elem.get('keywords', []))}")
-            report_lines.append(f"   - 标签: {', '.join(elem.get('tags', []))}")
-            report_lines.append(f"   - 复用性: {elem.get('reusability_score', 'N/A')}/10")
+            report_lines.append(f"   - 關鍵詞: {', '.join(elem.get('keywords', []))}")
+            report_lines.append(f"   - 標籤: {', '.join(elem.get('tags', []))}")
+            report_lines.append(f"   - 複用性: {elem.get('reusability_score', 'N/A')}/10")
             if elem.get('element_id'):
                 report_lines.append(f"   - element_id: `{elem['element_id']}`")
             report_lines.append("")
 
-    # 3. 统计
-    report_lines.append("## ✅ 更新统计\n")
-    report_lines.append(f"- 新添加: {stats['added']} 个元素")
-    report_lines.append(f"- 已存在: {stats['skipped']} 个元素")
+    # 3. 統計
+    report_lines.append("## ✅ 更新統計\n")
+    report_lines.append(f"- 新新增: {stats['added']} 個元素")
+    report_lines.append(f"- 已存在: {stats['skipped']} 個元素")
     if stats['failed'] > 0:
-        report_lines.append(f"- 失败: {stats['failed']} 个元素")
+        report_lines.append(f"- 失敗: {stats['failed']} 個元素")
 
-    # 4. 质量评估
+    # 4. 質量評估
     if stats['added'] > 0:
         avg_reusability = sum(
             e.get('reusability_score', 0) for e in elements
         ) / len(elements)
 
-        report_lines.append("\n## 💡 质量评估\n")
-        report_lines.append(f"- 提取完整度: {len(elements)*10:.0f}%")  # 假设每个元素10%
-        report_lines.append(f"- 平均复用性: {avg_reusability:.1f}/10")
-        report_lines.append(f"- 标签质量: {'优秀' if avg_reusability > 8 else '良好'}")
+        report_lines.append("\n## 💡 質量評估\n")
+        report_lines.append(f"- 提取完整度: {len(elements)*10:.0f}%")  # 假設每個元素10%
+        report_lines.append(f"- 平均複用性: {avg_reusability:.1f}/10")
+        report_lines.append(f"- 標籤質量: {'優秀' if avg_reusability > 8 else '良好'}")
 
     return "\n".join(report_lines)
 ```
@@ -295,23 +295,23 @@ def learn_from_prompt(
     domain_info: Dict,
     extracted_elements: List[Dict]
 ):
-    """完整学习流程"""
+    """完整學習流程"""
 
-    # 1. 连接数据库
+    # 1. 連線資料庫
     db = ElementDB('extracted_results/elements.db')
 
     print(f"\n{'='*60}")
     print(f"Learning from Prompt #{prompt_id}")
     print(f"{'='*60}\n")
 
-    print(f"领域: {domain_info['primary']}")
-    print(f"提取元素数: {len(extracted_elements)}\n")
+    print(f"領域: {domain_info['primary']}")
+    print(f"提取元素數: {len(extracted_elements)}\n")
 
-    # 2. 批量添加元素
-    print("添加到数据库...")
+    # 2. 批次新增元素
+    print("新增到資料庫...")
     stats = batch_add_elements(db, extracted_elements, prompt_id)
 
-    # 3. 生成报告
+    # 3. 生成報告
     report = generate_learning_report(
         prompt_id,
         prompt_text,
@@ -320,17 +320,17 @@ def learn_from_prompt(
         stats
     )
 
-    # 4. 保存报告
+    # 4. 儲存報告
     report_path = f"extracted_results/learning_report_prompt{prompt_id:02d}.md"
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write(report)
 
-    print(f"\n✅ 学习完成!")
-    print(f"   新添加: {stats['added']} 个元素")
-    print(f"   已跳过: {stats['skipped']} 个元素")
-    print(f"   报告: {report_path}")
+    print(f"\n✅ 學習完成!")
+    print(f"   新新增: {stats['added']} 個元素")
+    print(f"   已跳過: {stats['skipped']} 個元素")
+    print(f"   報告: {report_path}")
 
-    # 5. 导出JSON备份
+    # 5. 匯出JSON備份
     db.export_to_json('extracted_results/universal_elements_library.json')
 
     db.close()
@@ -340,29 +340,29 @@ def learn_from_prompt(
 
 ## 🔄 更新策略
 
-### 策略1: 严格去重（默认）
-- 同名元素：直接跳过
-- 高相似度（>80%）：跳过
-- 优点：保持库的纯净
-- 缺点：可能错过细微变体
+### 策略1: 嚴格去重（預設）
+- 同名元素：直接跳過
+- 高相似度（>80%）：跳過
+- 優點：保持庫的純淨
+- 缺點：可能錯過細微變體
 
-### 策略2: 版本合并
+### 策略2: 版本合併
 - 同名元素：更新keywords和tags
-- 合并source_prompts列表
-- 优点：丰富元素信息
-- 缺点：可能混淆不同变体
+- 合併source_prompts列表
+- 優點：豐富元素資訊
+- 缺點：可能混淆不同變體
 
-### 策略3: 变体共存
-- 允许同类别下的相似元素
-- 使用后缀区分：`large_almond_eyes_v1`, `large_almond_eyes_v2`
-- 优点：保留所有变体
-- 缺点：可能造成冗余
+### 策略3: 變體共存
+- 允許同類別下的相似元素
+- 使用字尾區分：`large_almond_eyes_v1`, `large_almond_eyes_v2`
+- 優點：保留所有變體
+- 缺點：可能造成冗餘
 
-**当前采用**: 策略1（严格去重）
+**當前採用**: 策略1（嚴格去重）
 
 ---
 
-## ✅ 输出格式
+## ✅ 輸出格式
 
 ```json
 {
@@ -388,5 +388,5 @@ def learn_from_prompt(
 
 ---
 
-**状态**: ✅ 已实现
-**去重准确率**: >95%
+**狀態**: ✅ 已實現
+**去重準確率**: >95%

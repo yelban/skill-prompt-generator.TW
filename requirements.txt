@@ -3,7 +3,7 @@ anthropic>=0.7.0
 pyyaml>=6.0
 
 # Database
-sqlite3  # Built-in with Python
+# sqlite3 - Python 內建模組，無需安裝（且 PyPI 上不存在此套件）
 
 # Optional: For advanced features
 # requests>=2.28.0  # If you add web fetching

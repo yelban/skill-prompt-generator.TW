@@ -1,23 +1,23 @@
 ---
 name: art-master
-description: 艺术风格主控 - 自动生成艺术风格提示词，支持水墨画、油画、超现实、插画等多种艺术风格
+description: 藝術風格主控 - 自動生成藝術風格提示詞，支援水墨畫、油畫、超現實、插畫等多種藝術風格
 ---
 
-# Art Master - 艺术风格主控 Skill
+# Art Master - 藝術風格主控 Skill
 
 **版本**: 1.0
-**领域**: 艺术风格
-**架构**: Master-Subordinate
-**数据源**: Universal Elements Database
+**領域**: 藝術風格
+**架構**: Master-Subordinate
+**資料來源**: Universal Elements Database
 
 ## 🎯 核心功能
 
-自动生成高质量的艺术风格提示词，支持：
-- 🎨 艺术风格（水墨画、油画、超现实、插画等）
+自動生成高質量的藝術風格提示詞，支援：
+- 🎨 藝術風格（水墨畫、油畫、超現實、插畫等）
 - ✨ 特殊效果（玻璃碎片、光影、粒子效果等）
-- 🖌️ 绘画技法（笔触、质感、构图等）
-- 🌈 色彩运用（冷暖色调、对比、和谐）
-- 📜 文化风格（中式、日式、西方古典等）
+- 🖌️ 繪畫技法（筆觸、質感、構圖等）
+- 🌈 色彩運用（冷暖色調、對比、和諧）
+- 📜 文化風格（中式、日式、西方古典等）
 
 ---
 
@@ -26,13 +26,13 @@ description: 艺术风格主控 - 自动生成艺术风格提示词，支持水�
 ### 快速生成
 
 ```
-生成一个中国水墨画风格
+生成一箇中國水墨畫風格
 ```
 
 或
 
 ```
-艺术风格：超现实主义，梦境氛围
+藝術風格：超現實主義，夢境氛圍
 ```
 
 ---
@@ -40,42 +40,42 @@ description: 艺术风格主控 - 自动生成艺术风格提示词，支持水�
 ## 🔄 工作流程
 
 ```
-用户输入
+使用者輸入
   ↓
-查询art领域元素 (1 element)
-  - art_styles: 中国水墨画等
-  - special_effects: 玻璃碎片等（需补充）
+查詢art領域元素 (1 element)
+  - art_styles: 中國水墨畫等
+  - special_effects: 玻璃碎片等（需補充）
   ↓
-组装Prompt
-  1. 艺术风格描述
+組裝Prompt
+  1. 藝術風格描述
   2. 特殊效果
-  3. 绘画技法
-  4. 色彩运用
+  3. 繪畫技法
+  4. 色彩運用
   ↓
-输出完整艺术Prompt
+輸出完整藝術Prompt
 ```
 
 ---
 
-## 📊 数据源
+## 📊 資料來源
 
-**主要库**: `art` domain (1 element)
+**主要庫**: `art` domain (1 element)
 
-**元素类别**:
-- `art_styles` - 艺术风格
-- `special_effects` - 特殊效果（待补充）
+**元素類別**:
+- `art_styles` - 藝術風格
+- `special_effects` - 特殊效果（待補充）
 
-**可用标签**:
+**可用標籤**:
 - `chinese-ink`, `painting`, `traditional`
 - `surreal`, `dreamlike`, `artistic`
 
 ---
 
-## ✅ 输出示例
+## ✅ 輸出示例
 
-**输入**: `生成中国水墨画`
+**輸入**: `生成中國水墨畫`
 
-**输出**:
+**輸出**:
 ```
 Traditional Chinese ink painting style, flowing brush strokes with varying
 ink density, minimalist composition emphasizing negative space, monochromatic
@@ -86,5 +86,5 @@ masterful brushwork technique, contemplative mood
 
 ---
 
-**Skill状态**: ✅ 已实现
-**Note**: 艺术领域元素较少（1个），建议后续补充更多art_styles和special_effects
+**Skill狀態**: ✅ 已實現
+**Note**: 藝術領域元素較少（1個），建議後續補充更多art_styles和special_effects

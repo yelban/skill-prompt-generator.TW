@@ -1,43 +1,43 @@
-# Prompt Extractor - 快速开始指南
+# Prompt Extractor - 快速開始指南
 
-## 5分钟上手
+## 5分鐘上手
 
-### 步骤1：测试环境
+### 步驟1：測試環境
 
 ```bash
 cd .claude/skills/prompt-extractor
 ./test_extractor.sh
 ```
 
-你应该看到：
+你應該看到：
 ```
-✓ 预处理成功
-  原始数量: 30
-  清洗后: 30
-  平均长度: 115.4 字符
-  聚类数量: 5
+✓ 預處理成功
+  原始數量: 30
+  清洗後: 30
+  平均長度: 115.4 字元
+  聚類數量: 5
 ```
 
-### 步骤2：在Claude Code中激活Skill
+### 步驟2：在Claude Code中啟用Skill
 
-在Claude Code对话中输入：
+在Claude Code對話中輸入：
 ```
 使用 prompt-extractor skill
 ```
 
-或者直接说：
+或者直接說：
 ```
-帮我分析AI绘画提示词
-```
-
-### 步骤3：提供你的提示词文件
-
-Skill会询问你：
-```
-请提供提示词文件路径（支持 .txt, .csv, .json）：
+幫我分析AI繪畫提示詞
 ```
 
-示例回复：
+### 步驟3：提供你的提示詞檔案
+
+Skill會詢問你：
+```
+請提供提示詞檔案路徑（支援 .txt, .csv, .json）：
+```
+
+示例回覆：
 ```
 ./my_prompts.txt
 ```
@@ -47,24 +47,24 @@ Skill会询问你：
 .claude/skills/prompt-extractor/example_prompts.txt
 ```
 
-### 步骤4：查看结果
+### 步驟4：檢視結果
 
-Skill会自动生成三个文件到 `./extracted_results/` 目录：
+Skill會自動生成三個檔案到 `./extracted_results/` 目錄：
 
-1. **extracted_modules.json** - 完整提取数据
-2. **module_library.json** - 可复用模块库
-3. **analysis_report.md** - 人类可读的分析报告
+1. **extracted_modules.json** - 完整提取資料
+2. **module_library.json** - 可複用模組庫
+3. **analysis_report.md** - 人類可讀的分析報告
 
-## 实战示例
+## 實戰示例
 
-### 示例1：分析100条收藏的提示词
+### 示例1：分析100條收藏的提示詞
 
-**你的文件** (prompts.txt):
+**你的檔案** (prompts.txt):
 ```
 a portrait of a woman, cinematic lighting, 85mm lens, ultra detailed
 cyberpunk city, neon lights, rain, photorealistic, 8k
 beautiful landscape, golden hour, dramatic clouds, HDR
-...（97条更多）
+...（97條更多）
 ```
 
 **操作**:
@@ -72,23 +72,23 @@ beautiful landscape, golden hour, dramatic clouds, HDR
 我：使用 prompt-extractor 分析 prompts.txt
 
 Claude：
-[自动执行]
-1. ✓ 已读取100条提示词
-2. ✓ 清洗后97条（去重3条）
-3. ✓ 识别5个主题簇
-4. ✓ 开始提取模块...
-   - 人像摄影：32条 [进行中 12/32]
+[自動執行]
+1. ✓ 已讀取100條提示詞
+2. ✓ 清洗後97條（去重3條）
+3. ✓ 識別5個主題簇
+4. ✓ 開始提取模組...
+   - 人像攝影：32條 [進行中 12/32]
    ...
 ```
 
-**5分钟后得到**:
-- 提取了450+个独特模块
-- 发现12个高质量模板
-- 识别出Top 20高复用组合
+**5分鐘後得到**:
+- 提取了450+個獨特模組
+- 發現12個高質量模板
+- 識別出Top 20高複用組合
 
-### 示例2：从CSV导入并筛选主题
+### 示例2：從CSV匯入並篩選主題
 
-**你的文件** (midjourney_export.csv):
+**你的檔案** (midjourney_export.csv):
 ```csv
 prompt,likes,created_at
 "portrait of woman, cinematic, 85mm",234,2024-01-15
@@ -98,20 +98,20 @@ prompt,likes,created_at
 
 **操作**:
 ```
-我：用 prompt-extractor 处理 midjourney_export.csv，只要"人像"主题
+我：用 prompt-extractor 處理 midjourney_export.csv，只要"人像"主題
 
 Claude：
-[自动识别CSV格式]
-✓ 检测到 'prompt' 列
-✓ 读取500条
-✓ 聚类发现 "人像摄影" 主题（143条）
-✓ 仅提取人像相关模块...
+[自動識別CSV格式]
+✓ 檢測到 'prompt' 列
+✓ 讀取500條
+✓ 聚類發現 "人像攝影" 主題（143條）
+✓ 僅提取人像相關模組...
 ```
 
-**结果**:
+**結果**:
 ```json
 {
-  "theme_filter": "人像摄影",
+  "theme_filter": "人像攝影",
   "extracted_count": 143,
   "top_modules": {
     "lighting": ["cinematic lighting", "soft light", "rembrandt"],
@@ -121,83 +121,83 @@ Claude：
 }
 ```
 
-## 常见问题速查
+## 常見問題速查
 
-### Q1: 我的文件是中文提示词怎么办？
-**A**: 完全支持！预处理器会自动处理中文：
+### Q1: 我的檔案是中文提示詞怎麼辦？
+**A**: 完全支援！預處理器會自動處理中文：
 ```python
 preprocessor = PromptPreprocessor()
-prompts = preprocessor.load_file("中文提示词.txt")
+prompts = preprocessor.load_file("中文提示詞.txt")
 ```
 
 ### Q2: CSV有多列，如何指定？
-**A**: 自动识别包含 'prompt', 'text', 'description' 的列。如果都没有，使用第一列。
+**A**: 自動識別包含 'prompt', 'text', 'description' 的列。如果都沒有，使用第一列。
 
-### Q3: 处理1000条需要多久？
+### Q3: 處理1000條需要多久？
 **A**:
-- 预处理：<10秒
-- AI提取：约5-10分钟（取决于网络和批次大小）
-- 建议分批：每批200-300条
+- 預處理：<10秒
+- AI提取：約5-10分鐘（取決於網路和批次大小）
+- 建議分批：每批200-300條
 
-### Q4: 如何合并多个模块库？
-**A**: 使用Python脚本：
+### Q4: 如何合併多個模組庫？
+**A**: 使用Python指令碼：
 ```python
 import json
 
-# 读取两个库
+# 讀取兩個庫
 with open('lib1.json') as f1, open('lib2.json') as f2:
     data1, data2 = json.load(f1), json.load(f2)
 
-# 合并（示例：合并视觉风格）
+# 合併（示例：合併視覺風格）
 combined_styles = list(set(data1['visual_styles'] + data2['visual_styles']))
 ```
 
 ## 下一步
 
-### 进阶使用
-- 阅读 [README.md](README.md) 了解完整功能
-- 查看 [skill.md](skill.md) 了解提取逻辑
-- 自定义 meta-prompt 提高精度
+### 進階使用
+- 閱讀 [README.md](README.md) 瞭解完整功能
+- 檢視 [skill.md](skill.md) 瞭解提取邏輯
+- 自定義 meta-prompt 提高精度
 
-### 扩展到1万条
-1. 先用100条测试验证质量
-2. 调整评分标准和模块分类
-3. 分10批次，每批1000条
-4. 最后合并所有模块库
+### 擴充套件到1萬條
+1. 先用100條測試驗證質量
+2. 調整評分標準和模組分類
+3. 分10批次，每批1000條
+4. 最後合併所有模組庫
 
-### 集成到工作流
+### 整合到工作流
 ```bash
-# 定期更新模块库
+# 定期更新模組庫
 ./update_library.sh new_prompts.txt
 
-# 搜索模块
+# 搜尋模組
 python search_modules.py "cinematic lighting portrait"
 
 # 生成新提示
 python generate_prompt.py --template portrait --style cinematic
 ```
 
-## 获取帮助
+## 獲取幫助
 
-在Claude Code中随时询问：
+在Claude Code中隨時詢問：
 ```
-prompt-extractor 如何处理大文件？
-prompt-extractor 提取质量不高怎么办？
-prompt-extractor 能导出为Excel吗？
+prompt-extractor 如何處理大檔案？
+prompt-extractor 提取質量不高怎麼辦？
+prompt-extractor 能匯出為Excel嗎？
 ```
 
 ## 成功案例
 
-**案例1**: 摄影师整理3年积累的800条prompt
-- 提取出65个核心模块
-- 构建了15套专业模板
-- 新作品创作效率提升3倍
+**案例1**: 攝影師整理3年積累的800條prompt
+- 提取出65個核心模組
+- 構建了15套專業模板
+- 新作品創作效率提升3倍
 
-**案例2**: AI艺术家分析顶级作品prompt
-- 从5000条中发现高质量模式
-- 识别出"电影级"风格的关键组合
-- 成片率从30%提升到75%
+**案例2**: AI藝術家分析頂級作品prompt
+- 從5000條中發現高質量模式
+- 識別出"電影級"風格的關鍵組合
+- 成片率從30%提升到75%
 
 ---
 
-**开始你的第一次提取吧！** 🚀
+**開始你的第一次提取吧！** 🚀

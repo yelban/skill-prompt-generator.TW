@@ -1,26 +1,26 @@
-# ⚠️ 旧架构 - Analyzer Module - 分析查询模块
+# ⚠️ 舊架構 - Analyzer Module - 分析查詢模組
 
-> **注意**：这是旧架构模块，属于prompt-master系统
+> **注意**：這是舊架構模組，屬於prompt-master系統
 
 
-**功能**: 分析、查询、对比提示词和模块信息
-**调用方式**: 通过主Skill路由或直接CLI调用
+**功能**: 分析、查詢、對比提示詞和模組資訊
+**呼叫方式**: 透過主Skill路由或直接CLI呼叫
 
 ---
 
 ## 📋 功能概述
 
-Analyzer模块提供以下分析功能：
-- 查看Prompt详细信息
-- 对比两个Prompts的差异
-- 查询五官模块信息
-- 查询流派和设备信息
+Analyzer模組提供以下分析功能：
+- 檢視Prompt詳細資訊
+- 對比兩個Prompts的差異
+- 查詢五官模組資訊
+- 查詢流派和裝置資訊
 
 ---
 
 ## 🔧 CLI命令
 
-### 1. 查看Prompt详细信息
+### 1. 檢視Prompt詳細資訊
 
 **命令**:
 ```bash
@@ -32,30 +32,30 @@ python3 prompt_tool.py show <id>
 python3 prompt_tool.py show 5
 ```
 
-**输出**:
+**輸出**:
 ```
-📸 Prompt #5: 清纯少女古典美
+📸 Prompt #5: 清純少女古典美
 
-基本信息:
-  主题: 清纯少女 / 古典优雅 / 自然光人像
-  长度: 892 字符
-  评分: 10.0/10
+基本資訊:
+  主題: 清純少女 / 古典優雅 / 自然光人像
+  長度: 892 字元
+  評分: 10.0/10
 
-摄影流派:
-  人像美容摄影 (置信度: 95%)
+攝影流派:
+  人像美容攝影 (置信度: 95%)
 
-技术参数:
-  相机: Canon EOS R5
-  镜头: RF 50mm f/1.2L
-  分辨率: 8K
+技術引數:
+  相機: Canon EOS R5
+  鏡頭: RF 50mm f/1.2L
+  解析度: 8K
 
-对立标准:
+對立標準:
   aesthetic:
-    ✓ 必须: flawless porcelain skin, soft classical contour
+    ✓ 必須: flawless porcelain skin, soft classical contour
     ✗ 禁止: modern edgy makeup, harsh contours
 ```
 
-### 2. 对比两个Prompts
+### 2. 對比兩個Prompts
 
 **命令**:
 ```bash
@@ -67,50 +67,50 @@ python3 prompt_tool.py compare <id1> <id2>
 python3 prompt_tool.py compare 5 17
 ```
 
-**输出**:
+**輸出**:
 ```
-⚖️  对比: #5 vs #17
+⚖️  對比: #5 vs #17
 
-属性         Prompt #5                  Prompt #17
+屬性         Prompt #5                  Prompt #17
 =======================================================
-标题         清纯少女古典美             性感朋克Jinx
-评分         10.0/10                    9.8/10
-流派         人像美容摄影               胶片艺术摄影
-相机         Canon EOS R5               Hasselblad 503CX
-分辨率       8K                         medium format
+標題         清純少女古典美             性感朋克Jinx
+評分         10.0/10                    9.8/10
+流派         人像美容攝影               膠片藝術攝影
+相機         Canon EOS R5               Hasselblad 503CX
+解析度       8K                         medium format
 ```
 
-### 3. 查询五官类型列表
+### 3. 查詢五官型別列表
 
 **命令**:
 ```bash
 python3 prompt_tool.py facial --list-types
 ```
 
-**输出**:
+**輸出**:
 ```
-📊 五官特征分类库
+📊 五官特徵分類庫
 
-眼型 (4种):
+眼型 (4種):
   large_expressive_almond    大眼杏仁眼      (9.8/10) Prompts: [5]
-  large_blue_expressive      大蓝眼（真人化）(8.5/10) Prompts: [18]
-  half_lidded_seductive      半闭诱惑眼      (8.0/10) Prompts: [17]
-  anime_hybrid_green         动漫混合绿眼    (8.5/10) Prompts: [11]
+  large_blue_expressive      大藍眼（真人化）(8.5/10) Prompts: [18]
+  half_lidded_seductive      半閉誘惑眼      (8.0/10) Prompts: [17]
+  anime_hybrid_green         動漫混合綠眼    (8.5/10) Prompts: [11]
 
-脸型 (2种):
-  oval_asian_refined         精致鹅蛋脸（亚洲）(10.0/10) Prompts: [17, 18]
-  classical_soft_contour     柔和古典脸型      (9.5/10)  Prompts: [5]
+臉型 (2種):
+  oval_asian_refined         精緻鵝蛋臉（亞洲）(10.0/10) Prompts: [17, 18]
+  classical_soft_contour     柔和古典臉型      (9.5/10)  Prompts: [5]
 
-... (其他类别)
+... (其他類別)
 ```
 
-### 4. 查询特定五官类型
+### 4. 查詢特定五官型別
 
 **命令**:
 ```bash
-python3 prompt_tool.py facial --eye-type <类型>
-python3 prompt_tool.py facial --skin-texture <类型>
-python3 prompt_tool.py facial --expression <类型>
+python3 prompt_tool.py facial --eye-type <型別>
+python3 prompt_tool.py facial --skin-texture <型別>
+python3 prompt_tool.py facial --expression <型別>
 ```
 
 **示例**:
@@ -118,77 +118,77 @@ python3 prompt_tool.py facial --expression <类型>
 python3 prompt_tool.py facial --eye-type almond
 ```
 
-**输出**:
+**輸出**:
 ```
-🔍 五官特征: 大眼杏仁眼
+🔍 五官特徵: 大眼杏仁眼
 
-视觉特征:
-  • size: 大而富有表现力 (large and expressive)
+視覺特徵:
+  • size: 大而富有表現力 (large and expressive)
   • shape: 杏仁形 (almond-shaped)
-  • eyelashes: 浓密修长的自然睫毛 (thick long natural lashes)
+  • eyelashes: 濃密修長的自然睫毛 (thick long natural lashes)
 
-提示词关键词:
+提示詞關鍵詞:
   • large expressive eyes
   • almond eyes
   • thick natural lashes
   • deep clear iris
   • dewy sparkle
 
-适合风格:
-  • 清纯少女
-  • 邻家小妹
-  • 古典温柔
-  • 现代商业人像
+適合風格:
+  • 清純少女
+  • 鄰家小妹
+  • 古典溫柔
+  • 現代商業人像
 
-使用该特征的Prompts (1个):
-  #5   清纯少女古典美                      10.0/10
+使用該特徵的Prompts (1個):
+  #5   清純少女古典美                      10.0/10
 
-使用建议:
-  • best_for: 万能眼型，适合清纯、优雅、古典风格
-  • pair_with: 搭配 'innocent', 'gentle', 'youthful' 强化纯净感
-  • lighting: 黄金时刻柔和光 (golden hour soft light) 最佳
+使用建議:
+  • best_for: 萬能眼型，適合清純、優雅、古典風格
+  • pair_with: 搭配 'innocent', 'gentle', 'youthful' 強化純淨感
+  • lighting: 黃金時刻柔和光 (golden hour soft light) 最佳
 ```
 
-### 5. 按风格推荐五官组合
+### 5. 按風格推薦五官組合
 
 **命令**:
 ```bash
-python3 prompt_tool.py facial --style <风格>
+python3 prompt_tool.py facial --style <風格>
 ```
 
 **示例**:
 ```bash
-python3 prompt_tool.py facial --style "清纯少女"
+python3 prompt_tool.py facial --style "清純少女"
 ```
 
-**输出**:
+**輸出**:
 ```
-🎨 风格: 清纯少女
+🎨 風格: 清純少女
 
-推荐五官组合:
+推薦五官組合:
 
-性别: 女性 (female)
-年龄: 青年（18-25岁） (young_adult) [10.0/10]
-人种: 东亚人 (east_asian) [10.0/10]
-  关键词: East Asian, Asian features
+性別: 女性 (female)
+年齡: 青年（18-25歲） (young_adult) [10.0/10]
+人種: 東亞人 (east_asian) [10.0/10]
+  關鍵詞: East Asian, Asian features
 
 眼型: 大眼杏仁眼 (large_expressive_almond) [9.8/10]
-  关键词: large expressive eyes, almond eyes, thick natural lashes
+  關鍵詞: large expressive eyes, almond eyes, thick natural lashes
 
-唇型: 粉嫩光泽唇 (soft_pink_gloss) [9.0/10]
-  关键词: soft full lips, gentle pink gloss, natural lip color
+唇型: 粉嫩光澤唇 (soft_pink_gloss) [9.0/10]
+  關鍵詞: soft full lips, gentle pink gloss, natural lip color
 
 鼻型: 小巧直鼻 (small_straight_delicate) [9.0/10]
-  关键词: small straight nose, delicate nose
+  關鍵詞: small straight nose, delicate nose
 
-皮肤: 瓷肌无瑕（发光质感） (porcelain_flawless_radiant) [9.5/10]
-  关键词: flawless porcelain skin, radiant jade-like brightness
+皮膚: 瓷肌無瑕（發光質感） (porcelain_flawless_radiant) [9.5/10]
+  關鍵詞: flawless porcelain skin, radiant jade-like brightness
 
-表情: 清纯温柔眼神 (innocent_gentle_gaze) [9.5/10]
-  关键词: innocent gaze, gentle smile, soft introspective
+表情: 清純溫柔眼神 (innocent_gentle_gaze) [9.5/10]
+  關鍵詞: innocent gaze, gentle smile, soft introspective
 ```
 
-### 6. 按流派搜索
+### 6. 按流派搜尋
 
 **命令**:
 ```bash
@@ -200,35 +200,35 @@ python3 prompt_tool.py search --genre <流派>
 python3 prompt_tool.py search --genre cinematic_narrative
 ```
 
-**输出**:
+**輸出**:
 ```
-🔍 流派: 电影叙事摄影
+🔍 流派: 電影敘事攝影
 
-流派特征:
-  • 8K HDR超高清数码摄影
-  • 电影级实景拍摄
-  • 自然叙事性光照
-  • 真人化角色演绎
+流派特徵:
+  • 8K HDR超高畫質數碼攝影
+  • 電影級實景拍攝
+  • 自然敘事性光照
+  • 真人化角色演繹
 
-典型设备:
+典型裝置:
   • Canon EOS R5
   • RF 35mm f/2.8 macro IS STM
 
-应用场景:
-  • 真人化角色摄影
-  • 电影级概念艺术
-  • 游戏IP真人化
+應用場景:
+  • 真人化角色攝影
+  • 電影級概念藝術
+  • 遊戲IP真人化
 
-相关提示词 (2个):
+相關提示詞 (2個):
   #18  Princess Peach真人化                    9.8/10
   #11  Saber真人化                             9.5/10
 ```
 
-### 7. 按设备搜索
+### 7. 按裝置搜尋
 
 **命令**:
 ```bash
-python3 prompt_tool.py search --equipment <设备>
+python3 prompt_tool.py search --equipment <裝置>
 ```
 
 **示例**:
@@ -238,59 +238,59 @@ python3 prompt_tool.py search --equipment R5
 
 ---
 
-## 🎯 使用场景
+## 🎯 使用場景
 
-### 场景1: 学习优秀Prompt
-
-```
-用户: "我想学习Prompt #5的细节"
-→ 调用: python3 prompt_tool.py show 5
-→ 查看完整技术参数、对立标准、独特特征
-```
-
-### 场景2: 对比两种风格
+### 場景1: 學習優秀Prompt
 
 ```
-用户: "清纯和性感风格有什么区别？"
-→ 调用: python3 prompt_tool.py compare 5 17
-→ 对比表格一目了然
+使用者: "我想學習Prompt #5的細節"
+→ 呼叫: python3 prompt_tool.py show 5
+→ 檢視完整技術引數、對立標準、獨特特徵
 ```
 
-### 场景3: 查询五官库
+### 場景2: 對比兩種風格
 
 ```
-用户: "有哪些眼型可选？"
-→ 调用: python3 prompt_tool.py facial --list-types
-→ 查看所有6大类五官分类
+使用者: "清純和性感風格有什麼區別？"
+→ 呼叫: python3 prompt_tool.py compare 5 17
+→ 對比表格一目瞭然
 ```
 
-### 场景4: 学习风格搭配
+### 場景3: 查詢五官庫
 
 ```
-用户: "古典优雅风格应该用什么五官？"
-→ 调用: python3 prompt_tool.py facial --style "古典优雅"
-→ 获取完整五官组合推荐
+使用者: "有哪些眼型可選？"
+→ 呼叫: python3 prompt_tool.py facial --list-types
+→ 檢視所有6大類五官分類
+```
+
+### 場景4: 學習風格搭配
+
+```
+使用者: "古典優雅風格應該用什麼五官？"
+→ 呼叫: python3 prompt_tool.py facial --style "古典優雅"
+→ 獲取完整五官組合推薦
 ```
 
 ---
 
-## 📁 数据依赖
+## 📁 資料依賴
 
 ```
 facial_features_library.json (v1.2)
-├── 9大类别、28个分类
-└── usage_index.by_style_mood (4种风格)
+├── 9大類別、28個分類
+└── usage_index.by_style_mood (4種風格)
 
 module_library.json
 ├── photography_genres (10流派)
-└── camera_equipment_index (设备库)
+└── camera_equipment_index (裝置庫)
 
 extracted_modules.json
-└── 18个源Prompts的完整数据
+└── 18個源Prompts的完整資料
 ```
 
 ---
 
-**模块状态**: ✅ 可用
+**模組狀態**: ✅ 可用
 **CLI命令**: `show`, `compare`, `search`, `facial`
-**支持查询**: Prompt、流派、设备、五官、风格
+**支援查詢**: Prompt、流派、裝置、五官、風格

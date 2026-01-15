@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-提示词预处理和聚类脚本
-支持 txt, csv, json 格式的自动解析和清洗
+提示詞預處理和聚類指令碼
+支援 txt, csv, json 格式的自動解析和清洗
 """
 
 import json
@@ -13,7 +13,7 @@ from collections import Counter
 
 
 class PromptPreprocessor:
-    """提示词预处理器"""
+    """提示詞預處理器"""
 
     def __init__(self, min_length: int = 10):
         self.min_length = min_length
@@ -21,11 +21,11 @@ class PromptPreprocessor:
         self.metadata = {}
 
     def load_file(self, file_path: str) -> List[str]:
-        """自动识别格式并加载文件"""
+        """自動識別格式並載入檔案"""
         path = Path(file_path)
 
         if not path.exists():
-            raise FileNotFoundError(f"文件不存在: {file_path}")
+            raise FileNotFoundError(f"檔案不存在: {file_path}")
 
         suffix = path.suffix.lower()
 
@@ -36,10 +36,10 @@ class PromptPreprocessor:
         elif suffix == '.json':
             return self._load_json(path)
         else:
-            raise ValueError(f"不支持的文件格式: {suffix}. 支持 .txt, .csv, .json")
+            raise ValueError(f"不支援的檔案格式: {suffix}. 支援 .txt, .csv, .json")
 
     def _load_txt(self, path: Path) -> List[str]:
-        """加载txt文件（每行一个提示词）"""
+        """載入txt檔案（每行一個提示詞）"""
         with open(path, 'r', encoding='utf-8') as f:
             lines = f.readlines()
 
@@ -49,7 +49,7 @@ class PromptPreprocessor:
         return prompts
 
     def _load_csv(self, path: Path) -> List[str]:
-        """加载csv文件（自动识别提示词列）"""
+        """載入csv檔案（自動識別提示詞列）"""
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             rows = list(reader)
@@ -57,7 +57,7 @@ class PromptPreprocessor:
         if not rows:
             return []
 
-        # 智能识别提示词列（包含 prompt, text, description 等关键词）
+        # 智慧識別提示詞列（包含 prompt, text, description 等關鍵詞）
         headers = list(rows[0].keys())
         prompt_col = None
 
@@ -69,7 +69,7 @@ class PromptPreprocessor:
             if prompt_col:
                 break
 
-        # 如果没找到，使用第一列
+        # 如果沒找到，使用第一列
         if not prompt_col:
             prompt_col = headers[0]
 
@@ -82,15 +82,15 @@ class PromptPreprocessor:
         return prompts
 
     def _load_json(self, path: Path) -> List[str]:
-        """加载json文件（支持数组或对象数组）"""
+        """載入json檔案（支援陣列或物件陣列）"""
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
         if isinstance(data, list):
-            # 如果是字符串数组
+            # 如果是字串陣列
             if all(isinstance(item, str) for item in data):
                 prompts = data
-            # 如果是对象数组，尝试找到提示词字段
+            # 如果是物件陣列，嘗試找到提示詞欄位
             else:
                 prompt_key = None
                 for key in ['prompt', 'text', 'description', 'content']:
@@ -104,7 +104,7 @@ class PromptPreprocessor:
                 prompts = [item[prompt_key] for item in data if prompt_key in item]
                 self.metadata['prompt_key'] = prompt_key
         else:
-            raise ValueError("JSON格式错误：需要数组或对象数组")
+            raise ValueError("JSON格式錯誤：需要陣列或物件陣列")
 
         self.metadata['format'] = 'json'
         self.metadata['original_count'] = len(prompts)
@@ -112,21 +112,21 @@ class PromptPreprocessor:
         return prompts
 
     def clean_prompts(self, prompts: List[str]) -> List[str]:
-        """清洗提示词"""
+        """清洗提示詞"""
         cleaned = []
 
         for prompt in prompts:
-            # 去除多余空格
+            # 去除多餘空格
             prompt = re.sub(r'\s+', ' ', prompt.strip())
 
-            # 统一标点（全角转半角）
+            # 統一標點（全形轉半形）
             prompt = prompt.replace('，', ', ').replace('。', '. ')
 
-            # 过滤短提示
+            # 過濾短提示
             if len(prompt) >= self.min_length:
                 cleaned.append(prompt)
 
-        # 去重（保持顺序）
+        # 去重（保持順序）
         seen = set()
         unique = []
         for p in cleaned:
@@ -140,47 +140,47 @@ class PromptPreprocessor:
         return unique
 
     def extract_keywords(self, prompts: List[str], top_n: int = 50) -> List[tuple]:
-        """提取高频关键词（用于聚类）"""
-        # 简单的关键词提取（基于词频）
+        """提取高頻關鍵詞（用於聚類）"""
+        # 簡單的關鍵詞提取（基於詞頻）
         all_words = []
 
-        # 停用词（需要扩展）
+        # 停用詞（需要擴充套件）
         stopwords = {'a', 'an', 'the', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'}
 
         for prompt in prompts:
-            # 分词（简化版，按逗号和空格）
+            # 分詞（簡化版，按逗號和空格）
             words = re.split(r'[,\s]+', prompt.lower())
             words = [w.strip('.,!?;:()[]{}') for w in words]
             words = [w for w in words if w and w not in stopwords and len(w) > 2]
             all_words.extend(words)
 
-        # 统计词频
+        # 統計詞頻
         word_counts = Counter(all_words)
 
         return word_counts.most_common(top_n)
 
     def simple_cluster(self, prompts: List[str], n_clusters: int = 5) -> Dict[str, List[str]]:
-        """简单聚类（基于关键词共现）"""
-        # 提取关键词
+        """簡單聚類（基於關鍵詞共現）"""
+        # 提取關鍵詞
         keywords = self.extract_keywords(prompts, top_n=30)
         top_keywords = [kw[0] for kw in keywords[:n_clusters * 2]]
 
-        # 为每个关键词创建簇
+        # 為每個關鍵詞建立簇
         clusters = {f"cluster_{i}": [] for i in range(n_clusters)}
         cluster_keywords = {}
 
-        # 选择最具代表性的关键词
+        # 選擇最具代表性的關鍵詞
         for i in range(min(n_clusters, len(top_keywords))):
             cluster_keywords[f"cluster_{i}"] = top_keywords[i]
 
-        # 分配提示词到簇
+        # 分配提示詞到簇
         unassigned = []
 
         for prompt in prompts:
             assigned = False
             prompt_lower = prompt.lower()
 
-            # 检查是否包含簇关键词
+            # 檢查是否包含簇關鍵詞
             for cluster_id, keyword in cluster_keywords.items():
                 if keyword in prompt_lower:
                     clusters[cluster_id].append(prompt)
@@ -190,7 +190,7 @@ class PromptPreprocessor:
             if not assigned:
                 unassigned.append(prompt)
 
-        # 未分配的放入最后一个簇或新簇
+        # 未分配的放入最後一個簇或新簇
         if unassigned:
             clusters["cluster_other"] = unassigned
 
@@ -200,7 +200,7 @@ class PromptPreprocessor:
         return clusters
 
     def generate_stats(self, prompts: List[str]) -> Dict[str, Any]:
-        """生成统计信息"""
+        """生成統計資訊"""
         lengths = [len(p) for p in prompts]
 
         return {
@@ -213,11 +213,11 @@ class PromptPreprocessor:
 
 
 def main():
-    """命令行接口"""
+    """命令列介面"""
     import sys
 
     if len(sys.argv) < 2:
-        print("用法: python preprocessor.py <文件路径> [输出文件]")
+        print("用法: python preprocessor.py <檔案路徑> [輸出檔案]")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -225,35 +225,35 @@ def main():
 
     preprocessor = PromptPreprocessor()
 
-    # 加载和清洗
-    print(f"正在加载: {input_file}")
+    # 載入和清洗
+    print(f"正在載入: {input_file}")
     prompts = preprocessor.load_file(input_file)
-    print(f"原始数量: {len(prompts)}")
+    print(f"原始數量: {len(prompts)}")
 
     prompts = preprocessor.clean_prompts(prompts)
-    print(f"清洗后: {len(prompts)}")
+    print(f"清洗後: {len(prompts)}")
 
-    # 聚类
+    # 聚類
     clusters = preprocessor.simple_cluster(prompts, n_clusters=5)
-    print(f"\n聚类结果:")
+    print(f"\n聚類結果:")
     for cluster_id, cluster_prompts in clusters.items():
-        print(f"  {cluster_id}: {len(cluster_prompts)} 条")
+        print(f"  {cluster_id}: {len(cluster_prompts)} 條")
 
-    # 生成统计
+    # 生成統計
     stats = preprocessor.generate_stats(prompts)
 
-    # 保存结果
+    # 儲存結果
     result = {
         "metadata": preprocessor.metadata,
         "statistics": stats,
-        "clusters": {k: v[:10] for k, v in clusters.items()},  # 每簇只保存前10个示例
+        "clusters": {k: v[:10] for k, v in clusters.items()},  # 每簇只儲存前10個示例
         "all_prompts": prompts
     }
 
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"\n结果已保存到: {output_file}")
+    print(f"\n結果已儲存到: {output_file}")
 
 
 if __name__ == "__main__":

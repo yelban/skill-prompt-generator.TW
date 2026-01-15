@@ -1,97 +1,97 @@
 ---
 name: prompt-xray
-description: 提示词X光透视 - 从优秀提示词中逆向提取"如何做X"的知识，让黑盒变透明
+description: 提示詞X光透視 - 從優秀提示詞中逆向提取"如何做X"的知識，讓黑盒變透明
 ---
 
-# Prompt Xray - 提示词逆向工程系统
+# Prompt Xray - 提示詞逆向工程系統
 
-**设计哲学**: 拆解黑盒，让模糊变清晰
-**核心能力**: 回答"如何做X"的问题
+**設計哲學**: 拆解黑盒，讓模糊變清晰
+**核心能力**: 回答"如何做X"的問題
 
 ---
 
-## 🎯 解决的问题
+## 🎯 解決的問題
 
-**问题**: 提示词是黑盒 → 不知道：
-- 如何控制颜色？
-- 如何控制空间布局？
-- 如何添加标志性符号？
-- 如何调整排版？
-- 如何控制材质？
+**問題**: 提示詞是黑盒 → 不知道：
+- 如何控制顏色？
+- 如何控制空間佈局？
+- 如何新增標誌性符號？
+- 如何調整排版？
+- 如何控制材質？
 - 如何控制光影？
 
-**解决**: 从N个优秀提示词中提取规律 → 生成知识库
+**解決**: 從N個優秀提示詞中提取規律 → 生成知識庫
 
 ---
 
 ## 📋 使用方式
 
-### 方式1：提取单一维度知识
+### 方式1：提取單一維度知識
 
 ```
-从已分析的提示词中，提取"如何控制颜色"的知识
+從已分析的提示詞中，提取"如何控制顏色"的知識
 ```
 
-### 方式2：提取所有维度知识
+### 方式2：提取所有維度知識
 
 ```
-从已分析的提示词中，构建完整知识库
+從已分析的提示詞中，構建完整知識庫
 ```
 
-### 方式3：指定范围
+### 方式3：指定範圍
 
 ```
-分析moss_terrarium系列，提取配色知识
+分析moss_terrarium系列，提取配色知識
 ```
 
 ---
 
-## 🔄 执行流程
+## 🔄 執行流程
 
-当用户请求提取知识时，你需要：
+當用戶請求提取知識時，你需要：
 
-### Step 1: 读取数据
-使用工具读取 `extracted_results/` 下的所有 `*_extracted.json` 文件：
+### Step 1: 讀取資料
+使用工具讀取 `extracted_results/` 下的所有 `*_extracted.json` 檔案：
 ```python
 from xray_helper import load_prompts
 prompts = load_prompts(pattern="*_extracted.json")
 ```
 
-### Step 2: 按维度分析
-根据用户请求的维度，分析对应模块：
+### Step 2: 按維度分析
+根據使用者請求的維度，分析對應模組：
 
-#### 如果用户要"颜色"知识：
-- 提取所有 `color_scheme` 模块
-- 分析配色公式、关键词、技巧
+#### 如果使用者要"顏色"知識：
+- 提取所有 `color_scheme` 模組
+- 分析配色公式、關鍵詞、技巧
 - 按下面的模板生成Markdown
 
-#### 如果用户要"布局"知识：
-- 提取所有 `composition` 模块
-- 分析视角、构图规则、定位方法
+#### 如果使用者要"佈局"知識：
+- 提取所有 `composition` 模組
+- 分析視角、構圖規則、定位方法
 - 按模板生成Markdown
 
-#### 如果用户要"符号"知识：
-- 提取 `constraints` 和 `detail_enhancers` 模块
-- 分析文字语法、Logo添加方法
+#### 如果使用者要"符號"知識：
+- 提取 `constraints` 和 `detail_enhancers` 模組
+- 分析文字語法、Logo新增方法
 - 按模板生成Markdown
 
-#### 如果用户要"材质"知识：
-- 提取 `detail_enhancers` 和相关描述
-- 分析表面特征、物理属性、质感关键词
+#### 如果使用者要"材質"知識：
+- 提取 `detail_enhancers` 和相關描述
+- 分析表面特徵、物理屬性、質感關鍵詞
 - 按模板生成Markdown
 
-#### 如果用户要"光影"知识：
+#### 如果使用者要"光影"知識：
 - 提取 `technical_parameters.lighting` 和 `mood_atmosphere`
-- 分析光源类型、布光方案、氛围效果
+- 分析光源型別、布光方案、氛圍效果
 - 按模板生成Markdown
 
-#### 如果用户要"排版"知识（设计类）：
+#### 如果使用者要"排版"知識（設計類）：
 - 提取 `composition` 和 `visual_style`
-- 分析栅格系统、视觉层级、对齐规则
+- 分析柵格系統、視覺層級、對齊規則
 - 按模板生成Markdown
 
-### Step 3: 生成知识卡片
-使用工具保存结果：
+### Step 3: 生成知識卡片
+使用工具儲存結果：
 ```python
 from xray_helper import save_knowledge_card
 save_knowledge_card(dimension="color", content=markdown_content)
@@ -99,31 +99,31 @@ save_knowledge_card(dimension="color", content=markdown_content)
 
 ---
 
-## 📝 输出模板
+## 📝 輸出模板
 
-### 模板1: 如何控制颜色？
+### 模板1: 如何控制顏色？
 
 ```markdown
-# 如何控制颜色？
+# 如何控制顏色？
 
-**分析时间**: {当前时间}
-**样本数量**: {分析了多少个提示词}
-**数据来源**: {哪些提示词}
+**分析時間**: {當前時間}
+**樣本數量**: {分析了多少個提示詞}
+**資料來源**: {哪些提示詞}
 
 ---
 
 ## 🎨 配色公式
 
-### 公式1: 冷暖对立（7:3黄金比例）
+### 公式1: 冷暖對立（7:3黃金比例）
 - **公式**: `70% cool base + 30% warm accent`
-- **来源**: moss_terrarium_001
-- **效果**: 自然和谐 + 视觉层次
+- **來源**: moss_terrarium_001
+- **效果**: 自然和諧 + 視覺層次
 
 ### 公式2: ...
 
 ---
 
-## 📚 颜色关键词库
+## 📚 顏色關鍵詞庫
 
 ### 冷色系
 - `rich forest greens`
@@ -143,97 +143,97 @@ save_knowledge_card(dimension="color", content=markdown_content)
 
 ## 🛠️ 配色技巧
 
-1. **温度对比** - 冷色环境 + 暖色焦点 = 视觉层次
-2. **7:3比例** - 主色70%，焦点色30%
-3. **单色调+焦点色** - 极简风格
+1. **溫度對比** - 冷色環境 + 暖色焦點 = 視覺層次
+2. **7:3比例** - 主色70%，焦點色30%
+3. **單色調+焦點色** - 極簡風格
 
 ---
 
-## 💡 应用案例
+## 💡 應用案例
 
 ### 案例1: moss_terrarium_001
 **配色方案**: rich forest greens (70%) + warm amber wood (30%)
 **效果**: Natural harmony, clear focal point
-**适用场景**: 自然场景、植物摄影
+**適用場景**: 自然場景、植物攝影
 
 ### 案例2: ...
 
 ```
 
-### 模板2: 如何控制空间布局？
+### 模板2: 如何控制空間佈局？
 
 ```markdown
-# 如何控制空间布局？
+# 如何控制空間佈局？
 
-**分析时间**: {当前时间}
-**样本数量**: {分析了多少个提示词}
+**分析時間**: {當前時間}
+**樣本數量**: {分析了多少個提示詞}
 
 ---
 
-## 🎥 视角选择
+## 🎥 視角選擇
 
 ### `slight top-down angle`
-**适用场景**: 微缩场景、产品摄影、生态瓶
-**关键词**: `top-down view`, `bird's eye view`, `overhead angle`
+**適用場景**: 微縮場景、產品攝影、生態瓶
+**關鍵詞**: `top-down view`, `bird's eye view`, `overhead angle`
 **案例**: moss_terrarium_001, moss_terrarium_002
-**效果**: 展示全貌，适合平铺布局
+**效果**: 展示全貌，適合平鋪佈局
 
 ### `isometric view`
-**适用场景**: 3D产品、游戏场景、建筑
-**关键词**: `isometric`, `45-degree angle`
-**效果**: 保持平行线，无透视变形
+**適用場景**: 3D產品、遊戲場景、建築
+**關鍵詞**: `isometric`, `45-degree angle`
+**效果**: 保持平行線，無透視變形
 
 ---
 
-## 📐 构图规则
+## 📐 構圖規則
 
-### Golden Ratio（黄金比例）
-**关键词**: `golden ratio composition`, `phi grid`
-**效果**: 经典和谐比例，视觉平衡
-**使用频率**: 3次
+### Golden Ratio（黃金比例）
+**關鍵詞**: `golden ratio composition`, `phi grid`
+**效果**: 經典和諧比例，視覺平衡
+**使用頻率**: 3次
 
 ### Rule of Thirds（三分法）
-**关键词**: `rule of thirds`, `thirds grid`
-**效果**: 动态平衡，引导视线
+**關鍵詞**: `rule of thirds`, `thirds grid`
+**效果**: 動態平衡，引導視線
 
-### Centered Symmetry（中心对称）
-**关键词**: `centered`, `perfectly symmetrical`
-**效果**: 稳定、庄重感
+### Centered Symmetry（中心對稱）
+**關鍵詞**: `centered`, `perfectly symmetrical`
+**效果**: 穩定、莊重感
 
 ---
 
 ## 🎯 定位方法
 
-### 相对位置描述
+### 相對位置描述
 - `iPhone placed next to notebook`
 - `floating in 3D space`
 - `bottom-left quadrant`
 
-### 精确坐标（高级）
+### 精確座標（高階）
 - `Subject A [X: 20-40, Y: 60-100] (Bottom-Left)`
 - `Subject B [X: 60-80, Y: 0-40] (Top-Right)`
 
 ---
 
-## 💡 应用案例
+## 💡 應用案例
 
 ### 案例1: moss_terrarium_001
-**视角**: slight top-down angle
-**构图**: centered in frame, golden ratio
+**視角**: slight top-down angle
+**構圖**: centered in frame, golden ratio
 **定位**: terrarium centered, cottage as focal point
 
 ```
 
-### 模板3: 如何添加标志性符号？
+### 模板3: 如何新增標誌性符號？
 
 ```markdown
-# 如何添加标志性符号？
+# 如何新增標誌性符號？
 
 ---
 
-## ✍️ 文字添加语法
+## ✍️ 文字新增語法
 
-### 基础语法
+### 基礎語法
 ```
 text "HELLO" in bold serif
 large bold sans-serif text "SALE" in red
@@ -247,9 +247,9 @@ neon red cursive script "OPEN"
 
 ---
 
-## 🏷️ Logo/水印添加
+## 🏷️ Logo/水印新增
 
-### 正确示例
+### 正確示例
 ```
 small square watermark in lower left corner
 simple logo in top-right, 10% opacity
@@ -257,67 +257,67 @@ brand symbol integrated into design
 ```
 
 ### ❌ 反面案例（避免）
-- `exactly 10x10 pixels` → AI无法保证像素精度
+- `exactly 10x10 pixels` → AI無法保證畫素精度
 - `Gothic font AND Arial font` → 矛盾指令
-- `mandatory mandatory mandatory` → 重复无效
+- `mandatory mandatory mandatory` → 重複無效
 
 ---
 
-## 🎨 符号风格
+## 🎨 符號風格
 
-### 材质效果
-- `neon` - 霓虹灯效果
+### 材質效果
+- `neon` - 霓虹燈效果
 - `embossed` - 浮雕效果
-- `metallic sheen` - 金属光泽
-- `glowing` - 发光效果
+- `metallic sheen` - 金屬光澤
+- `glowing` - 發光效果
 
-### 字体风格
-- `bold serif` - 粗体衬线
-- `sans-serif` - 无衬线
-- `cursive script` - 草书
-- `calligraphy` - 书法体
+### 字型風格
+- `bold serif` - 粗體襯線
+- `sans-serif` - 無襯線
+- `cursive script` - 草書
+- `calligraphy` - 書法體
 
 ```
 
-### 模板4: 如何控制材质？
+### 模板4: 如何控制材質？
 
 ```markdown
-# 如何控制材质？
+# 如何控制材質？
 
 ---
 
-## 🔍 表面特征
+## 🔍 表面特徵
 
-### 金属材质
-- `brushed titanium` - 拉丝钛金属
-- `polished chrome` - 抛光镀铬
-- `metallic sheen` - 金属光泽
+### 金屬材質
+- `brushed titanium` - 拉絲鈦金屬
+- `polished chrome` - 拋光鍍鉻
+- `metallic sheen` - 金屬光澤
 
-### 有机材质
-- `living green textures` - 生机勃勃的绿色质感
-- `natural wood grain` - 天然木纹
-- `rough bark` - 粗糙树皮
+### 有機材質
+- `living green textures` - 生機勃勃的綠色質感
+- `natural wood grain` - 天然木紋
+- `rough bark` - 粗糙樹皮
 
 ### 玻璃/透明
 - `under glass` - 玻璃下
 - `translucent` - 半透明
-- `crystal clear` - 晶莹剔透
+- `crystal clear` - 晶瑩剔透
 
 ---
 
-## ⚙️ 物理属性
+## ⚙️ 物理屬性
 
-- `glossy` / `matte` - 光泽/哑光
+- `glossy` / `matte` - 光澤/啞光
 - `reflective` / `absorptive` - 反射/吸收
-- `weathered` / `pristine` - 风化/原始
-- `soft` / `rigid` - 柔软/坚硬
+- `weathered` / `pristine` - 風化/原始
+- `soft` / `rigid` - 柔軟/堅硬
 
 ---
 
-## ✨ 光学效果
+## ✨ 光學效果
 
 - `morning dew droplets` - 晨露水珠
-- `soft sunlight reflections on glass` - 玻璃上的柔和阳光反射
+- `soft sunlight reflections on glass` - 玻璃上的柔和陽光反射
 - `condensation` - 冷凝水汽
 - `refraction` - 折射
 
@@ -330,84 +330,84 @@ brand symbol integrated into design
 
 ---
 
-## 💡 光源类型
+## 💡 光源型別
 
 ### 自然光
 - `soft diffused daylight` - 柔和漫射日光
-- `golden hour light` - 黄金时段光线
+- `golden hour light` - 黃金時段光線
 - `morning sunlight` - 晨光
-- `harsh noon sun` - 正午强光
+- `harsh noon sun` - 正午強光
 
 ### 人工光
-- `studio lighting` - 影棚灯光
-- `neon lights` - 霓虹灯
-- `rim light` - 轮廓光
-- `softbox overhead` - 头顶柔光箱
+- `studio lighting` - 影棚燈光
+- `neon lights` - 霓虹燈
+- `rim light` - 輪廓光
+- `softbox overhead` - 頭頂柔光箱
 
 ---
 
 ## 🎬 布光方案
 
-### Rembrandt Lighting（伦勃朗布光）
-**效果**: 戏剧性，适合人像
-**关键词**: `Rembrandt light`, `triangle highlight`, `dramatic shadows`
+### Rembrandt Lighting（倫勃朗布光）
+**效果**: 戲劇性，適合人像
+**關鍵詞**: `Rembrandt light`, `triangle highlight`, `dramatic shadows`
 
 ### Soft Diffused Light（柔和漫射光）
-**效果**: 自然、清新、无硬影
-**关键词**: `soft diffused`, `natural ambient`, `no harsh shadows`
+**效果**: 自然、清新、無硬影
+**關鍵詞**: `soft diffused`, `natural ambient`, `no harsh shadows`
 
-### Rim Light（轮廓光）
-**效果**: 勾勒边缘，分离主体和背景
-**关键词**: `rim lighting`, `backlight`, `edge highlight`
+### Rim Light（輪廓光）
+**效果**: 勾勒邊緣，分離主體和背景
+**關鍵詞**: `rim lighting`, `backlight`, `edge highlight`
 
 ---
 
-## 🌤️ 光线+氛围公式
+## 🌤️ 光線+氛圍公式
 
-### 清新宁静
+### 清新寧靜
 ```
 soft diffused daylight + morning dew = fresh, peaceful atmosphere
 ```
 
-### 戏剧张力
+### 戲劇張力
 ```
 Rembrandt light + rim light = dramatic portrait with depth
 ```
 
-### 科技未来
+### 科技未來
 ```
 neon accent lights + volumetric fog = cyberpunk atmosphere
 ```
 
 ---
 
-## 🌫️ 大气效果
+## 🌫️ 大氣效果
 
-- `volumetric fog` - 体积雾
-- `misty` - 雾蒙蒙
-- `hazy` - 朦胧
-- `clear crisp air` - 清澈空气
+- `volumetric fog` - 體積霧
+- `misty` - 霧濛濛
+- `hazy` - 朦朧
+- `clear crisp air` - 清澈空氣
 
 ```
 
 ---
 
-## 🛠️ 工具函数
+## 🛠️ 工具函式
 
-你需要使用 `xray_helper.py` 中的工具函数：
+你需要使用 `xray_helper.py` 中的工具函式：
 
-### 读取提示词
+### 讀取提示詞
 ```python
 from xray_helper import load_prompts
 
-# 加载所有提示词
+# 載入所有提示詞
 all_prompts = load_prompts()
 
-# 加载特定范围
+# 載入特定範圍
 moss_prompts = load_prompts(pattern="moss_terrarium*")
 ```
 
-### 保存知识卡片
+### 儲存知識卡片
 ```python
 from xray_helper import save_knowledge_card
 
@@ -423,36 +423,36 @@ save_knowledge_card(
 
 ---
 
-## 💡 关键原则
+## 💡 關鍵原則
 
-### 1. 寻找规律，不是罗列
-❌ 错误：只列出所有颜色关键词
-✅ 正确：发现配色公式（如：70% cool + 30% warm）
+### 1. 尋找規律，不是羅列
+❌ 錯誤：只列出所有顏色關鍵詞
+✅ 正確：發現配色公式（如：70% cool + 30% warm）
 
 ### 2. 提取技巧，不是描述
-❌ 错误："这个提示词用了森林绿"
-✅ 正确："冷色环境 + 暖色焦点 = 视觉层次"
+❌ 錯誤："這個提示詞用了森林綠"
+✅ 正確："冷色環境 + 暖色焦點 = 視覺層次"
 
-### 3. 给出案例，可直接复用
-❌ 错误：模糊描述"使用对比色"
-✅ 正确：具体案例 `rich forest greens + warm amber wood`
+### 3. 給出案例，可直接複用
+❌ 錯誤：模糊描述"使用對比色"
+✅ 正確：具體案例 `rich forest greens + warm amber wood`
 
-### 4. 学习优秀，也学习错误
-- 从A级提示词学习最佳实践
-- 从D级提示词（如pencil_sketch_idol）学习反面案例
+### 4. 學習優秀，也學習錯誤
+- 從A級提示詞學習最佳實踐
+- 從D級提示詞（如pencil_sketch_idol）學習反面案例
 
 ---
 
-## 📊 分析步骤（详细）
+## 📊 分析步驟（詳細）
 
-### 当用户说："提取如何控制颜色的知识"
+### 當用戶說："提取如何控制顏色的知識"
 
-**Step 1**: 加载数据
+**Step 1**: 載入資料
 ```python
 prompts = load_prompts()
 ```
 
-**Step 2**: 遍历所有提示词，提取 color_scheme 模块
+**Step 2**: 遍歷所有提示詞，提取 color_scheme 模組
 ```python
 color_data = []
 for prompt in prompts:
@@ -464,34 +464,34 @@ for prompt in prompts:
 ```
 
 **Step 3**: 分析配色公式
-- 查找 `primary_palette` 字段
-- 检查 `temperature` 描述（如："balanced - cool greens + warm wood"）
-- 识别比例关系（70%/30%）
+- 查詢 `primary_palette` 欄位
+- 檢查 `temperature` 描述（如："balanced - cool greens + warm wood"）
+- 識別比例關係（70%/30%）
 - 提取 `concept`（如："Cold Shell, Warm Heart"）
 
-**Step 4**: 分类关键词
-- 遍历所有颜色描述
-- 分为冷色/暖色/中性色
+**Step 4**: 分類關鍵詞
+- 遍歷所有顏色描述
+- 分為冷色/暖色/中性色
 - 去重，排序
 
 **Step 5**: 提取技巧
-- 温度对比？
-- 高对比/低对比？
-- 单色调+焦点色？
+- 溫度對比？
+- 高對比/低對比？
+- 單色調+焦點色？
 
-**Step 6**: 创建案例
-- 选择最佳3-5个案例
-- 包含：配色方案、效果、适用场景
+**Step 6**: 建立案例
+- 選擇最佳3-5個案例
+- 包含：配色方案、效果、適用場景
 
 **Step 7**: 生成Markdown
-- 按模板填充内容
-- 使用 `save_knowledge_card()` 保存
+- 按模板填充內容
+- 使用 `save_knowledge_card()` 儲存
 
 ---
 
-## 🎯 输出位置
+## 🎯 輸出位置
 
-所有知识卡片保存到：
+所有知識卡片儲存到：
 ```
 knowledge_base/
 ├── how_to_control_color.md
@@ -499,22 +499,22 @@ knowledge_base/
 ├── how_to_add_symbols.md
 ├── how_to_control_materials.md
 ├── how_to_control_lighting.md
-└── how_to_control_typography.md (针对设计类)
+└── how_to_control_typography.md (針對設計類)
 ```
 
 ---
 
-## ✅ 验收标准
+## ✅ 驗收標準
 
-生成的知识卡片应该：
-1. ✅ 回答"如何做X"的问题
-2. ✅ 包含具体的关键词和公式
-3. ✅ 有3+个真实案例
-4. ✅ 可以直接复用到新提示词中
-5. ✅ 既有正面案例，也有反面教训
+生成的知識卡片應該：
+1. ✅ 回答"如何做X"的問題
+2. ✅ 包含具體的關鍵詞和公式
+3. ✅ 有3+個真實案例
+4. ✅ 可以直接複用到新提示詞中
+5. ✅ 既有正面案例，也有反面教訓
 
 ---
 
-**Skill状态**: ✅ 设计完成
-**最后更新**: 2026-01-04
+**Skill狀態**: ✅ 設計完成
+**最後更新**: 2026-01-04
 **使用工具**: xray_helper.py

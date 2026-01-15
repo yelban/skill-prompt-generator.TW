@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-变量采样系统 - 智能采样元素变量
-支持参数化元素，避免重复采样，上下文感知
+變數取樣系統 - 智慧取樣元素變數
+支援引數化元素，避免重複取樣，上下文感知
 """
 
 import sqlite3
@@ -13,22 +13,22 @@ from typing import Dict, List, Optional, Any
 
 
 class SQLiteVariableSampler:
-    """SQLite元素变量采样器"""
+    """SQLite元素變數取樣器"""
 
     def __init__(self, db_path: str):
         """
-        初始化变量采样器
+        初始化變數取樣器
 
         Args:
-            db_path: 数据库路径
+            db_path: 資料庫路徑
         """
         self.db = sqlite3.connect(db_path)
         self.cursor = self.db.cursor()
-        self.history = []  # 采样历史，避免重复
-        self.max_history = 100  # 保留最近100次采样历史
+        self.history = []  # 取樣歷史，避免重複
+        self.max_history = 100  # 保留最近100次取樣歷史
 
     def get_element(self, element_id: str) -> Optional[Dict]:
-        """获取元素基础信息"""
+        """獲取元素基礎資訊"""
         query = """
             SELECT element_id, name, chinese_name, ai_prompt_template,
                    keywords, reusability_score, category_id, domain_id
@@ -60,7 +60,7 @@ class SQLiteVariableSampler:
         }
 
     def get_element_variables(self, element_id: str) -> List[Dict]:
-        """获取元素的所有变量配置"""
+        """獲取元素的所有變數配置"""
         query = """
             SELECT variable_id, parameter_name, parameter_type,
                    possible_values, default_value, description
@@ -93,49 +93,49 @@ class SQLiteVariableSampler:
     def sample_element_with_variables(self, element_id: str,
                                      style_context: Optional[Dict] = None) -> Dict:
         """
-        采样元素并应用变量
+        取樣元素並應用變數
 
         Args:
             element_id: 元素ID
-            style_context: 风格上下文（可选）
+            style_context: 風格上下文（可選）
 
         Returns:
-            包含原始元素和变量值的字典
+            包含原始元素和變數值的字典
         """
-        # 1. 获取元素基础模板
+        # 1. 獲取元素基礎模板
         element = self.get_element(element_id)
         if not element:
             raise ValueError(f"Element not found: {element_id}")
 
-        # 2. 获取该元素的所有变量
+        # 2. 獲取該元素的所有變數
         variables = self.get_element_variables(element_id)
 
         if not variables:
-            # 没有变量，直接返回原始元素
+            # 沒有變數，直接返回原始元素
             return {
                 'element': element,
                 'variables': {},
                 'result': element['template']
             }
 
-        # 3. 采样变量值（基于风格上下文）
+        # 3. 取樣變數值（基於風格上下文）
         sampled_vars = {}
         for var in variables:
             sampled_vars[var['parameter_name']] = self.sample_variable(
                 var, style_context, avoid_history=True
             )
 
-        # 4. 应用变量到模板
+        # 4. 應用變數到模板
         result = self.apply_variables(element['template'], sampled_vars)
 
-        # 5. 记录历史
+        # 5. 記錄歷史
         self.history.append({
             'element_id': element_id,
             'variables': sampled_vars,
             'timestamp': time.time()
         })
 
-        # 限制历史长度
+        # 限制歷史長度
         if len(self.history) > self.max_history:
             self.history = self.history[-self.max_history:]
 
@@ -148,29 +148,29 @@ class SQLiteVariableSampler:
     def sample_variable(self, var_config: Dict, style_context: Optional[Dict],
                        avoid_history: bool) -> Any:
         """
-        智能采样单个变量
+        智慧取樣單個變數
 
         Args:
-            var_config: 变量配置
-            style_context: 风格上下文
-            avoid_history: 是否避免最近使用过的值
+            var_config: 變數配置
+            style_context: 風格上下文
+            avoid_history: 是否避免最近使用過的值
 
         Returns:
-            采样的变量值
+            取樣的變數值
         """
         param_type = var_config['parameter_type']
 
         if param_type == 'enum':
-            # 枚举类型：随机选择，避免重复
+            # 列舉型別：隨機選擇，避免重複
             values = var_config['possible_values']
             if not values:
                 return var_config['default_value']
 
-            # 根据风格上下文过滤
+            # 根據風格上下文過濾
             if style_context:
                 values = self.filter_by_style(values, style_context)
 
-            # 避免最近使用过的
+            # 避免最近使用過的
             if avoid_history and len(values) > 1:
                 recent = self.get_recent_values(var_config['variable_id'])
                 filtered = [v for v in values if v not in recent]
@@ -180,27 +180,27 @@ class SQLiteVariableSampler:
             return random.choice(values) if values else var_config['default_value']
 
         elif param_type == 'range':
-            # 范围类型：在范围内随机
+            # 範圍型別：在範圍內隨機
             range_vals = var_config['possible_values']
             if not range_vals or len(range_vals) != 2:
                 return var_config['default_value']
 
             min_val, max_val = range_vals
 
-            # 根据风格上下文调整范围
+            # 根據風格上下文調整範圍
             if style_context:
                 min_val, max_val = self.adjust_range_by_style(
                     min_val, max_val, style_context
                 )
 
-            # 判断是整数还是浮点数
+            # 判斷是整數還是浮點數
             if isinstance(min_val, int) and isinstance(max_val, int):
                 return random.randint(min_val, max_val)
             else:
                 return round(random.uniform(min_val, max_val), 2)
 
         elif param_type == 'boolean':
-            # 布尔类型
+            # 布林型別
             if style_context and 'prefer_' + var_config['parameter_name'] in style_context:
                 return style_context['prefer_' + var_config['parameter_name']]
             return random.choice([True, False])
@@ -209,8 +209,8 @@ class SQLiteVariableSampler:
             return var_config['default_value']
 
     def filter_by_style(self, values: List[str], style_context: Dict) -> List[str]:
-        """根据风格上下文过滤值"""
-        # 简单实现：如果上下文指定了偏好，优先选择
+        """根據風格上下文過濾值"""
+        # 簡單實現：如果上下文指定了偏好，優先選擇
         preferred = style_context.get('preferred_values', [])
         if preferred:
             filtered = [v for v in values if v in preferred]
@@ -220,8 +220,8 @@ class SQLiteVariableSampler:
 
     def adjust_range_by_style(self, min_val: float, max_val: float,
                               style_context: Dict) -> tuple:
-        """根据风格上下文调整范围"""
-        # 简单实现：如果上下文指定了偏好范围，缩小范围
+        """根據風格上下文調整範圍"""
+        # 簡單實現：如果上下文指定了偏好範圍，縮小範圍
         if 'range_preference' in style_context:
             pref = style_context['range_preference']
             if pref == 'low':
@@ -233,20 +233,20 @@ class SQLiteVariableSampler:
         return min_val, max_val
 
     def get_recent_values(self, variable_id: str, n: int = 3) -> List[Any]:
-        """获取最近n次使用过的值"""
+        """獲取最近n次使用過的值"""
         recent = []
         for record in reversed(self.history):
             for var_name, var_value in record['variables'].items():
-                # 简化：通过参数名匹配（实际应该用variable_id）
+                # 簡化：透過引數名匹配（實際應該用variable_id）
                 if len(recent) < n:
                     recent.append(var_value)
         return recent
 
     def apply_variables(self, template: str, variables: Dict[str, Any]) -> str:
         """
-        应用变量到模板
+        應用變數到模板
 
-        支持格式：{variable_name}
+        支援格式：{variable_name}
         例如："{intensity} lighting" -> "dramatic lighting"
         """
         result = template
@@ -257,19 +257,19 @@ class SQLiteVariableSampler:
         return result
 
     def close(self):
-        """关闭数据库连接"""
+        """關閉資料庫連線"""
         self.db.close()
 
 
 class DesignVariableSampler:
-    """设计变量采样器（从design_variables表采样）"""
+    """設計變數取樣器（從design_variables表取樣）"""
 
     def __init__(self, db_path: str):
         """
-        初始化设计变量采样器
+        初始化設計變數取樣器
 
         Args:
-            db_path: 数据库路径
+            db_path: 資料庫路徑
         """
         self.db = sqlite3.connect(db_path)
         self.cursor = self.db.cursor()
@@ -279,14 +279,14 @@ class DesignVariableSampler:
     def sample_design_variables(self, style_name: str,
                                 variable_types: Optional[List[str]] = None) -> Dict:
         """
-        采样设计变量
+        取樣設計變數
 
         Args:
-            style_name: 风格名称（如：温馨可爱、现代简约）
-            variable_types: 变量类型列表（如：['colors', 'borders']），None表示全部
+            style_name: 風格名稱（如：溫馨可愛、現代簡約）
+            variable_types: 變數型別列表（如：['colors', 'borders']），None表示全部
 
         Returns:
-            采样的设计变量字典
+            取樣的設計變數字典
         """
         query = """
             SELECT variable_id, variable_type, variable_name, variable_data
@@ -308,7 +308,7 @@ class DesignVariableSampler:
         if not rows:
             return {}
 
-        # 按类型分组
+        # 按型別分組
         variables_by_type = {}
         for row in rows:
             var_type = row[1]
@@ -328,10 +328,10 @@ class DesignVariableSampler:
                 'variable_data': var_data
             })
 
-        # 从每个类型中随机选择一个
+        # 從每個型別中隨機選擇一個
         sampled = {}
         for var_type, candidates in variables_by_type.items():
-            # 避免重复
+            # 避免重複
             recent = self.get_recent_variables(var_type)
             filtered = [c for c in candidates if c['variable_id'] not in recent]
             if not filtered:
@@ -340,7 +340,7 @@ class DesignVariableSampler:
             selected = random.choice(filtered)
             sampled[var_type] = selected
 
-            # 记录历史
+            # 記錄歷史
             self.history.append({
                 'style_name': style_name,
                 'variable_type': var_type,
@@ -348,14 +348,14 @@ class DesignVariableSampler:
                 'timestamp': time.time()
             })
 
-        # 限制历史长度
+        # 限制歷史長度
         if len(self.history) > self.max_history:
             self.history = self.history[-self.max_history:]
 
         return sampled
 
     def get_recent_variables(self, variable_type: str, n: int = 3) -> List[str]:
-        """获取最近使用过的变量ID"""
+        """獲取最近使用過的變數ID"""
         recent = []
         for record in reversed(self.history):
             if record['variable_type'] == variable_type:
@@ -365,53 +365,53 @@ class DesignVariableSampler:
         return recent
 
     def close(self):
-        """关闭数据库连接"""
+        """關閉資料庫連線"""
         self.db.close()
 
 
 def test_variable_sampler():
-    """测试变量采样器"""
+    """測試變數取樣器"""
     print("=" * 80)
-    print("测试变量采样系统")
+    print("測試變數取樣系統")
     print("=" * 80)
 
-    # 测试SQLiteVariableSampler
-    print("\n【测试1】SQLite元素变量采样")
+    # 測試SQLiteVariableSampler
+    print("\n【測試1】SQLite元素變數取樣")
     sampler = SQLiteVariableSampler("extracted_results/elements.db")
 
-    # 测试采样lighting元素（假设有变量）
+    # 測試取樣lighting元素（假設有變數）
     try:
         result = sampler.sample_element_with_variables(
             'common_lighting_001',
             style_context={'preferred_values': ['dramatic']}
         )
         print(f"  元素: {result['element']['chinese_name']}")
-        print(f"  变量: {result['variables']}")
-        print(f"  结果: {result['result']}")
+        print(f"  變數: {result['variables']}")
+        print(f"  結果: {result['result']}")
     except Exception as e:
-        print(f"  跳过（元素可能不存在）: {e}")
+        print(f"  跳過（元素可能不存在）: {e}")
 
     sampler.close()
 
-    # 测试DesignVariableSampler
-    print("\n【测试2】设计变量采样")
+    # 測試DesignVariableSampler
+    print("\n【測試2】設計變數取樣")
     design_sampler = DesignVariableSampler("extracted_results/elements.db")
 
-    # 采样温馨可爱风格
-    sampled = design_sampler.sample_design_variables('温馨可爱')
-    print(f"  风格: 温馨可爱")
+    # 取樣溫馨可愛風格
+    sampled = design_sampler.sample_design_variables('溫馨可愛')
+    print(f"  風格: 溫馨可愛")
     for var_type, var_data in sampled.items():
         print(f"  {var_type}: {var_data['variable_name']}")
 
-    # 再次采样（应该避免重复）
-    print("\n  第二次采样（应避免重复）:")
-    sampled2 = design_sampler.sample_design_variables('温馨可爱')
+    # 再次取樣（應該避免重複）
+    print("\n  第二次取樣（應避免重複）:")
+    sampled2 = design_sampler.sample_design_variables('溫馨可愛')
     for var_type, var_data in sampled2.items():
         print(f"  {var_type}: {var_data['variable_name']}")
 
     design_sampler.close()
 
-    print("\n✅ 测试完成")
+    print("\n✅ 測試完成")
 
 
 if __name__ == '__main__':

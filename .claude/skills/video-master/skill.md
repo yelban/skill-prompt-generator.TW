@@ -1,23 +1,23 @@
 ---
 name: video-master
-description: 视频生成主控 - 自动生成视频场景提示词，支持动态效果、转场、运镜等
+description: 影片生成主控 - 自動生成影片場景提示詞，支援動態效果、轉場、運鏡等
 ---
 
-# Video Master - 视频生成主控 Skill
+# Video Master - 影片生成主控 Skill
 
 **版本**: 1.0
-**领域**: 视频生成
-**架构**: Master-Subordinate
-**数据源**: Universal Elements Database
+**領域**: 影片生成
+**架構**: Master-Subordinate
+**資料來源**: Universal Elements Database
 
 ## 🎯 核心功能
 
-自动生成高质量的视频场景提示词，支持：
-- 🎬 场景类型（武侠、科幻、动作、剧情等）
-- 📹 相机运动（推进、拉远、跟踪、环绕等）
-- ⚡ 动作效果（慢动作、快速剪辑、特效）
-- 🎭 叙事元素（角色、环境、氛围）
-- 🌅 光照场景（黄昏、黎明、夜晚、室内）
+自動生成高質量的影片場景提示詞，支援：
+- 🎬 場景型別（武俠、科幻、動作、劇情等）
+- 📹 相機運動（推進、拉遠、跟蹤、環繞等）
+- ⚡ 動作效果（慢動作、快速剪輯、特效）
+- 🎭 敘事元素（角色、環境、氛圍）
+- 🌅 光照場景（黃昏、黎明、夜晚、室內）
 
 ---
 
@@ -26,13 +26,13 @@ description: 视频生成主控 - 自动生成视频场景提示词，支持动�
 ### 快速生成
 
 ```
-生成一个武侠动作场景视频
+生成一個武俠動作場景影片
 ```
 
 或
 
 ```
-视频场景：电影级质感，慢镜头，动态相机运动
+影片場景：電影級質感，慢鏡頭，動態相機運動
 ```
 
 ---
@@ -40,45 +40,45 @@ description: 视频生成主控 - 自动生成视频场景提示词，支持动�
 ## 🔄 工作流程
 
 ```
-用户输入
+使用者輸入
   ↓
-查询video领域元素 (1 element)
-  - scene_types: 武侠等
-  - camera_movements: 动态运镜（待补充）
-  - motion_effects: 慢动作等（待补充）
+查詢video領域元素 (1 element)
+  - scene_types: 武俠等
+  - camera_movements: 動態運鏡（待補充）
+  - motion_effects: 慢動作等（待補充）
   ↓
-组装Prompt
-  1. 场景描述
-  2. 相机运动
-  3. 动作效果
-  4. 技术参数（8K HDR）
+組裝Prompt
+  1. 場景描述
+  2. 相機運動
+  3. 動作效果
+  4. 技術引數（8K HDR）
   ↓
-输出完整视频Prompt
+輸出完整影片Prompt
 ```
 
 ---
 
-## 📊 数据源
+## 📊 資料來源
 
-**主要库**: `video` domain (1 element)
+**主要庫**: `video` domain (1 element)
 
-**元素类别**:
-- `scene_types` - 场景类型
-- `camera_movements` - 相机运动（待补充）
-- `motion_effects` - 动态效果（待补充）
-- `transitions` - 转场效果（待补充）
+**元素類別**:
+- `scene_types` - 場景型別
+- `camera_movements` - 相機運動（待補充）
+- `motion_effects` - 動態效果（待補充）
+- `transitions` - 轉場效果（待補充）
 
-**可用标签**:
+**可用標籤**:
 - `cinematic`, `action`, `dramatic`
 - `slow-motion`, `tracking-shot`
 
 ---
 
-## ✅ 输出示例
+## ✅ 輸出示例
 
-**输入**: `生成武侠动作场景`
+**輸入**: `生成武俠動作場景`
 
-**输出**:
+**輸出**:
 ```
 Cinematic Chinese martial arts action scene, dynamic tracking shot following
 warrior through bamboo forest, slow-motion combat sequences with sword fighting,
@@ -89,5 +89,5 @@ Chinese aesthetics, professional action choreography, movie-quality VFX
 
 ---
 
-**Skill状态**: ✅ 已实现
-**Note**: 视频领域元素较少（1个），建议后续补充更多camera_movements和motion_effects
+**Skill狀態**: ✅ 已實現
+**Note**: 影片領域元素較少（1個），建議後續補充更多camera_movements和motion_effects

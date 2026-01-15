@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-YAML变量采样器 - 从prompt-crafter的YAML配置中采样设计变量
-支持温馨可爱、现代简约等风格的配色、边框、装饰采样
+YAML變數取樣器 - 從prompt-crafter的YAML配置中取樣設計變數
+支援溫馨可愛、現代簡約等風格的配色、邊框、裝飾取樣
 """
 
 import yaml
@@ -13,48 +13,48 @@ from pathlib import Path
 
 
 class YAMLVariableSampler:
-    """YAML变量采样器（读取prompt-crafter的YAML配置）"""
+    """YAML變數取樣器（讀取prompt-crafter的YAML配置）"""
 
     def __init__(self, yaml_dir: str = "variables"):
         """
-        初始化YAML变量采样器
+        初始化YAML變數取樣器
 
         Args:
-            yaml_dir: YAML文件目录路径
+            yaml_dir: YAML檔案目錄路徑
         """
         self.yaml_dir = Path(yaml_dir)
         self.history = []
         self.max_history = 100
 
-        # 加载YAML配置
+        # 載入YAML配置
         self.colors = self._load_yaml('colors.yaml')
         self.borders = self._load_yaml('borders.yaml')
         self.decorations = self._load_yaml('decorations.yaml')
 
     def _load_yaml(self, filename: str) -> Dict:
-        """加载YAML文件"""
+        """載入YAML檔案"""
         filepath = self.yaml_dir / filename
         if not filepath.exists():
-            print(f"⚠️ YAML文件不存在: {filepath}")
+            print(f"⚠️ YAML檔案不存在: {filepath}")
             return {}
 
         with open(filepath, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
 
-    def sample_variables(self, style: str = '温馨可爱',
+    def sample_variables(self, style: str = '溫馨可愛',
                         variable_types: Optional[List[str]] = None) -> Dict:
         """
-        采样设计变量
+        取樣設計變數
 
         Args:
-            style: 风格名称（温馨可爱、现代简约）
-            variable_types: 要采样的变量类型列表（如：['colors', 'borders']），None表示全部
+            style: 風格名稱（溫馨可愛、現代簡約）
+            variable_types: 要取樣的變數型別列表（如：['colors', 'borders']），None表示全部
 
         Returns:
-            采样的设计变量字典
+            取樣的設計變數字典
             {
                 'colors': {'scheme_name': '珊瑚粉色系', 'variants': [...]},
-                'borders': {'style': '大圆角', 'config': {...}},
+                'borders': {'style': '大圓角', 'config': {...}},
                 'decorations': {'type': '星星', 'config': {...}}
             }
         """
@@ -72,30 +72,30 @@ class YAMLVariableSampler:
         if 'decorations' in variable_types and self.decorations:
             sampled['decorations'] = self._sample_decorations(style)
 
-        # 记录历史
+        # 記錄歷史
         self.history.append({
             'style': style,
             'sampled': sampled,
             'timestamp': time.time()
         })
 
-        # 限制历史长度
+        # 限制歷史長度
         if len(self.history) > self.max_history:
             self.history = self.history[-self.max_history:]
 
         return sampled
 
     def _sample_colors(self, style: str) -> Dict:
-        """采样配色方案"""
+        """取樣配色方案"""
         if style not in self.colors:
-            # 风格不存在，使用第一个可用风格
+            # 風格不存在，使用第一個可用風格
             style = list(self.colors.keys())[0] if self.colors else None
             if not style:
                 return {}
 
         color_schemes = self.colors[style]
 
-        # 过滤出非文字色/背景色的主色系
+        # 過濾出非文字色/背景色的主色系
         main_schemes = {
             name: data for name, data in color_schemes.items()
             if '文字' not in name and '背景' not in name and isinstance(data, dict)
@@ -111,11 +111,11 @@ class YAMLVariableSampler:
         if not available:
             available = list(main_schemes.keys())
 
-        # 随机选择一个色系
+        # 隨機選擇一個色系
         scheme_name = random.choice(available)
         scheme_data = main_schemes[scheme_name]
 
-        # 从variants中随机选择一个颜色
+        # 從variants中隨機選擇一個顏色
         variants = scheme_data.get('variants', [])
         selected_variant = random.choice(variants) if variants else None
 
@@ -127,9 +127,9 @@ class YAMLVariableSampler:
         }
 
     def _sample_borders(self, style: str) -> Dict:
-        """采样边框样式"""
+        """取樣邊框樣式"""
         if style not in self.borders:
-            # 风格不存在，使用第一个可用风格
+            # 風格不存在，使用第一個可用風格
             style = list(self.borders.keys())[0] if self.borders else None
             if not style:
                 return {}
@@ -146,7 +146,7 @@ class YAMLVariableSampler:
         if not available:
             available = list(border_styles.keys())
 
-        # 随机选择一个边框样式
+        # 隨機選擇一個邊框樣式
         border_name = random.choice(available)
         border_config = border_styles[border_name]
 
@@ -157,9 +157,9 @@ class YAMLVariableSampler:
         }
 
     def _sample_decorations(self, style: str) -> Dict:
-        """采样装饰元素"""
+        """取樣裝飾元素"""
         if style not in self.decorations:
-            # 风格不存在，使用第一个可用风格
+            # 風格不存在，使用第一個可用風格
             style = list(self.decorations.keys())[0] if self.decorations else None
             if not style:
                 return {}
@@ -176,7 +176,7 @@ class YAMLVariableSampler:
         if not available:
             available = list(decoration_options.keys())
 
-        # 随机选择一个装饰元素
+        # 隨機選擇一個裝飾元素
         decoration_name = random.choice(available)
         decoration_config = decoration_options[decoration_name]
 
@@ -187,12 +187,12 @@ class YAMLVariableSampler:
         }
 
     def _get_recent_values(self, variable_type: str, n: int = 2) -> List[str]:
-        """获取最近使用过的值"""
+        """獲取最近使用過的值"""
         recent = []
         for record in reversed(self.history):
             if variable_type in record['sampled']:
                 sampled_data = record['sampled'][variable_type]
-                # 提取名称
+                # 提取名稱
                 if variable_type == 'colors':
                     name = sampled_data.get('scheme_name')
                 elif variable_type == 'borders':
@@ -212,13 +212,13 @@ class YAMLVariableSampler:
 
     def get_prompt_description(self, sampled: Dict) -> str:
         """
-        将采样的变量转换为提示词描述
+        將取樣的變數轉換為提示詞描述
 
         Args:
-            sampled: 采样的变量字典
+            sampled: 取樣的變數字典
 
         Returns:
-            提示词描述字符串
+            提示詞描述字串
         """
         parts = []
 
@@ -230,7 +230,7 @@ class YAMLVariableSampler:
             if variant:
                 parts.append(f"Color palette: {scheme_name}, primary color {variant['name']} ({variant['hex']})")
 
-        # 边框描述
+        # 邊框描述
         if 'borders' in sampled:
             borders_data = sampled['borders']
             border_name = borders_data.get('border_name', '')
@@ -239,7 +239,7 @@ class YAMLVariableSampler:
             if radius:
                 parts.append(f"Border style: {border_name}, radius {radius}")
 
-        # 装饰描述
+        # 裝飾描述
         if 'decorations' in sampled:
             deco_data = sampled['decorations']
             deco_name = deco_data.get('decoration_name', '')
@@ -249,16 +249,16 @@ class YAMLVariableSampler:
 
 
 def test_yaml_sampler():
-    """测试YAML变量采样器"""
+    """測試YAML變數取樣器"""
     print("=" * 80)
-    print("测试YAML变量采样器")
+    print("測試YAML變數取樣器")
     print("=" * 80)
 
     sampler = YAMLVariableSampler()
 
-    # 测试1：采样温馨可爱风格
-    print("\n【测试1】采样温馨可爱风格")
-    sampled1 = sampler.sample_variables(style='温馨可爱')
+    # 測試1：取樣溫馨可愛風格
+    print("\n【測試1】取樣溫馨可愛風格")
+    sampled1 = sampler.sample_variables(style='溫馨可愛')
 
     print(f"  配色: {sampled1.get('colors', {}).get('scheme_name')}")
     if 'colors' in sampled1:
@@ -266,31 +266,31 @@ def test_yaml_sampler():
         if variant:
             print(f"    主色: {variant['name']} ({variant['hex']})")
 
-    print(f"  边框: {sampled1.get('borders', {}).get('border_name')}")
-    print(f"  装饰: {sampled1.get('decorations', {}).get('decoration_name')}")
+    print(f"  邊框: {sampled1.get('borders', {}).get('border_name')}")
+    print(f"  裝飾: {sampled1.get('decorations', {}).get('decoration_name')}")
 
-    # 测试2：再次采样（应避免重复）
-    print("\n【测试2】再次采样温馨可爱（应避免重复）")
-    sampled2 = sampler.sample_variables(style='温馨可爱')
+    # 測試2：再次取樣（應避免重複）
+    print("\n【測試2】再次取樣溫馨可愛（應避免重複）")
+    sampled2 = sampler.sample_variables(style='溫馨可愛')
 
     print(f"  配色: {sampled2.get('colors', {}).get('scheme_name')}")
-    print(f"  边框: {sampled2.get('borders', {}).get('border_name')}")
-    print(f"  装饰: {sampled2.get('decorations', {}).get('decoration_name')}")
+    print(f"  邊框: {sampled2.get('borders', {}).get('border_name')}")
+    print(f"  裝飾: {sampled2.get('decorations', {}).get('decoration_name')}")
 
-    # 测试3：采样现代简约风格
-    print("\n【测试3】采样现代简约风格")
-    sampled3 = sampler.sample_variables(style='现代简约')
+    # 測試3：取樣現代簡約風格
+    print("\n【測試3】取樣現代簡約風格")
+    sampled3 = sampler.sample_variables(style='現代簡約')
 
     print(f"  配色: {sampled3.get('colors', {}).get('scheme_name')}")
-    print(f"  边框: {sampled3.get('borders', {}).get('border_name')}")
-    print(f"  装饰: {sampled3.get('decorations', {}).get('decoration_name')}")
+    print(f"  邊框: {sampled3.get('borders', {}).get('border_name')}")
+    print(f"  裝飾: {sampled3.get('decorations', {}).get('decoration_name')}")
 
-    # 测试4：生成提示词描述
-    print("\n【测试4】生成提示词描述")
+    # 測試4：生成提示詞描述
+    print("\n【測試4】生成提示詞描述")
     prompt_desc = sampler.get_prompt_description(sampled1)
     print(f"  {prompt_desc}")
 
-    print("\n✅ 测试完成")
+    print("\n✅ 測試完成")
 
 
 if __name__ == '__main__':

@@ -1,397 +1,397 @@
 ---
 name: prompt-master
-description: 提示词主控 - 智能选择合适的领域skill并生成提示词，支持自动领域分类和调度
+description: 提示詞主控 - 智慧選擇合適的領域skill並生成提示詞，支援自動領域分類和排程
 ---
 
-# ⚠️ 旧架构 - Prompt Master - 提示词主控 Skill
+# ⚠️ 舊架構 - Prompt Master - 提示詞主控 Skill
 
-> **注意**：这是旧架构系统，使用JSON文件（facial_features_library.json）作为数据源。
+> **注意**：這是舊架構系統，使用JSON檔案（facial_features_library.json）作為資料來源。
 >
-> **新架构**请使用：`intelligent-prompt-generator`（使用elements.db数据库）
+> **新架構**請使用：`intelligent-prompt-generator`（使用elements.db資料庫）
 
 **版本**: 1.0
-**创建日期**: 2026-01-01
-**架构**: Master-Subordinate (主从结构)
+**建立日期**: 2026-01-01
+**架構**: Master-Subordinate (主從結構)
 
 ---
 
-## 📋 系统概述
+## 📋 系統概述
 
-这是一个智能提示词管理系统的主控 Skill，负责：
-1. 理解用户的自然语言意图
-2. 路由到对应的子模块
-3. 整合子模块输出并返回结果
+這是一個智慧提示詞管理系統的主控 Skill，負責：
+1. 理解使用者的自然語言意圖
+2. 路由到對應的子模組
+3. 整合子模組輸出並返回結果
 
 ---
 
 ## 🎯 核心功能
 
-### 1. 意图识别 (Intent Recognition)
+### 1. 意圖識別 (Intent Recognition)
 
-自动识别用户请求的5种意图类型：
+自動識別使用者請求的5種意圖型別：
 
-| 意图类型 | 关键词 | 示例请求 | 路由到 |
+| 意圖型別 | 關鍵詞 | 示例請求 | 路由到 |
 |---------|--------|----------|--------|
-| **提取** (Extract) | 提取、分析、分类、识别 | "提取这个Prompt中的五官特征" | extractor.md |
-| **组装** (Build) | 生成、组装、创建、制作 | "生成一个电影级美少女的提示词" | builder.md |
-| **优化** (Optimize) | 优化、改进、增强、调整 | "优化这个提示词" | optimizer.md |
-| **推荐** (Recommend) | 推荐、建议、相似、匹配 | "推荐类似的提示词" | recommender.md |
-| **分析** (Analyze) | 分析、对比、评估、查询 | "分析这两个提示词的区别" | analyzer.md |
+| **提取** (Extract) | 提取、分析、分類、識別 | "提取這個Prompt中的五官特徵" | extractor.md |
+| **組裝** (Build) | 生成、組裝、建立、製作 | "生成一個電影級美少女的提示詞" | builder.md |
+| **最佳化** (Optimize) | 最佳化、改進、增強、調整 | "最佳化這個提示詞" | optimizer.md |
+| **推薦** (Recommend) | 推薦、建議、相似、匹配 | "推薦類似的提示詞" | recommender.md |
+| **分析** (Analyze) | 分析、對比、評估、查詢 | "分析這兩個提示詞的區別" | analyzer.md |
 
-### 2. 数据源
+### 2. 資料來源
 
-系统使用以下JSON数据文件：
-- `facial_features_library.json` (v1.2) - 人像面部特征库（28个分类）
-- `module_library.json` - 摄影流派与设备索引
-- `extracted_modules.json` - 18个源Prompts的提取结果
+系統使用以下JSON資料檔案：
+- `facial_features_library.json` (v1.2) - 人像面部特徵庫（28個分類）
+- `module_library.json` - 攝影流派與裝置索引
+- `extracted_modules.json` - 18個源Prompts的提取結果
 
 ---
 
-## 🤖 执行流程
+## 🤖 執行流程
 
-### Step 1: 意图识别
+### Step 1: 意圖識別
 
-分析用户输入，识别意图类型：
+分析使用者輸入，識別意圖型別：
 
 ```python
-# 伪代码示例
-user_input = "生成一个电影级美少女的提示词"
+# 虛擬碼示例
+user_input = "生成一個電影級美少女的提示詞"
 
-if any(keyword in user_input for keyword in ["生成", "组装", "创建", "制作"]):
+if any(keyword in user_input for keyword in ["生成", "組裝", "建立", "製作"]):
     intent = "build"
-elif any(keyword in user_input for keyword in ["提取", "分析Prompt", "识别"]):
+elif any(keyword in user_input for keyword in ["提取", "分析Prompt", "識別"]):
     intent = "extract"
-elif any(keyword in user_input for keyword in ["优化", "改进", "增强"]):
+elif any(keyword in user_input for keyword in ["最佳化", "改進", "增強"]):
     intent = "optimize"
-elif any(keyword in user_input for keyword in ["推荐", "建议", "相似"]):
+elif any(keyword in user_input for keyword in ["推薦", "建議", "相似"]):
     intent = "recommend"
-elif any(keyword in user_input for keyword in ["分析", "对比", "查询"]):
+elif any(keyword in user_input for keyword in ["分析", "對比", "查詢"]):
     intent = "analyze"
 else:
-    # 默认：build（最常用）
+    # 預設：build（最常用）
     intent = "build"
 ```
 
-### Step 2: 路由到子模块
+### Step 2: 路由到子模組
 
-根据意图调用对应模块：
+根據意圖呼叫對應模組：
 
 ```python
-# 伪代码示例
+# 虛擬碼示例
 if intent == "build":
-    # 调用 builder.md
+    # 呼叫 builder.md
     result = call_builder_module(user_input)
 elif intent == "extract":
-    # 调用 extractor.md
+    # 呼叫 extractor.md
     result = call_extractor_module(user_input)
-# ... 其他模块
+# ... 其他模組
 ```
 
-### Step 3: 返回结果
+### Step 3: 返回結果
 
-整合子模块输出，格式化返回给用户。
+整合子模組輸出，格式化返回給使用者。
 
 ---
 
-## 📦 子模块说明
+## 📦 子模組說明
 
-### 1. extractor.md - 提取模块
-**功能**: 从用户提供的Prompt中提取可复用的模块
-**输入**: 原始Prompt文本
-**输出**: 提取的模块分类（眼型、脸型、唇型等）
+### 1. extractor.md - 提取模組
+**功能**: 從使用者提供的Prompt中提取可複用的模組
+**輸入**: 原始Prompt文字
+**輸出**: 提取的模組分類（眼型、臉型、唇型等）
 
 **示例**:
 ```
-用户: "提取这个Prompt的五官特征: A beautiful young woman with large blue eyes..."
-输出:
+使用者: "提取這個Prompt的五官特徵: A beautiful young woman with large blue eyes..."
+輸出:
   - 眼型: large blue expressive
-  - 性别: female
-  - 年龄: young_adult
+  - 性別: female
+  - 年齡: young_adult
 ```
 
-### 2. builder.md - 组装模块
-**功能**: 根据用户描述智能组装提示词
-**输入**: 用户的自然语言描述
-**输出**: 完整的提示词
-
-**示例**:
-```
-用户: "生成一个电影级美少女的提示词"
-输出: A beautiful East Asian young woman, large expressive almond eyes, ...
-```
-
-### 3. optimizer.md - 优化模块
-**功能**: 优化用户提供的提示词
-**输入**: 原始提示词
-**输出**: 优化后的提示词 + 优化建议
+### 2. builder.md - 組裝模組
+**功能**: 根據使用者描述智慧組裝提示詞
+**輸入**: 使用者的自然語言描述
+**輸出**: 完整的提示詞
 
 **示例**:
 ```
-用户: "优化这个提示词: A woman with eyes"
-输出: A beautiful young East Asian woman, large expressive almond eyes, ...
-建议: 添加了年龄、人种、眼型细节
+使用者: "生成一個電影級美少女的提示詞"
+輸出: A beautiful East Asian young woman, large expressive almond eyes, ...
 ```
 
-### 4. recommender.md - 推荐模块
-**功能**: 推荐相似或相关的提示词/模块
-**输入**: Prompt ID 或 描述
-**输出**: 推荐列表（带相似度评分）
-
-**示例**:
-```
-用户: "推荐与Prompt #5相似的提示词"
-输出:
-  1. Prompt #18 (相似度: 85%) - 同为清纯少女风格
-  2. Prompt #10 (相似度: 75%) - 同为East Asian人像
-```
-
-### 5. analyzer.md - 分析模块
-**功能**: 分析提示词、对比、查询信息
-**输入**: Prompt ID 或 查询条件
-**输出**: 详细分析结果
+### 3. optimizer.md - 最佳化模組
+**功能**: 最佳化使用者提供的提示詞
+**輸入**: 原始提示詞
+**輸出**: 最佳化後的提示詞 + 最佳化建議
 
 **示例**:
 ```
-用户: "对比Prompt #5和#17的区别"
-输出:
-  - Prompt #5: 清纯少女，古典优雅
-  - Prompt #17: 性感挑逗，叛逆风格
-  差异: 表情、眼型、皮肤质感完全不同
+使用者: "最佳化這個提示詞: A woman with eyes"
+輸出: A beautiful young East Asian woman, large expressive almond eyes, ...
+建議: 添加了年齡、人種、眼型細節
+```
+
+### 4. recommender.md - 推薦模組
+**功能**: 推薦相似或相關的提示詞/模組
+**輸入**: Prompt ID 或 描述
+**輸出**: 推薦列表（帶相似度評分）
+
+**示例**:
+```
+使用者: "推薦與Prompt #5相似的提示詞"
+輸出:
+  1. Prompt #18 (相似度: 85%) - 同為清純少女風格
+  2. Prompt #10 (相似度: 75%) - 同為East Asian人像
+```
+
+### 5. analyzer.md - 分析模組
+**功能**: 分析提示詞、對比、查詢資訊
+**輸入**: Prompt ID 或 查詢條件
+**輸出**: 詳細分析結果
+
+**示例**:
+```
+使用者: "對比Prompt #5和#17的區別"
+輸出:
+  - Prompt #5: 清純少女，古典優雅
+  - Prompt #17: 性感挑逗，叛逆風格
+  差異: 表情、眼型、皮膚質感完全不同
 ```
 
 ---
 
-## 🔧 实际执行逻辑
+## 🔧 實際執行邏輯
 
-当你作为 Prompt Master Skill 被调用时，请按以下步骤执行：
+當你作為 Prompt Master Skill 被呼叫時，請按以下步驟執行：
 
-### 1. 接收用户输入
+### 1. 接收使用者輸入
 
-从用户消息中提取关键信息：
-- 意图类型（提取/组装/优化/推荐/分析）
-- 具体参数（Prompt ID、描述、查询条件等）
+從使用者訊息中提取關鍵資訊：
+- 意圖型別（提取/組裝/最佳化/推薦/分析）
+- 具體引數（Prompt ID、描述、查詢條件等）
 
-### 2. 意图识别
+### 2. 意圖識別
 
-使用关键词匹配识别用户意图：
+使用關鍵詞匹配識別使用者意圖：
 
-**提取意图**:
-- 关键词: "提取", "分析Prompt中的", "识别", "这个Prompt的"
+**提取意圖**:
+- 關鍵詞: "提取", "分析Prompt中的", "識別", "這個Prompt的"
 - 示例: "提取Prompt #18的眼型"
 
-**组装意图**:
-- 关键词: "生成", "创建", "组装", "制作", "我想要"
-- 示例: "生成一个清纯少女的提示词"
+**組裝意圖**:
+- 關鍵詞: "生成", "建立", "組裝", "製作", "我想要"
+- 示例: "生成一個清純少女的提示詞"
 
-**优化意图**:
-- 关键词: "优化", "改进", "增强", "调整", "修正"
-- 示例: "优化这个提示词"
+**最佳化意圖**:
+- 關鍵詞: "最佳化", "改進", "增強", "調整", "修正"
+- 示例: "最佳化這個提示詞"
 
-**推荐意图**:
-- 关键词: "推荐", "建议", "相似", "类似", "相关"
-- 示例: "推荐相似的提示词"
+**推薦意圖**:
+- 關鍵詞: "推薦", "建議", "相似", "類似", "相關"
+- 示例: "推薦相似的提示詞"
 
-**分析意图**:
-- 关键词: "分析", "对比", "查询", "查看", "详细信息"
-- 示例: "分析Prompt #5的特点"
+**分析意圖**:
+- 關鍵詞: "分析", "對比", "查詢", "檢視", "詳細資訊"
+- 示例: "分析Prompt #5的特點"
 
-### 3. 调用子模块
+### 3. 呼叫子模組
 
-**重要**: 你不能直接执行子模块的逻辑。你需要：
+**重要**: 你不能直接執行子模組的邏輯。你需要：
 
-#### 选项A: 调用CLI工具（推荐）
+#### 選項A: 呼叫CLI工具（推薦）
 使用 `prompt_tool.py` CLI工具：
 ```bash
-# 组装功能
-python3 prompt_tool.py build "电影级美少女"
-python3 prompt_tool.py generate  # 交互式生成
+# 組裝功能
+python3 prompt_tool.py build "電影級美少女"
+python3 prompt_tool.py generate  # 互動式生成
 
-# 查询功能
+# 查詢功能
 python3 prompt_tool.py show 5
 python3 prompt_tool.py recommend 5
 python3 prompt_tool.py compare 5 17
 
-# 五官查询
+# 五官查詢
 python3 prompt_tool.py facial --list-types
-python3 prompt_tool.py facial --style "清纯少女"
+python3 prompt_tool.py facial --style "清純少女"
 ```
 
-#### 选项B: 直接读取JSON数据
-当CLI工具无法满足需求时，直接操作JSON数据：
+#### 選項B: 直接讀取JSON資料
+當CLI工具無法滿足需求時，直接操作JSON資料：
 ```python
-# 读取数据文件
+# 讀取資料檔案
 facial_lib = load_json("extracted_results/facial_features_library.json")
 module_lib = load_json("extracted_results/module_library.json")
 prompts_data = load_json("extracted_results/extracted_modules.json")
 
-# 根据意图处理数据
+# 根據意圖處理資料
 # ...
 ```
 
-### 4. 格式化输出
+### 4. 格式化輸出
 
-将结果以清晰易读的格式返回给用户：
+將結果以清晰易讀的格式返回給使用者：
 - 使用Markdown格式化
-- 突出关键信息
-- 提供可操作的建议
+- 突出關鍵資訊
+- 提供可操作的建議
 
 ---
 
 ## 📊 使用示例
 
-### 示例1: 组装提示词
+### 示例1: 組裝提示詞
 
-**用户输入**:
+**使用者輸入**:
 ```
-"我想生成一个电影级的清纯美少女的提示词"
+"我想生成一個電影級的清純美少女的提示詞"
 ```
 
-**执行流程**:
-1. 识别意图: build（组装）
-2. 提取关键词: "电影级" → cinematic_narrative, "清纯美少女" → 清纯少女
-3. 调用CLI: `python3 prompt_tool.py build "电影级的清纯美少女"`
-4. 返回生成的完整提示词
+**執行流程**:
+1. 識別意圖: build（組裝）
+2. 提取關鍵詞: "電影級" → cinematic_narrative, "清純美少女" → 清純少女
+3. 呼叫CLI: `python3 prompt_tool.py build "電影級的清純美少女"`
+4. 返回生成的完整提示詞
 
-**输出**:
+**輸出**:
 ```
-✨ 已生成提示词:
+✨ 已生成提示詞:
 
 A beautiful East Asian young woman, large expressive almond eyes, thick natural lashes, deep clear iris, dewy sparkle, soft highlights, oval face, delicate refined Asian facial structure, soft full lips, gentle pink gloss, small straight delicate nose, flawless porcelain skin, radiant jade-like brightness, natural subtle blush, dewy luminous glow, innocent gaze, gentle smile, soft introspective, photographed with canon_eos_r5, 35mm f/2.8, 8K HDR, cinematic lighting, photorealistic, ultra-detailed
 
-📋 组合详情:
-- 流派: 电影叙事摄影
-- 风格: 清纯少女
-- 人种: 东亚人
-- 年龄: 青年（18-25岁）
-- 性别: 女性
+📋 組合詳情:
+- 流派: 電影敘事攝影
+- 風格: 清純少女
+- 人種: 東亞人
+- 年齡: 青年（18-25歲）
+- 性別: 女性
 ```
 
-### 示例2: 推荐相似提示词
+### 示例2: 推薦相似提示詞
 
-**用户输入**:
+**使用者輸入**:
 ```
-"推荐与Prompt #5相似的提示词"
+"推薦與Prompt #5相似的提示詞"
 ```
 
-**执行流程**:
-1. 识别意图: recommend（推荐）
+**執行流程**:
+1. 識別意圖: recommend（推薦）
 2. 提取Prompt ID: 5
-3. 调用CLI: `python3 prompt_tool.py recommend 5`
-4. 返回推荐列表
+3. 呼叫CLI: `python3 prompt_tool.py recommend 5`
+4. 返回推薦列表
 
-**输出**:
+**輸出**:
 ```
-🔍 为 Prompt #5 (清纯少女古典美) 推荐相关提示词
+🔍 為 Prompt #5 (清純少女古典美) 推薦相關提示詞
 
-[1] #18 清纯公主Cosplay
+[1] #18 清純公主Cosplay
     相似度: 75%
-    理由: 同为清纯少女风格 + 同用东亚人种
+    理由: 同為清純少女風格 + 同用東亞人種
 
-[2] #10 温柔少女人像
+[2] #10 溫柔少女人像
     相似度: 65%
-    理由: 同为人像美容摄影 + 主题相关
+    理由: 同為人像美容攝影 + 主題相關
 
 [3] #17 性感朋克少女
     相似度: 45%
-    理由: 同为年轻女性人像（风格差异大）
+    理由: 同為年輕女性人像（風格差異大）
 ```
 
-### 示例3: 查询五官组合
+### 示例3: 查詢五官組合
 
-**用户输入**:
+**使用者輸入**:
 ```
-"清纯少女风格应该用什么五官组合？"
+"清純少女風格應該用什麼五官組合？"
 ```
 
-**执行流程**:
-1. 识别意图: analyze（分析/查询）
-2. 识别风格: "清纯少女"
-3. 调用CLI: `python3 prompt_tool.py facial --style "清纯少女"`
-4. 返回五官组合推荐
+**執行流程**:
+1. 識別意圖: analyze（分析/查詢）
+2. 識別風格: "清純少女"
+3. 呼叫CLI: `python3 prompt_tool.py facial --style "清純少女"`
+4. 返回五官組合推薦
 
-**输出**:
+**輸出**:
 ```
-🎨 风格: 清纯少女
+🎨 風格: 清純少女
 
-推荐五官组合:
+推薦五官組合:
 
-性别: 女性 (female)
-年龄: 青年（18-25岁） (young_adult)
-人种: 东亚人 (east_asian)
+性別: 女性 (female)
+年齡: 青年（18-25歲） (young_adult)
+人種: 東亞人 (east_asian)
 眼型: 大眼杏仁眼 (large_expressive_almond) [9.8/10]
-  关键词: large expressive eyes, almond eyes, thick natural lashes
-唇型: 粉嫩光泽唇 (soft_pink_gloss) [9.0/10]
-  关键词: soft full lips, gentle pink gloss, natural lip color
+  關鍵詞: large expressive eyes, almond eyes, thick natural lashes
+唇型: 粉嫩光澤唇 (soft_pink_gloss) [9.0/10]
+  關鍵詞: soft full lips, gentle pink gloss, natural lip color
 鼻型: 小巧直鼻 (small_straight_delicate) [9.0/10]
-  关键词: small straight nose, delicate nose
-皮肤: 瓷肌无瑕（发光质感） (porcelain_flawless_radiant) [9.5/10]
-  关键词: flawless porcelain skin, radiant jade-like brightness
-表情: 清纯温柔眼神 (innocent_gentle_gaze) [9.5/10]
-  关键词: innocent gaze, gentle smile, soft introspective
+  關鍵詞: small straight nose, delicate nose
+皮膚: 瓷肌無瑕（發光質感） (porcelain_flawless_radiant) [9.5/10]
+  關鍵詞: flawless porcelain skin, radiant jade-like brightness
+表情: 清純溫柔眼神 (innocent_gentle_gaze) [9.5/10]
+  關鍵詞: innocent gaze, gentle smile, soft introspective
 ```
 
 ---
 
-## 🎯 最佳实践
+## 🎯 最佳實踐
 
-### 1. 优先使用CLI工具
-- ✅ CLI工具已经过测试，稳定可靠
-- ✅ 输出格式统一，易于理解
-- ✅ 包含彩色输出，体验更好
+### 1. 優先使用CLI工具
+- ✅ CLI工具已經過測試，穩定可靠
+- ✅ 輸出格式統一，易於理解
+- ✅ 包含彩色輸出，體驗更好
 
-### 2. 清晰的输出格式
+### 2. 清晰的輸出格式
 - 使用Markdown格式化
-- 使用emoji增强可读性
-- 突出显示关键信息
+- 使用emoji增強可讀性
+- 突出顯示關鍵資訊
 
-### 3. 智能路由
-- 当用户意图不明确时，提供选项让用户选择
-- 对于复杂请求，可能需要调用多个子模块
+### 3. 智慧路由
+- 當用戶意圖不明確時，提供選項讓使用者選擇
+- 對於複雜請求，可能需要呼叫多個子模組
 
-### 4. 错误处理
-- 当JSON文件不存在时，提示用户
-- 当Prompt ID不存在时，列出可用ID
-- 当关键词无法匹配时，提供建议
+### 4. 錯誤處理
+- 當JSON檔案不存在時，提示使用者
+- 當Prompt ID不存在時，列出可用ID
+- 當關鍵詞無法匹配時，提供建議
 
 ---
 
-## 📚 数据文件路径
+## 📚 資料檔案路徑
 
 ```
 /Users/huangzongning/prompt_gen_image/
 ├── extracted_results/
-│   ├── facial_features_library.json (v1.2, 28分类)
-│   ├── module_library.json (10摄影流派)
+│   ├── facial_features_library.json (v1.2, 28分類)
+│   ├── module_library.json (10攝影流派)
 │   └── extracted_modules.json (18 Prompts)
 ├── prompt_tool.py (CLI工具)
-└── demo_generate.py (演示脚本)
+└── demo_generate.py (演示指令碼)
 ```
 
 ---
 
-## 🔍 执行指令
+## 🔍 執行指令
 
-当用户调用这个Skill时，请：
+當用戶呼叫這個Skill時，請：
 
-1. **分析用户意图**
-   - 仔细阅读用户输入
-   - 识别关键词和参数
+1. **分析使用者意圖**
+   - 仔細閱讀使用者輸入
+   - 識別關鍵詞和引數
 
-2. **选择执行方式**
-   - 优先使用CLI工具（Bash调用 prompt_tool.py）
-   - 必要时直接读取JSON数据（Read tool）
+2. **選擇執行方式**
+   - 優先使用CLI工具（Bash呼叫 prompt_tool.py）
+   - 必要時直接讀取JSON資料（Read tool）
 
-3. **执行并返回**
-   - 格式化输出结果
-   - 提供可操作的后续建议
+3. **執行並返回**
+   - 格式化輸出結果
+   - 提供可操作的後續建議
 
-4. **主动优化**
-   - 如果用户提供的信息不完整，主动优化或询问
-   - 提供改进建议
+4. **主動最佳化**
+   - 如果使用者提供的資訊不完整，主動最佳化或詢問
+   - 提供改進建議
 
 ---
 
-**Skill状态**: ✅ 可用
-**支持的操作**: 提取、组装、优化、推荐、分析
-**数据版本**: facial_features_library v1.2
-**总分类数**: 28个（9大类）
+**Skill狀態**: ✅ 可用
+**支援的操作**: 提取、組裝、最佳化、推薦、分析
+**資料版本**: facial_features_library v1.2
+**總分類數**: 28個（9大類）

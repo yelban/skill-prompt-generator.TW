@@ -1,42 +1,42 @@
-# Product Builder - 产品Prompt组装器
+# Product Builder - 產品Prompt組裝器
 
-**功能**: 从Universal Elements Database查询元素并组装产品摄影Prompt
-
----
-
-## 🎯 组装策略
-
-### 基础结构
-
-```
-产品摄影Prompt =
-  产品描述 (20%) +
-  材质纹理 (15%) +
-  摄影技术 (25%) +
-  光照设置 (20%) +
-  技术参数 (10%) +
-  质量增强 (10%)
-```
+**功能**: 從Universal Elements Database查詢元素並組裝產品攝影Prompt
 
 ---
 
-## 📋 组装流程
+## 🎯 組裝策略
 
-### Step 1: 查询产品元素
+### 基礎結構
+
+```
+產品攝影Prompt =
+  產品描述 (20%) +
+  材質紋理 (15%) +
+  攝影技術 (25%) +
+  光照設定 (20%) +
+  技術引數 (10%) +
+  質量增強 (10%)
+```
+
+---
+
+## 📋 組裝流程
+
+### Step 1: 查詢產品元素
 
 ```python
 from element_db import ElementDB
 
 db = ElementDB('extracted_results/elements.db')
 
-# 查询产品类型
+# 查詢產品型別
 product_elements = db.search_by_domain(
     'product',
     category_id='product_types',
     min_reusability=6.0
 )
 
-# 如果用户指定了标签（如"luxury"）
+# 如果使用者指定了標籤（如"luxury"）
 if user_tags:
     product_elements = db.search_by_tags(
         user_tags + ['product'],
@@ -44,10 +44,10 @@ if user_tags:
     )
 ```
 
-### Step 2: 查询材质纹理
+### Step 2: 查詢材質紋理
 
 ```python
-# 查询材质
+# 查詢材質
 materials = db.search_by_domain(
     'product',
     category_id='material_textures',
@@ -55,43 +55,43 @@ materials = db.search_by_domain(
     limit=2
 )
 
-# 或按标签查询
+# 或按標籤查詢
 materials = db.search_by_tags(['glossy', 'leather', 'metal'])
 ```
 
-### Step 3: 查询摄影技术
+### Step 3: 查詢攝影技術
 
 ```python
-# 查询专业摄影技术
+# 查詢專業攝影技術
 photo_tech = db.search_by_domain(
     'common',
     category_id='photography_techniques',
     min_reusability=8.0
 )
 
-# 产品摄影常用：macro, Phase One, editorial
+# 產品攝影常用：macro, Phase One, editorial
 macro_tech = [e for e in photo_tech if 'macro' in e['name'].lower()]
 ```
 
-### Step 4: 查询光照技术
+### Step 4: 查詢光照技術
 
 ```python
-# 查询光照
+# 查詢光照
 lighting = db.search_by_domain(
     'common',
     category_id='lighting_techniques',
     min_reusability=8.0
 )
 
-# 产品摄影常用：softbox, rim lighting, studio lighting
+# 產品攝影常用：softbox, rim lighting, studio lighting
 product_lighting = [e for e in lighting if any(kw in e['ai_prompt_template'].lower()
                     for kw in ['softbox', 'rim', 'studio'])]
 ```
 
-### Step 5: 查询技术效果
+### Step 5: 查詢技術效果
 
 ```python
-# 查询分辨率等技术参数
+# 查詢解析度等技術引數
 tech_effects = db.search_by_domain(
     'common',
     category_id='technical_effects',
@@ -104,7 +104,7 @@ resolution = [e for e in tech_effects if '4k' in e['name'].lower() or '8k' in e[
 
 ---
 
-## 🔧 组装算法
+## 🔧 組裝演算法
 
 ```python
 def build_product_prompt(
@@ -113,26 +113,26 @@ def build_product_prompt(
     user_tags: list = None
 ) -> str:
     """
-    组装产品摄影Prompt
+    組裝產品攝影Prompt
 
     Args:
-        product_type: 产品类型（如"book", "watch", "electronics"）
-        style: 风格（如"luxury", "minimalist", "tech"）
-        user_tags: 用户指定的标签
+        product_type: 產品型別（如"book", "watch", "electronics"）
+        style: 風格（如"luxury", "minimalist", "tech"）
+        user_tags: 使用者指定的標籤
 
     Returns:
-        完整的产品摄影Prompt
+        完整的產品攝影Prompt
     """
 
     db = ElementDB('extracted_results/elements.db')
     prompt_parts = []
 
-    # 1. 产品主体
+    # 1. 產品主體
     if product_type != "premium product":
-        # 搜索特定产品
+        # 搜尋特定產品
         products = db.search_by_tags([product_type, 'product'])
     else:
-        # 使用通用产品描述
+        # 使用通用產品描述
         products = db.search_by_domain('product', limit=1)
 
     if products:
@@ -140,28 +140,28 @@ def build_product_prompt(
     else:
         prompt_parts.append(f"premium {product_type}")
 
-    # 2. 摄影技术（核心）
+    # 2. 攝影技術（核心）
     photo_tech = db.search_by_domain('common', category_id='photography_techniques', limit=1)
     if photo_tech:
         prompt_parts.append(photo_tech[0]['ai_prompt_template'])
 
-    # 3. 光照设置
+    # 3. 光照設定
     lighting = db.search_by_domain('product', category_id='lighting_techniques', limit=1)
     if lighting:
         prompt_parts.append(lighting[0]['ai_prompt_template'])
 
-    # 4. 材质纹理（如果有style要求）
+    # 4. 材質紋理（如果有style要求）
     if style and style.lower() in ['luxury', 'premium', 'high-end']:
         materials = db.search_by_tags(['luxury'], require_all=False)
         if materials:
             prompt_parts.append(materials[0]['ai_prompt_template'])
 
-    # 5. 技术参数
+    # 5. 技術引數
     tech = db.search_by_tags(['4k', 'resolution'])
     if tech:
         prompt_parts.append(tech[0]['ai_prompt_template'])
 
-    # 6. 质量增强词
+    # 6. 質量增強詞
     quality_enhancers = [
         "photorealistic",
         "ultra-detailed",
@@ -173,7 +173,7 @@ def build_product_prompt(
 
     prompt_parts.extend(quality_enhancers)
 
-    # 组装
+    # 組裝
     prompt = ', '.join(prompt_parts)
 
     db.close()
@@ -182,11 +182,11 @@ def build_product_prompt(
 
 ---
 
-## 📊 输出示例
+## 📊 輸出示例
 
-### 示例1: 奢华书籍
+### 示例1: 奢華書籍
 
-**输入**:
+**輸入**:
 ```python
 build_product_prompt(
     product_type="collector edition book",
@@ -194,7 +194,7 @@ build_product_prompt(
 )
 ```
 
-**输出**:
+**輸出**:
 ```
 Premium collector's edition book, luxury binding, Italian calfskin cover,
 Phase One medium format camera with 100mm macro lens, sophisticated softbox
@@ -205,9 +205,9 @@ perfectly controlled lighting
 
 ---
 
-### 示例2: 科技产品
+### 示例2: 科技產品
 
-**输入**:
+**輸入**:
 ```python
 build_product_prompt(
     product_type="smartphone",
@@ -216,7 +216,7 @@ build_product_prompt(
 )
 ```
 
-**输出**:
+**輸出**:
 ```
 Premium smartphone with glossy glass surface, modern sleek design, Phase One
 camera with macro lens capturing screen details, soft studio lighting creating
@@ -226,23 +226,23 @@ professional tech product photography, minimal background, clean aesthetic
 
 ---
 
-## ✅ 质量保证
+## ✅ 質量保證
 
-### 必备元素检查
+### 必備元素檢查
 
-每个产品Prompt应包含：
-- ✅ 产品描述
-- ✅ 摄影技术（相机/镜头）
-- ✅ 光照设置
-- ✅ 分辨率/质量参数
+每個產品Prompt應包含：
+- ✅ 產品描述
+- ✅ 攝影技術（相機/鏡頭）
+- ✅ 光照設定
+- ✅ 解析度/質量引數
 
-### 长度控制
+### 長度控制
 
-- 目标: 150-250词
-- 最小: 100词
-- 最大: 300词
+- 目標: 150-250詞
+- 最小: 100詞
+- 最大: 300詞
 
 ---
 
-**模块状态**: ✅ 已实现
-**查询效率**: O(log n) 索引查询
+**模組狀態**: ✅ 已實現
+**查詢效率**: O(log n) 索引查詢
