@@ -1,8 +1,21 @@
 # Skill Prompt Generator - 基於Skills的智慧提示詞生成系統
 
+> 🌐 **繁體中文版** | [English Version](https://github.com/huangserva/skill-prompt-generator)
+
 > 🎉 **v2.0 已釋出！** 新增跨domain查詢和設計系統整合。[檢視升級指南 →](UPGRADE_GUIDE_v2.0.md)
 
 **一個 Claude Code Skills 專案**，透過12個專業領域Skills，基於Universal Elements Library（1246+元素）生成高質量AI影像提示詞。
+
+### 🖼️ 支援的繪圖平台
+
+| 平台 | 適用場景 | 提示詞格式 |
+|------|----------|-----------|
+| **Midjourney** | 藝術風格、概念設計 | 簡潔 + `--ar` 參數 |
+| **Stable Diffusion** | 精確控制、專業攝影 | 詳細 + `(text:1.3)` 權重 |
+| **DALL-E 3** | 快速原型、創意探索 | 自然語言 |
+| **Nano Banana Pro** | 高品質寫實、人像攝影 | 自然語言（🆕 新增）|
+
+> 💡 **Nano Banana Pro** 即 Google Gemini 3 Pro Image，支援中英文自然語言描述，無需特殊語法。
 
 ## 🆕 v2.0 新特性
 
