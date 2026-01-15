@@ -1,6 +1,7 @@
 # Skill Prompt Generator - 基於Skills的智慧提示詞生成系統
 
 > 🌐 **繁體中文版** | [English Version](https://github.com/huangserva/skill-prompt-generator)
+> 📦 **Clone**: `git clone https://github.com/yelban/skill-prompt-generator.TW.git`
 
 > 🎉 **v2.0 已釋出！** 新增跨domain查詢和設計系統整合。[檢視升級指南 →](UPGRADE_GUIDE_v2.0.md)
 
@@ -86,10 +87,10 @@
 
 ```bash
 # 1. 克隆專案
-git clone https://github.com/huangserva/skill-prompt-generator.git
+git clone https://github.com/yelban/skill-prompt-generator.TW.git
 
 # 2. 進入專案目錄
-cd skill-prompt-generator
+cd skill-prompt-generator.TW
 
 # 3. 安裝Python依賴（二選一）
 pip install -r requirements.txt
@@ -102,7 +103,7 @@ uv venv && uv pip install -r requirements.txt
 
 #### 方式2：下載ZIP
 
-1. 訪問 https://github.com/huangserva/skill-prompt-generator
+1. 訪問 https://github.com/yelban/skill-prompt-generator.TW
 2. 點選 "Code" → "Download ZIP"
 3. 解壓到任意目錄
 4. 安裝依賴（二選一）：
